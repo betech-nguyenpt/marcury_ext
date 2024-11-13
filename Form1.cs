@@ -1,4 +1,5 @@
-﻿using marcury_ext.Utils;
+﻿using marcury_ext;
+using marcury_ext.Utils;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -18,11 +19,92 @@ namespace marcury_ext
     public partial class FormExtract : Form
     {
         private bool isDragging = false;
+        private bool isSearchMode = false;
+        private LowLevelMouseProc _mouseProc;
+        private IntPtr _hookID = IntPtr.Zero;
 
         public FormExtract()
         {
             InitializeComponent();
+            // Tạo delegate và thiết lập mouse hook
+            _mouseProc = HookCallback;
         }
+
+        // Khi nhấn nút tìm kiếm (BtnStartSearch)
+        private void BtnStartSearch_Click(object sender, EventArgs e)
+        {
+            isSearchMode = !isSearchMode;
+            if (isSearchMode) {
+                this.Cursor = Cursors.Cross; // Đổi thành dấu "+" khi tìm kiếm
+                labelStatus.Text = "Chế độ tìm kiếm đang bật! Hãy click vào cửa sổ bất kỳ để lấy handle.";
+                _hookID = SetHook(_mouseProc); // Bắt đầu hook chuột
+            } else {
+                this.Cursor = Cursors.Default;
+                labelStatus.Text = "Chế độ tìm kiếm đã tắt!";
+                UnhookWindowsHookEx(_hookID); // Tắt hook chuột khi thoát tìm kiếm
+            }
+        }
+
+        // Callback của mouse hook, xử lý sự kiện nhấp chuột
+        private IntPtr HookCallback(int nCode, IntPtr wParam, IntPtr lParam)
+        {
+            const int WM_LBUTTONDOWN = 0x0201;
+            if (nCode >= 0 && wParam == (IntPtr)WM_LBUTTONDOWN && isSearchMode) {
+                IntPtr handle = GetWindowHandleAtCursor(); // Lấy handle cửa sổ dưới con trỏ
+                if (handle != IntPtr.Zero) {
+                    StringBuilder windowText = new StringBuilder(256);
+                    WinApi.GetWindowText(handle, windowText, windowText.Capacity);
+
+                    // Hiển thị handle và nội dung của cửa sổ
+                    TextHandle.Text = $"Handle: {handle}";
+                    this.AppendTextToResult(windowText.ToString());
+                    //textContent.Text = $"Text: {windowText.ToString()}";
+                } else {
+                    labelStatus.Text = "Không tìm thấy cửa sổ tại vị trí chuột.";
+                }
+
+                // Tắt chế độ tìm kiếm sau khi lấy handle
+                isSearchMode = false;
+                this.Cursor = Cursors.Default;
+                labelStatus.Text = "Chế độ tìm kiếm đã tắt!";
+                UnhookWindowsHookEx(_hookID);
+            }
+            return CallNextHookEx(_hookID, nCode, wParam, lParam);
+        }
+
+        // Đặt hook chuột toàn cục
+        private IntPtr SetHook(LowLevelMouseProc proc)
+        {
+            using (var curProcess = System.Diagnostics.Process.GetCurrentProcess())
+            using (var curModule = curProcess.MainModule) {
+                return SetWindowsHookEx(WH_MOUSE_LL, proc, GetModuleHandle(curModule.ModuleName), 0);
+            }
+        }
+
+        // Lấy Handle của cửa sổ tại vị trí con trỏ chuột
+        private IntPtr GetWindowHandleAtCursor()
+        {
+            WinApi.GetCursorPos(out Point cursorPos); // Lấy vị trí con trỏ
+            return WinApi.WindowFromPoint(cursorPos); // Lấy handle cửa sổ tại vị trí chuột
+        }
+
+        // Delegate và cấu hình cho mouse hook
+        private delegate IntPtr LowLevelMouseProc(int nCode, IntPtr wParam, IntPtr lParam);
+
+        [DllImport("user32.dll", SetLastError = true)]
+        private static extern IntPtr SetWindowsHookEx(int idHook, LowLevelMouseProc lpfn, IntPtr hMod, uint dwThreadId);
+
+        [DllImport("user32.dll", SetLastError = true)]
+        private static extern bool UnhookWindowsHookEx(IntPtr hhk);
+
+        [DllImport("user32.dll", SetLastError = true)]
+        private static extern IntPtr CallNextHookEx(IntPtr hhk, int nCode, IntPtr wParam, IntPtr lParam);
+
+        [DllImport("kernel32.dll", SetLastError = true)]
+        private static extern IntPtr GetModuleHandle(string lpModuleName);
+
+        private const int WH_MOUSE_LL = 14; // Mã cho hook chuột toàn cục
+
 
         /// <summary>
         /// Handle click close button
@@ -156,7 +238,7 @@ namespace marcury_ext
             return string.Empty;
         }
 
-        private void FormExtract_MouseClick(object sender, MouseEventArgs e)
+        public void FormExtract_MouseClick(object sender, MouseEventArgs e)
         {
             if (this.isDragging)
             {
@@ -220,5 +302,23 @@ namespace marcury_ext
             int dist = LevenshteinDistance.Calculate(TBXStr1.Text, TBXStr2.Text);
             LBLResult.Text = "Distance is " + dist;
         }
+
+        private void button1_Click(object sender, EventArgs e)
+        {
+
+        }
     }
+}
+
+// Lớp để chứa các API Windows cần thiết
+public static class WinApi
+{
+    [DllImport("user32.dll")]
+    public static extern IntPtr WindowFromPoint(Point p);
+
+    [DllImport("user32.dll", SetLastError = true, CharSet = CharSet.Auto)]
+    public static extern int GetWindowText(IntPtr hwnd, StringBuilder lpString, int nMaxCount);
+
+    [DllImport("user32.dll")]
+    public static extern bool GetCursorPos(out Point lpPoint);
 }
