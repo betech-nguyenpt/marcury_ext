@@ -1,4 +1,5 @@
-﻿using System;
+﻿using marcury_ext.Utils;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
@@ -9,6 +10,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using System.Xml;
+using System.Xml.Linq;
 using static System.Windows.Forms.VisualStyles.VisualStyleElement;
 
 namespace marcury_ext
@@ -167,6 +169,56 @@ namespace marcury_ext
         {
             TxtResult.AppendText(text);
             TxtResult.AppendText(Environment.NewLine);
+        }
+
+        private void FormExtract_Load(object sender, EventArgs e)
+        {
+            DataSet dataSet = new DataSet();
+            dataSet.ReadXml("DataSource\\demo.xml");
+            //DGVMain.DataSource = dataSet.Tables[0];
+
+            // Load data for ListView
+            LVData.View = View.Details;
+            LVData.GridLines = true;
+            //LVData.Sorting = SortOrder.Ascending;
+            LVData.Columns.Add("原文", 300);
+            LVData.Columns.Add("一致率", 70);
+            LVData.Columns.Add("候補", 300);
+            LVData.Columns.Add("適用", 50);
+            LVData.Items.Clear();
+            var doc = XDocument.Load("DataSource\\demo.xml");
+            var output = from x in doc.Root.Elements("result")
+                         select new ListViewItem(new[]
+                         {
+                             x.Element("content").Value,
+                             x.Element("matchrate").Value,
+                             x.Element("suggest").Value,
+                             x.Element("apply").Value,
+                         });
+            LVData.Items.AddRange(output.Reverse().ToArray());
+            //using (XmlReader reader = XmlReader.Create("DataSource\\demo.xml"))
+            //{
+            //    int i = 0;
+            //    while (reader.Read())
+            //    {
+            //        ListViewItem item = new ListViewItem();
+            //        switch (reader.Name.ToString())
+            //        {
+            //            case "content":
+            //                item.Text = reader.GetAttribute("content");
+            //                break;
+            //            default:
+            //                break;
+            //        }
+            //        LVData.Items.Add(item);
+            //    }
+            //}
+        }
+
+        private void BtnGetStringDistance_Click(object sender, EventArgs e)
+        {
+            int dist = LevenshteinDistance.Calculate(TBXStr1.Text, TBXStr2.Text);
+            LBLResult.Text = "Distance is " + dist;
         }
     }
 }
