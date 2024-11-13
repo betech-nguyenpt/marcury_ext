@@ -8,13 +8,16 @@ using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using System.Xml;
 using static System.Windows.Forms.VisualStyles.VisualStyleElement;
 
 namespace marcury_ext
 {
-    public partial class Form1 : Form
+    public partial class FormExtract : Form
     {
-        public Form1()
+        private bool isDragging = false;
+
+        public FormExtract()
         {
             InitializeComponent();
         }
@@ -37,56 +40,133 @@ namespace marcury_ext
         /// <param name="e">EventArgs</param>
         private void BtnGetTextData_Click(object sender, EventArgs e)
         {
-            List<WinText> windows = new List<WinText>();
-            // Find the first "FormMarcury" window
-            IntPtr hWnd = FindWindow(null, "FormMarcury");
-            //while (hWnd != IntPtr.Zero)
-            //{
-            //    // Find the control window that has the text
-            //    IntPtr hEdit = FindWindowEx(hWnd, IntPtr.Zero, "edit", null);
-            //    //initialize the buffer.  using a StringBuilder here
-            //    System.Text.StringBuilder sb = new System.Text.StringBuilder(255);  // or length from call with GETTEXTLENGTH
-
-            //    //get the text from the child control
-            //    int RetVal = SendMessage(hEdit, WM_GETTEXT, sb.Capacity, sb);
-
-            //    windows.Add(new WinText() { hWnd = hWnd, Text = sb.ToString() });
-
-            //    //find the next window
-            //    hWnd = FindWindowEx(IntPtr.Zero, hWnd, "FormMarcury", null);
-            //}
-
-            //do something clever
-            windows.OrderBy(x => x.Text).ToList().ForEach(y => Console.Write("{0} = {1}\n", y.hWnd, y.Text));
-            if (hWnd != IntPtr.Zero)
-            {
-                Console.Write("\n\nFound FormMarcury window.");
-            }
-            Console.Write("\n\nFound {0} window(s).", windows.Count);
+            var allText = GetAllTextFromWindowByTitle("FormMarcury");
+            this.AppendTextToResult(allText.ToString());
+            // Turn on dragging mode
+            //this.isDragging = true;
+            //this.AppendTextToResult("Dragging mode is ON");
         }
-        private struct WinText
+        // Delegate we use to call methods when enumerating child windows.
+        private delegate bool EnumWindowProc(IntPtr hWnd, IntPtr parameter);
+
+        [DllImport("user32")]
+        [return: MarshalAs(UnmanagedType.Bool)]
+        private static extern bool EnumChildWindows(IntPtr window, EnumWindowProc callback, IntPtr i);
+
+        [DllImport("user32.dll", EntryPoint = "FindWindow", SetLastError = true)]
+        private static extern IntPtr FindWindowByCaption(IntPtr zeroOnly, string lpWindowName);
+
+        [DllImport("user32.dll", CharSet = CharSet.Auto)]
+        private static extern IntPtr SendMessage(IntPtr hWnd, uint msg, IntPtr wParam, [Out] StringBuilder lParam);
+
+        // Callback method used to collect a list of child windows we need to capture text from.
+        private static bool EnumChildWindowsCallback(IntPtr handle, IntPtr pointer)
         {
-            public IntPtr hWnd;
-            public string Text;
+            // Creates a managed GCHandle object from the pointer representing a handle to the list created in GetChildWindows.
+            var gcHandle = GCHandle.FromIntPtr(pointer);
+
+            // Casts the handle back back to a List<IntPtr>
+            var list = gcHandle.Target as List<IntPtr>;
+
+            if (list == null)
+            {
+                throw new InvalidCastException("GCHandle Target could not be cast as List<IntPtr>");
+            }
+
+            // Adds the handle to the list.
+            list.Add(handle);
+
+            return true;
         }
 
+        // Returns an IEnumerable<IntPtr> containing the handles of all child windows of the parent window.
+        private static IEnumerable<IntPtr> GetChildWindows(IntPtr parent)
+        {
+            // Create list to store child window handles.
+            var result = new List<IntPtr>();
 
-        const int WM_GETTEXT = 0x0D;
-        const int WM_GETTEXTLENGTH = 0x0E;
+            // Allocate list handle to pass to EnumChildWindows.
+            var listHandle = GCHandle.Alloc(result);
 
-        [DllImport("user32.dll", SetLastError = true)]
-        public static extern IntPtr FindWindow(string lpClassName, string lpWindowName);
+            try
+            {
+                // Enumerates though all the child windows of the parent represented by IntPtr parent, executing EnumChildWindowsCallback for each. 
+                EnumChildWindows(parent, EnumChildWindowsCallback, GCHandle.ToIntPtr(listHandle));
+            }
+            finally
+            {
+                // Free the list handle.
+                if (listHandle.IsAllocated)
+                    listHandle.Free();
+            }
 
-        [DllImport("user32.dll", SetLastError = true)]
-        public static extern int SendMessage(IntPtr hWnd, int msg, int Param, System.Text.StringBuilder text);
+            // Return the list of child window handles.
+            return result;
+        }
 
-        [DllImport("user32.dll", SetLastError = true)]
-        public static extern IntPtr FindWindowEx(IntPtr hwndParent, IntPtr hwndChildAfter, string lpszClass, string lpszWindow);
+        // Gets text text from a control by it's handle.
+        private static string GetText(IntPtr handle)
+        {
+            const uint WM_GETTEXTLENGTH = 0x000E;
+            const uint WM_GETTEXT = 0x000D;
 
-        internal delegate int WindowEnumProc(IntPtr hwnd, IntPtr lparam);
+            // Gets the text length.
+            var length = (int)SendMessage(handle, WM_GETTEXTLENGTH, IntPtr.Zero, null);
 
-        [DllImport("user32.dll")]
-        internal static extern bool EnumChildWindows(IntPtr hwnd, WindowEnumProc func, IntPtr lParam);
+            // Init the string builder to hold the text.
+            var sb = new StringBuilder(length + 1);
 
+            // Writes the text from the handle into the StringBuilder
+            SendMessage(handle, WM_GETTEXT, (IntPtr)sb.Capacity, sb);
+
+            // Return the text as a string.
+            return sb.ToString();
+        }
+
+        // Wraps everything together. Will accept a window title and return all text in the window that matches that window title.
+        private static string GetAllTextFromWindowByTitle(string windowTitle)
+        {
+            var sb = new StringBuilder();
+
+            try
+            {
+                // Find the main window's handle by the title.
+                var windowHWnd = FindWindowByCaption(IntPtr.Zero, windowTitle);
+
+                // Loop though the child windows, and execute the EnumChildWindowsCallback method
+                var childWindows = GetChildWindows(windowHWnd);
+
+                // For each child handle, run GetText
+                foreach (var childWindowText in childWindows.Select(GetText))
+                {
+                    // Append the text to the string builder.
+                    sb.Append(childWindowText);
+                }
+
+                // Return the windows full text.
+                return sb.ToString();
+            }
+            catch (Exception e)
+            {
+                Console.Write(e.Message);
+            }
+
+            return string.Empty;
+        }
+
+        private void FormExtract_MouseClick(object sender, MouseEventArgs e)
+        {
+            if (this.isDragging)
+            {
+                this.isDragging = false;
+                this.AppendTextToResult("Dragging mode is OFF");
+            }
+        }
+
+        private void AppendTextToResult(String text)
+        {
+            TxtResult.AppendText(text);
+            TxtResult.AppendText(Environment.NewLine);
+        }
     }
 }
