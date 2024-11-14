@@ -18,11 +18,17 @@ namespace marcury_ext
 {
     public partial class FormExtract : Form
     {
+        /// <summary>
+        /// Flag dragging mode
+        /// </summary>
         private bool isDragging = false;
         private bool isSearchMode = false;
         private LowLevelMouseProc _mouseProc;
         private IntPtr _hookID = IntPtr.Zero;
 
+        /// <summary>
+        /// Constructor
+        /// </summary>
         public FormExtract()
         {
             InitializeComponent();
@@ -110,7 +116,7 @@ namespace marcury_ext
         /// Handle click close button
         /// </summary>
         /// <param name="sender">Sender</param>
-        /// <param name="e">EventArgs</param>
+        /// <param name="e">Event arguments</param>
         private void BtnClose_Click(object sender, EventArgs e)
         {
             // Quit application
@@ -121,7 +127,7 @@ namespace marcury_ext
         /// Handle click Get text data button
         /// </summary>
         /// <param name="sender">Sender</param>
-        /// <param name="e">EventArgs</param>
+        /// <param name="e">Event arguments</param>
         private void BtnGetTextData_Click(object sender, EventArgs e)
         {
             var allText = GetAllTextFromWindowByTitle("FormMarcury");
@@ -130,20 +136,77 @@ namespace marcury_ext
             //this.isDragging = true;
             //this.AppendTextToResult("Dragging mode is ON");
         }
-        // Delegate we use to call methods when enumerating child windows.
-        private delegate bool EnumWindowProc(IntPtr hWnd, IntPtr parameter);
 
-        [DllImport("user32")]
-        [return: MarshalAs(UnmanagedType.Bool)]
-        private static extern bool EnumChildWindows(IntPtr window, EnumWindowProc callback, IntPtr i);
+        /// <summary>
+        /// Handle mouse click on form
+        /// </summary>
+        /// <param name="sender">Sender</param>
+        /// <param name="e">Event arguments</param>
+        private void FormExtract_MouseClick(object sender, MouseEventArgs e)
+        {
+            if (this.isDragging)
+            {
+                this.isDragging = false;
+                this.AppendTextToResult("Dragging mode is OFF");
+            }
+        }
 
-        [DllImport("user32.dll", EntryPoint = "FindWindow", SetLastError = true)]
-        private static extern IntPtr FindWindowByCaption(IntPtr zeroOnly, string lpWindowName);
+        /// <summary>
+        /// Handle form load
+        /// </summary>
+        /// <param name="sender">Sender</param>
+        /// <param name="e">Event arguments</param>
+        private void FormExtract_Load(object sender, EventArgs e)
+        {
+            // Load data for ListView
+            LVData.View = View.Details;
+            LVData.GridLines = true;
+            //LVData.Sorting = SortOrder.Ascending;
+            LVData.Columns.Add("原文", 300);
+            LVData.Columns.Add("一致率", 70);
+            LVData.Columns.Add("候補", 300);
+            LVData.Columns.Add("適用", 50);
+            LVData.Items.Clear();
+            var doc = XDocument.Load("DataSource\\demo.xml");
+            var output = from x in doc.Root.Elements("result")
+                         select new ListViewItem(new[]
+                         {
+                             x.Element("content").Value,
+                             x.Element("matchrate").Value,
+                             x.Element("suggest").Value,
+                             x.Element("apply").Value,
+                         });
+            LVData.Items.AddRange(output.Reverse().ToArray());
+        }
 
-        [DllImport("user32.dll", CharSet = CharSet.Auto)]
-        private static extern IntPtr SendMessage(IntPtr hWnd, uint msg, IntPtr wParam, [Out] StringBuilder lParam);
+        /// <summary>
+        /// Handle click Get string distance button
+        /// </summary>
+        /// <param name="sender">Sender</param>
+        /// <param name="e">Event arguments</param>
+        private void BtnGetStringDistance_Click(object sender, EventArgs e)
+        {
+            int dist = LevenshteinDistance.Calculate(TBXStr1.Text, TBXStr2.Text);
+            LBLResult.Text = "Distance is " + dist;
+        }
 
-        // Callback method used to collect a list of child windows we need to capture text from.
+        /// <summary>
+        /// Append text to result textbox
+        /// </summary>
+        /// <param name="text">Text to append</param>
+        private void AppendTextToResult(String text)
+        {
+            TxtResult.AppendText(text);
+            TxtResult.AppendText(Environment.NewLine);
+        }
+
+        /// <summary>
+        /// Callback method used to collect a list of child windows we need to capture text from.
+        /// </summary>
+        /// <param name="handle">IntPtr</param>
+        /// <param name="pointer">IntPtr</param>
+        /// <returns></returns>
+        /// <exception cref="InvalidCastException"></exception>
         private static bool EnumChildWindowsCallback(IntPtr handle, IntPtr pointer)
         {
             // Creates a managed GCHandle object from the pointer representing a handle to the list created in GetChildWindows.
@@ -163,7 +226,11 @@ namespace marcury_ext
             return true;
         }
 
-        // Returns an IEnumerable<IntPtr> containing the handles of all child windows of the parent window.
+        /// <summary>
+        /// Returns an IEnumerable<IntPtr> containing the handles of all child windows of the parent window.
+        /// </summary>
+        /// <param name="parent"></param>
+        /// <returns></returns>
         private static IEnumerable<IntPtr> GetChildWindows(IntPtr parent)
         {
             // Create list to store child window handles.
@@ -188,7 +255,11 @@ namespace marcury_ext
             return result;
         }
 
-        // Gets text text from a control by it's handle.
+        /// <summary>
+        /// Gets text text from a control by it's handle.
+        /// </summary>
+        /// <param name="handle"></param>
+        /// <returns></returns>
         private static string GetText(IntPtr handle)
         {
             const uint WM_GETTEXTLENGTH = 0x000E;
@@ -207,7 +278,11 @@ namespace marcury_ext
             return sb.ToString();
         }
 
-        // Wraps everything together. Will accept a window title and return all text in the window that matches that window title.
+        /// <summary>
+        /// Wraps everything together. Will accept a window title and return all text in the window that matches that window title.
+        /// </summary>
+        /// <param name="windowTitle">Title of window</param>
+        /// <returns>String of content</returns>
         private static string GetAllTextFromWindowByTitle(string windowTitle)
         {
             var sb = new StringBuilder();
@@ -252,50 +327,16 @@ namespace marcury_ext
             TxtResult.AppendText(text);
             TxtResult.AppendText(Environment.NewLine);
         }
+        
+        // Delegate we use to call methods when enumerating child windows.
+        private delegate bool EnumWindowProc(IntPtr hWnd, IntPtr parameter);
 
-        private void FormExtract_Load(object sender, EventArgs e)
-        {
-            DataSet dataSet = new DataSet();
-            dataSet.ReadXml("DataSource\\demo.xml");
-            //DGVMain.DataSource = dataSet.Tables[0];
+        [DllImport("user32")]
+        [return: MarshalAs(UnmanagedType.Bool)]
+        private static extern bool EnumChildWindows(IntPtr window, EnumWindowProc callback, IntPtr i);
 
-            // Load data for ListView
-            LVData.View = View.Details;
-            LVData.GridLines = true;
-            //LVData.Sorting = SortOrder.Ascending;
-            LVData.Columns.Add("原文", 300);
-            LVData.Columns.Add("一致率", 70);
-            LVData.Columns.Add("候補", 300);
-            LVData.Columns.Add("適用", 50);
-            LVData.Items.Clear();
-            var doc = XDocument.Load("DataSource\\demo.xml");
-            var output = from x in doc.Root.Elements("result")
-                         select new ListViewItem(new[]
-                         {
-                             x.Element("content").Value,
-                             x.Element("matchrate").Value,
-                             x.Element("suggest").Value,
-                             x.Element("apply").Value,
-                         });
-            LVData.Items.AddRange(output.Reverse().ToArray());
-            //using (XmlReader reader = XmlReader.Create("DataSource\\demo.xml"))
-            //{
-            //    int i = 0;
-            //    while (reader.Read())
-            //    {
-            //        ListViewItem item = new ListViewItem();
-            //        switch (reader.Name.ToString())
-            //        {
-            //            case "content":
-            //                item.Text = reader.GetAttribute("content");
-            //                break;
-            //            default:
-            //                break;
-            //        }
-            //        LVData.Items.Add(item);
-            //    }
-            //}
-        }
+        [DllImport("user32.dll", EntryPoint = "FindWindow", SetLastError = true)]
+        private static extern IntPtr FindWindowByCaption(IntPtr zeroOnly, string lpWindowName);
 
         private void BtnGetStringDistance_Click(object sender, EventArgs e)
         {
@@ -307,6 +348,9 @@ namespace marcury_ext
         {
 
         }
+        
+        [DllImport("user32.dll", CharSet = CharSet.Auto)]
+        private static extern IntPtr SendMessage(IntPtr hWnd, uint msg, IntPtr wParam, [Out] StringBuilder lParam);
     }
 }
 
