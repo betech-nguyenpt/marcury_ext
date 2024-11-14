@@ -26,36 +26,36 @@ namespace marcury_ext
         public FormExtract()
         {
             InitializeComponent();
-            // Tạo delegate và thiết lập mouse hook
+            // Create delegate and set mouse hook
             _mouseProc = HookCallback;
         }
 
-        // Khi nhấn nút tìm kiếm (BtnStartSearch)
+        // When the search button is pressed (BtnStartSearch)
         private void BtnStartSearch_Click(object sender, EventArgs e)
         {
             isSearchMode = !isSearchMode;
             if (isSearchMode) {
-                this.Cursor = Cursors.Cross; // Đổi thành dấu "+" khi tìm kiếm
+                this.Cursor = Cursors.Cross; // Change to "+" sign when searching
                 labelStatus.Text = "Chế độ tìm kiếm đang bật! Hãy click vào cửa sổ bất kỳ để lấy handle.";
-                _hookID = SetHook(_mouseProc); // Bắt đầu hook chuột
+                _hookID = SetHook(_mouseProc); // Start mouse hook
             } else {
                 this.Cursor = Cursors.Default;
                 labelStatus.Text = "Chế độ tìm kiếm đã tắt!";
-                UnhookWindowsHookEx(_hookID); // Tắt hook chuột khi thoát tìm kiếm
+                UnhookWindowsHookEx(_hookID); // Disable mouse hook when exiting search
             }
         }
 
-        // Callback của mouse hook, xử lý sự kiện nhấp chuột
+        // Mouse hook callback, handle click event
         private IntPtr HookCallback(int nCode, IntPtr wParam, IntPtr lParam)
         {
             const int WM_LBUTTONDOWN = 0x0201;
             if (nCode >= 0 && wParam == (IntPtr)WM_LBUTTONDOWN && isSearchMode) {
-                IntPtr handle = GetWindowHandleAtCursor(); // Lấy handle cửa sổ dưới con trỏ
+                IntPtr handle = GetWindowHandleAtCursor(); // Get the window handle under the cursor
                 if (handle != IntPtr.Zero) {
                     StringBuilder windowText = new StringBuilder(256);
                     WinApi.GetWindowText(handle, windowText, windowText.Capacity);
 
-                    // Hiển thị handle và nội dung của cửa sổ
+                    // Display the handle and contents of the window
                     TextHandle.Text = $"Handle: {handle}";
                     this.AppendTextToResult(windowText.ToString());
                     //textContent.Text = $"Text: {windowText.ToString()}";
@@ -63,7 +63,7 @@ namespace marcury_ext
                     labelStatus.Text = "Không tìm thấy cửa sổ tại vị trí chuột.";
                 }
 
-                // Tắt chế độ tìm kiếm sau khi lấy handle
+                // Turn off search mode after getting handle
                 isSearchMode = false;
                 this.Cursor = Cursors.Default;
                 labelStatus.Text = "Chế độ tìm kiếm đã tắt!";
@@ -72,7 +72,7 @@ namespace marcury_ext
             return CallNextHookEx(_hookID, nCode, wParam, lParam);
         }
 
-        // Đặt hook chuột toàn cục
+        // Set global mouse hook
         private IntPtr SetHook(LowLevelMouseProc proc)
         {
             using (var curProcess = System.Diagnostics.Process.GetCurrentProcess())
@@ -81,14 +81,14 @@ namespace marcury_ext
             }
         }
 
-        // Lấy Handle của cửa sổ tại vị trí con trỏ chuột
+        // Get the Handle of the window at the mouse cursor position
         private IntPtr GetWindowHandleAtCursor()
         {
-            WinApi.GetCursorPos(out Point cursorPos); // Lấy vị trí con trỏ
-            return WinApi.WindowFromPoint(cursorPos); // Lấy handle cửa sổ tại vị trí chuột
+            WinApi.GetCursorPos(out Point cursorPos); // Get cursor position
+            return WinApi.WindowFromPoint(cursorPos); // Get the window handle at the mouse position
         }
 
-        // Delegate và cấu hình cho mouse hook
+        // Delegate and configuration for mouse hook
         private delegate IntPtr LowLevelMouseProc(int nCode, IntPtr wParam, IntPtr lParam);
 
         [DllImport("user32.dll", SetLastError = true)]
@@ -103,7 +103,7 @@ namespace marcury_ext
         [DllImport("kernel32.dll", SetLastError = true)]
         private static extern IntPtr GetModuleHandle(string lpModuleName);
 
-        private const int WH_MOUSE_LL = 14; // Mã cho hook chuột toàn cục
+        private const int WH_MOUSE_LL = 14; // Code for global mouse hook
 
 
         /// <summary>
@@ -310,7 +310,7 @@ namespace marcury_ext
     }
 }
 
-// Lớp để chứa các API Windows cần thiết
+// Class to contain necessary Windows APIs
 public static class WinApi
 {
     [DllImport("user32.dll")]
