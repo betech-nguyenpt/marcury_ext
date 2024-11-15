@@ -64,10 +64,15 @@ namespace marcury_ext
                 this.Cursor = Cursors.Default;
                 customCursor.IsSearching = isSearchMode;
                 customCursor.UpdateCursor();  // Cập nhật lại con trỏ
+                SendMessage(handle, WM_SETTEXT, 0, "Blablabla");
             } else {
                 labelStatus.Text = "Target form not found at mouse position.";
             }
         }
+        [DllImport("user32.dll")]
+        private static extern int SendMessage(IntPtr hWnd, int wMsg, int
+       wParam, [MarshalAs(UnmanagedType.LPStr)] string lParam);
+        private const int WM_SETTEXT = 0x0C;
 
         // Get the Handle of the window at the mouse cursor position
         private IntPtr GetWindowHandleAtCursor()
