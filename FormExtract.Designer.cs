@@ -28,30 +28,30 @@
         /// </summary>
         private void InitializeComponent()
         {
-            this.TxtResult = new System.Windows.Forms.TextBox();
+            this.txtResult = new System.Windows.Forms.TextBox();
             this.BtnClose = new System.Windows.Forms.Button();
             this.BtnGetTextData = new System.Windows.Forms.Button();
             this.label1 = new System.Windows.Forms.Label();
-            this.LVData = new System.Windows.Forms.ListView();
+            this.lvData = new System.Windows.Forms.ListView();
             this.TBXStr1 = new System.Windows.Forms.TextBox();
             this.TBXStr2 = new System.Windows.Forms.TextBox();
             this.label2 = new System.Windows.Forms.Label();
             this.label3 = new System.Windows.Forms.Label();
             this.BtnGetStringDistance = new System.Windows.Forms.Button();
             this.LBLResult = new System.Windows.Forms.Label();
-            this.TextHandle = new System.Windows.Forms.TextBox();
+            this.txtHandle = new System.Windows.Forms.TextBox();
             this.BtnStartSearch = new System.Windows.Forms.Button();
             this.labelStatus = new System.Windows.Forms.Label();
             this.SuspendLayout();
             // 
-            // TxtResult
+            // txtResult
             // 
-            this.TxtResult.Location = new System.Drawing.Point(12, 564);
-            this.TxtResult.Multiline = true;
-            this.TxtResult.Name = "TxtResult";
-            this.TxtResult.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
-            this.TxtResult.Size = new System.Drawing.Size(575, 113);
-            this.TxtResult.TabIndex = 0;
+            this.txtResult.Location = new System.Drawing.Point(12, 564);
+            this.txtResult.Multiline = true;
+            this.txtResult.Name = "txtResult";
+            this.txtResult.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
+            this.txtResult.Size = new System.Drawing.Size(575, 113);
+            this.txtResult.TabIndex = 0;
             // 
             // BtnClose
             // 
@@ -84,19 +84,19 @@
             this.label1.TabIndex = 4;
             this.label1.Text = "特記文候補検索";
             // 
-            // LVData
+            // lvData
             // 
-            this.LVData.CheckBoxes = true;
-            this.LVData.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.LVData.FullRowSelect = true;
-            this.LVData.HideSelection = false;
-            this.LVData.Location = new System.Drawing.Point(12, 29);
-            this.LVData.MultiSelect = false;
-            this.LVData.Name = "LVData";
-            this.LVData.Size = new System.Drawing.Size(776, 290);
-            this.LVData.TabIndex = 6;
-            this.LVData.UseCompatibleStateImageBehavior = false;
-            this.LVData.View = System.Windows.Forms.View.Details;
+            this.lvData.CheckBoxes = true;
+            this.lvData.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.lvData.FullRowSelect = true;
+            this.lvData.HideSelection = false;
+            this.lvData.Location = new System.Drawing.Point(12, 29);
+            this.lvData.MultiSelect = false;
+            this.lvData.Name = "lvData";
+            this.lvData.Size = new System.Drawing.Size(776, 290);
+            this.lvData.TabIndex = 6;
+            this.lvData.UseCompatibleStateImageBehavior = false;
+            this.lvData.View = System.Windows.Forms.View.Details;
             // 
             // TBXStr1
             // 
@@ -155,12 +155,12 @@
             this.LBLResult.Size = new System.Drawing.Size(0, 17);
             this.LBLResult.TabIndex = 12;
             // 
-            // TextHandle
+            // txtHandle
             // 
-            this.TextHandle.Location = new System.Drawing.Point(9, 515);
-            this.TextHandle.Name = "TextHandle";
-            this.TextHandle.Size = new System.Drawing.Size(109, 20);
-            this.TextHandle.TabIndex = 13;
+            this.txtHandle.Location = new System.Drawing.Point(9, 515);
+            this.txtHandle.Name = "txtHandle";
+            this.txtHandle.Size = new System.Drawing.Size(109, 20);
+            this.txtHandle.TabIndex = 13;
             // 
             // BtnStartSearch
             // 
@@ -188,18 +188,18 @@
             this.ClientSize = new System.Drawing.Size(800, 689);
             this.Controls.Add(this.labelStatus);
             this.Controls.Add(this.BtnStartSearch);
-            this.Controls.Add(this.TextHandle);
+            this.Controls.Add(this.txtHandle);
             this.Controls.Add(this.LBLResult);
             this.Controls.Add(this.BtnGetStringDistance);
             this.Controls.Add(this.label3);
             this.Controls.Add(this.label2);
             this.Controls.Add(this.TBXStr2);
             this.Controls.Add(this.TBXStr1);
-            this.Controls.Add(this.LVData);
+            this.Controls.Add(this.lvData);
             this.Controls.Add(this.label1);
             this.Controls.Add(this.BtnGetTextData);
             this.Controls.Add(this.BtnClose);
-            this.Controls.Add(this.TxtResult);
+            this.Controls.Add(this.txtResult);
             this.Name = "FormExtract";
             this.Text = "特記サポート";
             this.Load += new System.EventHandler(this.FormExtract_Load);
@@ -211,18 +211,18 @@
 
         #endregion
 
-        private System.Windows.Forms.TextBox TxtResult;
+        private System.Windows.Forms.TextBox txtResult;
         private System.Windows.Forms.Button BtnClose;
         private System.Windows.Forms.Button BtnGetTextData;
         private System.Windows.Forms.Label label1;
-        private System.Windows.Forms.ListView LVData;
+        private System.Windows.Forms.ListView lvData;
         private System.Windows.Forms.TextBox TBXStr1;
         private System.Windows.Forms.TextBox TBXStr2;
         private System.Windows.Forms.Label label2;
         private System.Windows.Forms.Label label3;
         private System.Windows.Forms.Button BtnGetStringDistance;
         private System.Windows.Forms.Label LBLResult;
-        private System.Windows.Forms.TextBox TextHandle;
+        private System.Windows.Forms.TextBox txtHandle;
         private System.Windows.Forms.Button BtnStartSearch;
         private System.Windows.Forms.Label labelStatus;
     }

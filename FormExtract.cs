@@ -13,6 +13,7 @@ using System.Windows.Forms;
 using System.Xml;
 using System.Xml.Linq;
 using static System.Windows.Forms.VisualStyles.VisualStyleElement;
+using TextBox = System.Windows.Forms.TextBox;
 
 namespace marcury_ext
 {
@@ -23,8 +24,12 @@ namespace marcury_ext
         /// </summary>
         private bool isDragging = false;
         private bool isSearchMode = false;
-        private LowLevelMouseProc _mouseProc;
-        private IntPtr _hookID = IntPtr.Zero;
+        private OverlayForm overlayForm; // Declare overlayForm
+        private CustomCursor customCursor; // Declare CustomCursor
+
+        private IntPtr handleTarget;
+        private string textChangeFromMarExtra = "changed the text and turned it red!";
+        private const int WM_SETTEXT = 0x0C;
 
         /// <summary>
         /// Constructor
@@ -32,84 +37,80 @@ namespace marcury_ext
         public FormExtract()
         {
             InitializeComponent();
-            // Create delegate and set mouse hook
-            _mouseProc = HookCallback;
+            // Initialize custom cursor, initial state is not searching
+            customCursor = new CustomCursor();
+            // Attach the ItemChecked event to the ListView
+            lvData.ItemChecked += LvData_ItemChecked;
         }
 
-        // When the search button is pressed (BtnStartSearch)
+        /// <summary>
+        /// When the search button is pressed (BtnStartSearch)
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void BtnStartSearch_Click(object sender, EventArgs e)
         {
             isSearchMode = !isSearchMode;
+            this.overlayForm = new OverlayForm();
             if (isSearchMode) {
-                this.Cursor = Cursors.Cross; // Change to "+" sign when searching
-                labelStatus.Text = "Chế độ tìm kiếm đang bật! Hãy click vào cửa sổ bất kỳ để lấy handle.";
-                _hookID = SetHook(_mouseProc); // Start mouse hook
+                // Create and display OverlayForm when starting search             
+                this.overlayForm.Show();
+                // Update search status and change cursor accordingly
+                customCursor.IsSearching = isSearchMode;
+                customCursor.UpdateCursor();  // Update cursor
+                this.overlayForm.MouseClick += OverlayForm_MouseClick;
+                labelStatus.Text = "Search mode is on! Click on any window to get the handle.";
             } else {
-                this.Cursor = Cursors.Default;
-                labelStatus.Text = "Chế độ tìm kiếm đã tắt!";
-                UnhookWindowsHookEx(_hookID); // Disable mouse hook when exiting search
+                // Close OverlayForm if search mode is off
+                customCursor.Dispose();  //Free custom cursor
+                this.overlayForm?.Close();
             }
         }
 
-        // Mouse hook callback, handle click event
-        private IntPtr HookCallback(int nCode, IntPtr wParam, IntPtr lParam)
+        /// <summary>
+        /// Load OverLoadForm for get handle textbox target
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void OverlayForm_MouseClick(object sender, MouseEventArgs e)
         {
-            const int WM_LBUTTONDOWN = 0x0201;
-            if (nCode >= 0 && wParam == (IntPtr)WM_LBUTTONDOWN && isSearchMode) {
-                IntPtr handle = GetWindowHandleAtCursor(); // Get the window handle under the cursor
-                if (handle != IntPtr.Zero) {
-                    StringBuilder windowText = new StringBuilder(256);
-                    WinApi.GetWindowText(handle, windowText, windowText.Capacity);
-
-                    // Display the handle and contents of the window
-                    TextHandle.Text = $"Handle: {handle}";
-                    this.AppendTextToResult(windowText.ToString());
-                    //textContent.Text = $"Text: {windowText.ToString()}";
-                } else {
-                    labelStatus.Text = "Không tìm thấy cửa sổ tại vị trí chuột.";
-                }
-
-                // Turn off search mode after getting handle
-                isSearchMode = false;
+            // When clicking on a position in the OverlayForm, get the handle of the window there
+            IntPtr handle = GetWindowHandleAtCursor();
+            if (handle != IntPtr.Zero) {
+                // Display the window's handle information and text content
+                StringBuilder windowText = new StringBuilder(256);
+                WinApi.GetWindowText(handle, windowText, windowText.Capacity);
+                txtHandle.Text = $"Handle: {handle}";
+                string texttarget = windowText.ToString();
+                txtResult.Text = $"Text: {texttarget}";
+                labelStatus.Text = "Target form information retrieved!";
+                handleTarget = handle; // Set value handle target
+                // SendMessage(handle, WM_SETTEXT, 0, this.textChangeFromMarExtra);
+                // Close OverlayForm after getting the handle
+                this.overlayForm.Close();
+                isSearchMode = false;  // Turn off search mode
+                //Return to default mouse cursor
                 this.Cursor = Cursors.Default;
-                labelStatus.Text = "Chế độ tìm kiếm đã tắt!";
-                UnhookWindowsHookEx(_hookID);
+                customCursor.IsSearching = isSearchMode;
+                customCursor.UpdateCursor();  // Update cursor in handle search mode: (currently not working)           
+            } else {
+                labelStatus.Text = "Target form not found at mouse position.";
             }
-            return CallNextHookEx(_hookID, nCode, wParam, lParam);
         }
 
-        // Set global mouse hook
-        private IntPtr SetHook(LowLevelMouseProc proc)
-        {
-            using (var curProcess = System.Diagnostics.Process.GetCurrentProcess())
-            using (var curModule = curProcess.MainModule) {
-                return SetWindowsHookEx(WH_MOUSE_LL, proc, GetModuleHandle(curModule.ModuleName), 0);
-            }
-        }
+        [DllImport("user32.dll")]
+        private static extern int SendMessage(IntPtr hWnd, int wMsg, int wParam, [MarshalAs(UnmanagedType.LPStr)] string lParam);
 
         // Get the Handle of the window at the mouse cursor position
         private IntPtr GetWindowHandleAtCursor()
         {
-            WinApi.GetCursorPos(out Point cursorPos); // Get cursor position
-            return WinApi.WindowFromPoint(cursorPos); // Get the window handle at the mouse position
+            Point cursorPos = Cursor.Position;
+            return WindowFromPoint(cursorPos); // Get handle at mouse position
         }
 
-        // Delegate and configuration for mouse hook
-        private delegate IntPtr LowLevelMouseProc(int nCode, IntPtr wParam, IntPtr lParam);
-
-        [DllImport("user32.dll", SetLastError = true)]
-        private static extern IntPtr SetWindowsHookEx(int idHook, LowLevelMouseProc lpfn, IntPtr hMod, uint dwThreadId);
-
-        [DllImport("user32.dll", SetLastError = true)]
-        private static extern bool UnhookWindowsHookEx(IntPtr hhk);
-
-        [DllImport("user32.dll", SetLastError = true)]
-        private static extern IntPtr CallNextHookEx(IntPtr hhk, int nCode, IntPtr wParam, IntPtr lParam);
-
-        [DllImport("kernel32.dll", SetLastError = true)]
-        private static extern IntPtr GetModuleHandle(string lpModuleName);
-
-        private const int WH_MOUSE_LL = 14; // Code for global mouse hook
+        // Get handle at mouse position
+        [DllImport("user32.dll")]
+        public static extern IntPtr WindowFromPoint(Point p);
 
 
         /// <summary>
@@ -158,26 +159,84 @@ namespace marcury_ext
         /// <param name="e">Event arguments</param>
         private void FormExtract_Load(object sender, EventArgs e)
         {
-            // Load data for ListView
-            LVData.View = View.Details;
-            LVData.GridLines = true;
-            //LVData.Sorting = SortOrder.Ascending;
-            LVData.Columns.Add("原文", 300);
-            LVData.Columns.Add("一致率", 70);
-            LVData.Columns.Add("候補", 300);
-            LVData.Columns.Add("適用", 50);
-            LVData.Items.Clear();
-            var doc = XDocument.Load("DataSource\\demo.xml");
-            var output = from x in doc.Root.Elements("result")
-                         select new ListViewItem(new[]
-                         {
-                             x.Element("content").Value,
-                             x.Element("matchrate").Value,
-                             x.Element("suggest").Value,
-                             x.Element("apply").Value,
-                         });
-            LVData.Items.AddRange(output.Reverse().ToArray());
+            // Make sure ListView has columns: 適用, 原文, 一致率, 候補
+            lvData.Columns.Add("適用", 50);
+            lvData.Columns.Add("原文", 300);
+            lvData.Columns.Add("一致率", 70);
+            lvData.Columns.Add("候補", 300);
+
+            // Enable Checkboxes for ListView items
+            lvData.CheckBoxes = true;
+            // Set detail display mode
+            lvData.View = View.Details;
+
+            // Enable gridlines for column and row separation
+            lvData.GridLines = true;
+
+            // Set full row selection (optional)
+            lvData.FullRowSelect = true;
+
+            // Add 23 rows of data
+            for (int i = 1; i <= 10; i++) {
+                string originalText = $"原文 {i}";
+                string accuracy = $"{(i * 4)}%";
+                string candidate = $"候補 {i}";
+
+                // Add item to ListView
+                ListViewItem listViewItem = new ListViewItem();
+                listViewItem.Checked = false; // Set checkbox checked or unchecked for the item
+
+                // Add the rest of the columns
+                listViewItem.SubItems.Add(originalText);
+                listViewItem.SubItems.Add(accuracy);
+                listViewItem.SubItems.Add(candidate);
+
+                lvData.Items.Add(listViewItem);
+            }
         }
+
+        /// <summary>
+        ///  LvData_ItemChecked send text when checked box
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void LvData_ItemChecked(object sender, ItemCheckedEventArgs e)
+        {
+            // Check if checkbox is selected
+            if (e.Item.Checked) {
+                // Get the value from column "候補" (column 3, index 2)
+                string candidateText = e.Item.SubItems[3].Text;
+                // Convert the string to IntPtr for correct Unicode encoding
+                IntPtr ptr = Marshal.StringToHGlobalUni(candidateText);
+                // Send a message SendMessage to change the text
+                SendMessage(handleTarget, WM_SETTEXT, 0, ptr);
+                // Free up memory
+                Marshal.FreeHGlobal(ptr);
+            }
+        }
+        // Import library with IntPtr receiving version
+        [DllImport("user32.dll", CharSet = CharSet.Unicode, SetLastError = true)]
+        private static extern int SendMessage(IntPtr hWnd, int Msg, int wParam, IntPtr lParam);
+
+       /* /// <summary>
+        ///  HighlightText
+        /// </summary>
+        /// <param name="handleTextB"></param>
+        /// <param name="startIndex"></param>
+        /// <param name="length"></param>
+        private void HighlightText(IntPtr handleTextB, int startIndex, int length)
+        {
+            int endIndex = startIndex + length;
+            // Chuyển startIndex và endIndex thành IntPtr
+            IntPtr startPtr = new IntPtr(startIndex);
+            IntPtr endPtr = new IntPtr(endIndex);
+            // Gửi thông điệp để chọn văn bản, làm highlight
+            SendMessage(handleTextB, EM_SETSEL, startPtr, endPtr);
+        }
+        // Declare the SendMessage function from the user32.dll library
+        [DllImport("user32.dll", CharSet = CharSet.Auto)]
+        private static extern IntPtr SendMessage(IntPtr hWnd, int msg, IntPtr wParam, IntPtr lParam);
+        private const int EM_SETSEL = 0xB1; // Message để chọn văn bản*/
 
         /// <summary>
         /// Handle click Get string distance button
@@ -196,8 +255,8 @@ namespace marcury_ext
         /// <param name="text">Text to append</param>
         private void AppendTextToResult(String text)
         {
-            TxtResult.AppendText(text);
-            TxtResult.AppendText(Environment.NewLine);
+            txtResult.AppendText(text);
+            txtResult.AppendText(Environment.NewLine);
         }
 
         /// <summary>
@@ -312,21 +371,6 @@ namespace marcury_ext
 
             return string.Empty;
         }
-
-       /* public void FormExtract_MouseClick(object sender, MouseEventArgs e)
-        {
-            if (this.isDragging)
-            {
-                this.isDragging = false;
-                this.AppendTextToResult("Dragging mode is OFF");
-            }
-        }*/
-
-       /* private void AppendTextToResult(String text)
-        {
-            TxtResult.AppendText(text);
-            TxtResult.AppendText(Environment.NewLine);
-        }*/
         
         // Delegate we use to call methods when enumerating child windows.
         private delegate bool EnumWindowProc(IntPtr hWnd, IntPtr parameter);
@@ -337,12 +381,6 @@ namespace marcury_ext
 
         [DllImport("user32.dll", EntryPoint = "FindWindow", SetLastError = true)]
         private static extern IntPtr FindWindowByCaption(IntPtr zeroOnly, string lpWindowName);
-
-        /*private void BtnGetStringDistance_Click(object sender, EventArgs e)
-        {
-            int dist = LevenshteinDistance.Calculate(TBXStr1.Text, TBXStr2.Text);
-            LBLResult.Text = "Distance is " + dist;
-        }*/
 
         private void button1_Click(object sender, EventArgs e)
         {
