@@ -313,20 +313,20 @@ namespace marcury_ext
             return string.Empty;
         }
 
-        public void FormExtract_MouseClick(object sender, MouseEventArgs e)
+       /* public void FormExtract_MouseClick(object sender, MouseEventArgs e)
         {
             if (this.isDragging)
             {
                 this.isDragging = false;
                 this.AppendTextToResult("Dragging mode is OFF");
             }
-        }
+        }*/
 
-        private void AppendTextToResult(String text)
+       /* private void AppendTextToResult(String text)
         {
             TxtResult.AppendText(text);
             TxtResult.AppendText(Environment.NewLine);
-        }
+        }*/
         
         // Delegate we use to call methods when enumerating child windows.
         private delegate bool EnumWindowProc(IntPtr hWnd, IntPtr parameter);
@@ -338,11 +338,11 @@ namespace marcury_ext
         [DllImport("user32.dll", EntryPoint = "FindWindow", SetLastError = true)]
         private static extern IntPtr FindWindowByCaption(IntPtr zeroOnly, string lpWindowName);
 
-        private void BtnGetStringDistance_Click(object sender, EventArgs e)
+        /*private void BtnGetStringDistance_Click(object sender, EventArgs e)
         {
             int dist = LevenshteinDistance.Calculate(TBXStr1.Text, TBXStr2.Text);
             LBLResult.Text = "Distance is " + dist;
-        }
+        }*/
 
         private void button1_Click(object sender, EventArgs e)
         {
