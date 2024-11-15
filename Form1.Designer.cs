@@ -39,6 +39,9 @@
             this.label3 = new System.Windows.Forms.Label();
             this.BtnGetStringDistance = new System.Windows.Forms.Button();
             this.LBLResult = new System.Windows.Forms.Label();
+            this.TextHandle = new System.Windows.Forms.TextBox();
+            this.BtnStartSearch = new System.Windows.Forms.Button();
+            this.labelStatus = new System.Windows.Forms.Label();
             this.SuspendLayout();
             // 
             // TxtResult
@@ -152,11 +155,40 @@
             this.LBLResult.Size = new System.Drawing.Size(0, 17);
             this.LBLResult.TabIndex = 12;
             // 
+            // TextHandle
+            // 
+            this.TextHandle.Location = new System.Drawing.Point(9, 515);
+            this.TextHandle.Name = "TextHandle";
+            this.TextHandle.Size = new System.Drawing.Size(109, 20);
+            this.TextHandle.TabIndex = 13;
+            // 
+            // BtnStartSearch
+            // 
+            this.BtnStartSearch.Location = new System.Drawing.Point(175, 514);
+            this.BtnStartSearch.Name = "BtnStartSearch";
+            this.BtnStartSearch.Size = new System.Drawing.Size(75, 21);
+            this.BtnStartSearch.TabIndex = 14;
+            this.BtnStartSearch.Text = "Search";
+            this.BtnStartSearch.UseVisualStyleBackColor = true;
+            this.BtnStartSearch.Click += new System.EventHandler(this.BtnStartSearch_Click);
+            // 
+            // labelStatus
+            // 
+            this.labelStatus.AutoSize = true;
+            this.labelStatus.Location = new System.Drawing.Point(318, 518);
+            this.labelStatus.Name = "labelStatus";
+            this.labelStatus.Size = new System.Drawing.Size(37, 13);
+            this.labelStatus.TabIndex = 15;
+            this.labelStatus.Text = "Status";
+            // 
             // FormExtract
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(800, 689);
+            this.Controls.Add(this.labelStatus);
+            this.Controls.Add(this.BtnStartSearch);
+            this.Controls.Add(this.TextHandle);
             this.Controls.Add(this.LBLResult);
             this.Controls.Add(this.BtnGetStringDistance);
             this.Controls.Add(this.label3);
@@ -190,6 +222,9 @@
         private System.Windows.Forms.Label label3;
         private System.Windows.Forms.Button BtnGetStringDistance;
         private System.Windows.Forms.Label LBLResult;
+        private System.Windows.Forms.TextBox TextHandle;
+        private System.Windows.Forms.Button BtnStartSearch;
+        private System.Windows.Forms.Label labelStatus;
     }
 }
 

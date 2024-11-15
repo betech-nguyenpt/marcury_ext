@@ -1,4 +1,5 @@
-﻿using marcury_ext.Utils;
+﻿using marcury_ext;
+using marcury_ext.Utils;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -21,6 +22,9 @@ namespace marcury_ext
         /// Flag dragging mode
         /// </summary>
         private bool isDragging = false;
+        private bool isSearchMode = false;
+        private LowLevelMouseProc _mouseProc;
+        private IntPtr _hookID = IntPtr.Zero;
 
         /// <summary>
         /// Constructor
@@ -28,7 +32,85 @@ namespace marcury_ext
         public FormExtract()
         {
             InitializeComponent();
+            // Create delegate and set mouse hook
+            _mouseProc = HookCallback;
         }
+
+        // When the search button is pressed (BtnStartSearch)
+        private void BtnStartSearch_Click(object sender, EventArgs e)
+        {
+            isSearchMode = !isSearchMode;
+            if (isSearchMode) {
+                this.Cursor = Cursors.Cross; // Change to "+" sign when searching
+                labelStatus.Text = "Chế độ tìm kiếm đang bật! Hãy click vào cửa sổ bất kỳ để lấy handle.";
+                _hookID = SetHook(_mouseProc); // Start mouse hook
+            } else {
+                this.Cursor = Cursors.Default;
+                labelStatus.Text = "Chế độ tìm kiếm đã tắt!";
+                UnhookWindowsHookEx(_hookID); // Disable mouse hook when exiting search
+            }
+        }
+
+        // Mouse hook callback, handle click event
+        private IntPtr HookCallback(int nCode, IntPtr wParam, IntPtr lParam)
+        {
+            const int WM_LBUTTONDOWN = 0x0201;
+            if (nCode >= 0 && wParam == (IntPtr)WM_LBUTTONDOWN && isSearchMode) {
+                IntPtr handle = GetWindowHandleAtCursor(); // Get the window handle under the cursor
+                if (handle != IntPtr.Zero) {
+                    StringBuilder windowText = new StringBuilder(256);
+                    WinApi.GetWindowText(handle, windowText, windowText.Capacity);
+
+                    // Display the handle and contents of the window
+                    TextHandle.Text = $"Handle: {handle}";
+                    this.AppendTextToResult(windowText.ToString());
+                    //textContent.Text = $"Text: {windowText.ToString()}";
+                } else {
+                    labelStatus.Text = "Không tìm thấy cửa sổ tại vị trí chuột.";
+                }
+
+                // Turn off search mode after getting handle
+                isSearchMode = false;
+                this.Cursor = Cursors.Default;
+                labelStatus.Text = "Chế độ tìm kiếm đã tắt!";
+                UnhookWindowsHookEx(_hookID);
+            }
+            return CallNextHookEx(_hookID, nCode, wParam, lParam);
+        }
+
+        // Set global mouse hook
+        private IntPtr SetHook(LowLevelMouseProc proc)
+        {
+            using (var curProcess = System.Diagnostics.Process.GetCurrentProcess())
+            using (var curModule = curProcess.MainModule) {
+                return SetWindowsHookEx(WH_MOUSE_LL, proc, GetModuleHandle(curModule.ModuleName), 0);
+            }
+        }
+
+        // Get the Handle of the window at the mouse cursor position
+        private IntPtr GetWindowHandleAtCursor()
+        {
+            WinApi.GetCursorPos(out Point cursorPos); // Get cursor position
+            return WinApi.WindowFromPoint(cursorPos); // Get the window handle at the mouse position
+        }
+
+        // Delegate and configuration for mouse hook
+        private delegate IntPtr LowLevelMouseProc(int nCode, IntPtr wParam, IntPtr lParam);
+
+        [DllImport("user32.dll", SetLastError = true)]
+        private static extern IntPtr SetWindowsHookEx(int idHook, LowLevelMouseProc lpfn, IntPtr hMod, uint dwThreadId);
+
+        [DllImport("user32.dll", SetLastError = true)]
+        private static extern bool UnhookWindowsHookEx(IntPtr hhk);
+
+        [DllImport("user32.dll", SetLastError = true)]
+        private static extern IntPtr CallNextHookEx(IntPtr hhk, int nCode, IntPtr wParam, IntPtr lParam);
+
+        [DllImport("kernel32.dll", SetLastError = true)]
+        private static extern IntPtr GetModuleHandle(string lpModuleName);
+
+        private const int WH_MOUSE_LL = 14; // Code for global mouse hook
+
 
         /// <summary>
         /// Handle click close button
@@ -231,6 +313,21 @@ namespace marcury_ext
             return string.Empty;
         }
 
+       /* public void FormExtract_MouseClick(object sender, MouseEventArgs e)
+        {
+            if (this.isDragging)
+            {
+                this.isDragging = false;
+                this.AppendTextToResult("Dragging mode is OFF");
+            }
+        }*/
+
+       /* private void AppendTextToResult(String text)
+        {
+            TxtResult.AppendText(text);
+            TxtResult.AppendText(Environment.NewLine);
+        }*/
+        
         // Delegate we use to call methods when enumerating child windows.
         private delegate bool EnumWindowProc(IntPtr hWnd, IntPtr parameter);
 
@@ -241,7 +338,31 @@ namespace marcury_ext
         [DllImport("user32.dll", EntryPoint = "FindWindow", SetLastError = true)]
         private static extern IntPtr FindWindowByCaption(IntPtr zeroOnly, string lpWindowName);
 
+        /*private void BtnGetStringDistance_Click(object sender, EventArgs e)
+        {
+            int dist = LevenshteinDistance.Calculate(TBXStr1.Text, TBXStr2.Text);
+            LBLResult.Text = "Distance is " + dist;
+        }*/
+
+        private void button1_Click(object sender, EventArgs e)
+        {
+
+        }
+        
         [DllImport("user32.dll", CharSet = CharSet.Auto)]
         private static extern IntPtr SendMessage(IntPtr hWnd, uint msg, IntPtr wParam, [Out] StringBuilder lParam);
     }
+}
+
+// Class to contain necessary Windows APIs
+public static class WinApi
+{
+    [DllImport("user32.dll")]
+    public static extern IntPtr WindowFromPoint(Point p);
+
+    [DllImport("user32.dll", SetLastError = true, CharSet = CharSet.Auto)]
+    public static extern int GetWindowText(IntPtr hwnd, StringBuilder lpString, int nMaxCount);
+
+    [DllImport("user32.dll")]
+    public static extern bool GetCursorPos(out Point lpPoint);
 }
