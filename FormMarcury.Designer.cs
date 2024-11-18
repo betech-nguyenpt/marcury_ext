@@ -29,6 +29,7 @@
         private void InitializeComponent()
         {
             this.textBox1 = new System.Windows.Forms.TextBox();
+            this.textBox2 = new System.Windows.Forms.TextBox();
             this.SuspendLayout();
             // 
             // textBox1
@@ -41,14 +42,23 @@
             this.textBox1.TabIndex = 0;
             this.textBox1.Text = "This is short text.\r\n今日は学校へ行きますか。\r\n今日は学校へ行きますか。\r\n今日は学校へ行きますか。\r\n今日は学校へ行きますか。\r\n";
             // 
+            // textBox2
+            // 
+            this.textBox2.Location = new System.Drawing.Point(12, 254);
+            this.textBox2.Name = "textBox2";
+            this.textBox2.Size = new System.Drawing.Size(560, 20);
+            this.textBox2.TabIndex = 1;
+            // 
             // MARCURY
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(800, 450);
+            this.Controls.Add(this.textBox2);
             this.Controls.Add(this.textBox1);
             this.Name = "MARCURY";
             this.Text = "FormMarcury";
+            this.Load += new System.EventHandler(this.MARCURY_Load);
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -57,5 +67,6 @@
         #endregion
 
         private System.Windows.Forms.TextBox textBox1;
+        private System.Windows.Forms.TextBox textBox2;
     }
 }

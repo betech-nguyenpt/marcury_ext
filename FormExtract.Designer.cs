@@ -32,7 +32,6 @@
             this.BtnClose = new System.Windows.Forms.Button();
             this.BtnGetTextData = new System.Windows.Forms.Button();
             this.label1 = new System.Windows.Forms.Label();
-            this.lvData = new System.Windows.Forms.ListView();
             this.TBXStr1 = new System.Windows.Forms.TextBox();
             this.TBXStr2 = new System.Windows.Forms.TextBox();
             this.label2 = new System.Windows.Forms.Label();
@@ -42,6 +41,10 @@
             this.txtHandle = new System.Windows.Forms.TextBox();
             this.BtnStartSearch = new System.Windows.Forms.Button();
             this.labelStatus = new System.Windows.Forms.Label();
+            this.dataGridViewDb = new System.Windows.Forms.DataGridView();
+            this.btnMark = new System.Windows.Forms.Button();
+            this.btnSelect = new System.Windows.Forms.Button();
+            ((System.ComponentModel.ISupportInitialize)(this.dataGridViewDb)).BeginInit();
             this.SuspendLayout();
             // 
             // txtResult
@@ -83,20 +86,6 @@
             this.label1.Size = new System.Drawing.Size(106, 17);
             this.label1.TabIndex = 4;
             this.label1.Text = "特記文候補検索";
-            // 
-            // lvData
-            // 
-            this.lvData.CheckBoxes = true;
-            this.lvData.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.lvData.FullRowSelect = true;
-            this.lvData.HideSelection = false;
-            this.lvData.Location = new System.Drawing.Point(12, 29);
-            this.lvData.MultiSelect = false;
-            this.lvData.Name = "lvData";
-            this.lvData.Size = new System.Drawing.Size(776, 290);
-            this.lvData.TabIndex = 6;
-            this.lvData.UseCompatibleStateImageBehavior = false;
-            this.lvData.View = System.Windows.Forms.View.Details;
             // 
             // TBXStr1
             // 
@@ -181,11 +170,42 @@
             this.labelStatus.TabIndex = 15;
             this.labelStatus.Text = "Status";
             // 
+            // dataGridViewDb
+            // 
+            this.dataGridViewDb.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
+            this.dataGridViewDb.Location = new System.Drawing.Point(9, 42);
+            this.dataGridViewDb.Name = "dataGridViewDb";
+            this.dataGridViewDb.Size = new System.Drawing.Size(773, 258);
+            this.dataGridViewDb.TabIndex = 16;
+            // 
+            // btnMark
+            // 
+            this.btnMark.Location = new System.Drawing.Point(700, 598);
+            this.btnMark.Name = "btnMark";
+            this.btnMark.Size = new System.Drawing.Size(88, 21);
+            this.btnMark.TabIndex = 17;
+            this.btnMark.Text = "markText";
+            this.btnMark.UseVisualStyleBackColor = true;
+            this.btnMark.Click += new System.EventHandler(this.BtnMarkDataTextBox_Click);
+            // 
+            // btnSelect
+            // 
+            this.btnSelect.Location = new System.Drawing.Point(703, 563);
+            this.btnSelect.Name = "btnSelect";
+            this.btnSelect.Size = new System.Drawing.Size(84, 24);
+            this.btnSelect.TabIndex = 18;
+            this.btnSelect.Text = "select text";
+            this.btnSelect.UseVisualStyleBackColor = true;
+            this.btnSelect.Click += new System.EventHandler(this.BtnSelectTextBox_Click);
+            // 
             // FormExtract
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(800, 689);
+            this.Controls.Add(this.btnSelect);
+            this.Controls.Add(this.btnMark);
+            this.Controls.Add(this.dataGridViewDb);
             this.Controls.Add(this.labelStatus);
             this.Controls.Add(this.BtnStartSearch);
             this.Controls.Add(this.txtHandle);
@@ -195,7 +215,6 @@
             this.Controls.Add(this.label2);
             this.Controls.Add(this.TBXStr2);
             this.Controls.Add(this.TBXStr1);
-            this.Controls.Add(this.lvData);
             this.Controls.Add(this.label1);
             this.Controls.Add(this.BtnGetTextData);
             this.Controls.Add(this.BtnClose);
@@ -204,6 +223,7 @@
             this.Text = "特記サポート";
             this.Load += new System.EventHandler(this.FormExtract_Load);
             this.MouseClick += new System.Windows.Forms.MouseEventHandler(this.FormExtract_MouseClick);
+            ((System.ComponentModel.ISupportInitialize)(this.dataGridViewDb)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -215,7 +235,6 @@
         private System.Windows.Forms.Button BtnClose;
         private System.Windows.Forms.Button BtnGetTextData;
         private System.Windows.Forms.Label label1;
-        private System.Windows.Forms.ListView lvData;
         private System.Windows.Forms.TextBox TBXStr1;
         private System.Windows.Forms.TextBox TBXStr2;
         private System.Windows.Forms.Label label2;
@@ -225,6 +244,9 @@
         private System.Windows.Forms.TextBox txtHandle;
         private System.Windows.Forms.Button BtnStartSearch;
         private System.Windows.Forms.Label labelStatus;
+        private System.Windows.Forms.DataGridView dataGridViewDb;
+        private System.Windows.Forms.Button btnMark;
+        private System.Windows.Forms.Button btnSelect;
     }
 }
 

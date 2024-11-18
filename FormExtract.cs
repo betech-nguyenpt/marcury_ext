@@ -14,6 +14,8 @@ using System.Xml;
 using System.Xml.Linq;
 using static System.Windows.Forms.VisualStyles.VisualStyleElement;
 using TextBox = System.Windows.Forms.TextBox;
+using System.Windows.Automation;
+using System.Windows.Automation.Text;
 
 namespace marcury_ext
 {
@@ -28,6 +30,7 @@ namespace marcury_ext
         private CustomCursor customCursor; // Declare CustomCursor
 
         private IntPtr handleTarget;
+        private string textTarget;
         private string textChangeFromMarExtra = "changed the text and turned it red!";
         private const int WM_SETTEXT = 0x0C;
 
@@ -40,7 +43,7 @@ namespace marcury_ext
             // Initialize custom cursor, initial state is not searching
             customCursor = new CustomCursor();
             // Attach the ItemChecked event to the ListView
-            lvData.ItemChecked += LvData_ItemChecked;
+            //lvData.ItemChecked += LvData_ItemChecked;
         }
 
         /// <summary>
@@ -79,10 +82,18 @@ namespace marcury_ext
             if (handle != IntPtr.Zero) {
                 // Display the window's handle information and text content
                 StringBuilder windowText = new StringBuilder(256);
-                WinApi.GetWindowText(handle, windowText, windowText.Capacity);
+                //WinApi.GetWindowText(handle, windowText, windowText.Capacity); // Stop use WinApi.GetWindowText
+                AutomationElement textBoxElement = AutomationElement.FromHandle(handle); // Use UI Automation change 
+                string fullText = "";
+                if (textBoxElement.TryGetCurrentPattern(TextPattern.Pattern, out object patternObject)) {
+                    TextPattern textPattern = (TextPattern)patternObject;
+                    fullText = textPattern.DocumentRange.GetText(-1);
+                }
                 txtHandle.Text = $"Handle: {handle}";
-                string texttarget = windowText.ToString();
-                txtResult.Text = $"Text: {texttarget}";
+                //textTarget = windowText.ToString();
+                //txtResult.Text = $"Text: {textTarget}";
+                textTarget = fullText;
+                txtResult.Text = $"Text: {fullText}";
                 labelStatus.Text = "Target form information retrieved!";
                 handleTarget = handle; // Set value handle target
                 // SendMessage(handle, WM_SETTEXT, 0, this.textChangeFromMarExtra);
@@ -92,7 +103,7 @@ namespace marcury_ext
                 //Return to default mouse cursor
                 this.Cursor = Cursors.Default;
                 customCursor.IsSearching = isSearchMode;
-                customCursor.UpdateCursor();  // Update cursor in handle search mode: (currently not working)           
+                customCursor.UpdateCursor();  // Update cursor in handle search mode: (currently not working)
             } else {
                 labelStatus.Text = "Target form not found at mouse position.";
             }
@@ -139,6 +150,105 @@ namespace marcury_ext
         }
 
         /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void BtnMarkDataTextBox_Click(object sender, EventArgs e)
+        {
+            // Mark text in TextBox of form other
+            MarkTextWithRange();
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        private void MarkTextWithRange()
+        {
+            // Get content from TextBox
+            string textMark = textTarget;
+            // Check if index range is valid
+            int startIndex = 19;
+            int endIndex = 34;
+            if (textMark != null) {
+                if (startIndex >= 0 && endIndex <= textMark.Length) {
+                    // Split the text before the paragraph to be edited
+                    string before = textMark.Substring(0, startIndex);
+                    // Split the text to be edited (from index 10 to 20)
+                    string middle = textMark.Substring(startIndex, endIndex - startIndex);
+                    // Split the text after the paragraph to be edited
+                    string after = textMark.Substring(endIndex);
+                    // Insert (***) into the part to be edited
+                    string newText = before + "(***" + middle + "***)" + after;
+                    IntPtr ptr = Marshal.StringToHGlobalUni(newText);
+                    // Reattach content to TextBox
+                    SendMessage(handleTarget, WM_SETTEXT, 0, ptr);
+                }
+            }  
+        }
+
+        private void BtnSelectTextBox_Click(object sender, EventArgs e)
+        {
+            // Select text in TextBox of form other
+            /*SelectTextByHandle();*/
+            HighlightTextInExternalTextBox(handleTarget, 2, 5);
+        }
+
+        private void SelectTextByHandle()
+        {
+            if (handleTarget != IntPtr.Zero) {
+                Console.WriteLine($"Text handleTarget: {handleTarget}");
+                int startIndex = 5;
+                int endIndex = 10;
+                int lParam = (endIndex << 16) | startIndex; // Cách tính lParam để chọn văn bản
+                SendMessage(handleTarget, EM_SETSEL, 0, lParam);
+                // Gửi thông điệp để đảm bảo TextBox có focus (đảm bảo TextBox nhận sự kiện chọn văn bản)
+                SendMessage(handleTarget, 0x000B, 1, 0); // 0x000B là WM_SETREDRAW
+            }
+        }
+
+        // P/Invoke to call Windows API
+        [DllImport("user32.dll", CharSet = CharSet.Auto)]
+        public static extern IntPtr SendMessage(IntPtr hWnd, uint Msg, int wParam, int lParam);
+        private const int EM_SETSEL = 0xB1; // How to calculate lParam to select text
+
+
+        /// <summary>
+        ///  
+        /// </summary>
+        /// <param name="handle"></param>
+        /// <param name="startIndex"></param>
+        /// <param name="endIndex"></param>
+        public void HighlightTextInExternalTextBox(IntPtr handle, int startIndex, int endIndex)
+        {
+            if (handle == IntPtr.Zero) {
+                return;
+            }
+            // Get the AutomationElement element from the TextBox handle
+            AutomationElement textBoxElement = AutomationElement.FromHandle(handle);
+            if (textBoxElement == null) {
+                Console.WriteLine("Could not find TextBox with the provided handle.");
+                return;
+            }
+
+            // Check if TextBox supports TextPattern pattern
+            if (textBoxElement.TryGetCurrentPattern(TextPattern.Pattern, out object patternObject)) {
+                TextPattern textPattern = (TextPattern)patternObject;
+                // Get TextPatternRange based on startIndex and endIndex
+                TextPatternRange textRange = textPattern.DocumentRange.Clone();
+                textRange.MoveEndpointByUnit(TextPatternRangeEndpoint.Start, TextUnit.Character, startIndex);
+                textRange.MoveEndpointByUnit(TextPatternRangeEndpoint.End, TextUnit.Character, endIndex - startIndex);
+                // Check selected text again
+                string selectedText = textRange.GetText(-1);  // Lấy tất cả văn bản trong phạm vi đã chọn
+                Console.WriteLine($"Selected Text: {selectedText}");
+                // Set textRange to highlight mode (by selecting it)
+                textRange.Select();
+            } else {
+                Console.WriteLine("TextBox does not support TextPattern. Cannot select text.");
+            }
+        }
+
+        /// <summary>
         /// Handle mouse click on form
         /// </summary>
         /// <param name="sender">Sender</param>
@@ -159,39 +269,73 @@ namespace marcury_ext
         /// <param name="e">Event arguments</param>
         private void FormExtract_Load(object sender, EventArgs e)
         {
-            // Make sure ListView has columns: 適用, 原文, 一致率, 候補
-            lvData.Columns.Add("適用", 50);
-            lvData.Columns.Add("原文", 300);
-            lvData.Columns.Add("一致率", 70);
-            lvData.Columns.Add("候補", 300);
+            // Thêm các cột vào DataGridView
+            dataGridViewDb.Columns.Add("原文", "原文");
+            dataGridViewDb.Columns.Add("一致率", "一致率");
+            dataGridViewDb.Columns.Add("候補", "候補");
 
-            // Enable Checkboxes for ListView items
-            lvData.CheckBoxes = true;
-            // Set detail display mode
-            lvData.View = View.Details;
+            // Thêm cột 適用 là cột checkbox (Đảm bảo thêm cột "適用" đúng cách)
+            DataGridViewCheckBoxColumn checkBoxColumn = new DataGridViewCheckBoxColumn();
+            checkBoxColumn.HeaderText = "適用";
+            checkBoxColumn.Name = "適用";  // Đặt tên cột là "適用"
+            dataGridViewDb.Columns.Add(checkBoxColumn);
 
-            // Enable gridlines for column and row separation
-            lvData.GridLines = true;
+            // Đặt chiều rộng cho các cột còn lại
+            dataGridViewDb.Columns["原文"].Width = 300;
+            dataGridViewDb.Columns["一致率"].Width = 70;
+            dataGridViewDb.Columns["候補"].Width = 300;
 
-            // Set full row selection (optional)
-            lvData.FullRowSelect = true;
-
-            // Add 23 rows of data
+            // Thêm dữ liệu vào DataGridView
             for (int i = 1; i <= 10; i++) {
-                string originalText = $"原文 {i}";
+                string originalText = (i % 3 == 1) ? $"原文 {i}-{i + 2}" : "";
                 string accuracy = $"{(i * 4)}%";
                 string candidate = $"候補 {i}";
 
-                // Add item to ListView
-                ListViewItem listViewItem = new ListViewItem();
-                listViewItem.Checked = false; // Set checkbox checked or unchecked for the item
+                dataGridViewDb.Rows.Add(originalText, accuracy, candidate, false); // Checkbox mặc định là false
+            }
 
-                // Add the rest of the columns
-                listViewItem.SubItems.Add(originalText);
-                listViewItem.SubItems.Add(accuracy);
-                listViewItem.SubItems.Add(candidate);
+            // Gán sự kiện CellValueChanged cho DataGridView
+            dataGridViewDb.CellValueChanged += DataGridViewDb_CellValueChanged;
+            dataGridViewDb.CellContentClick += DataGridViewDb_CellContentClick;
 
-                lvData.Items.Add(listViewItem);
+            // Thay đổi chiều cao của DataGridView
+            dataGridViewDb.Height = 250;  // Tăng chiều cao của DataGridView (thay số 400 tùy theo yêu cầu)
+        }
+
+        /// <summary>
+        /// DataGridViewDb_CellContentClick
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void DataGridViewDb_CellContentClick(object sender, DataGridViewCellEventArgs e)
+        {
+            // Check if the clicked cell is a column checkbox
+            if (e.ColumnIndex == dataGridViewDb.Columns["適用"].Index && e.RowIndex >= 0) {
+                // Change checkbox state when clicked
+                dataGridViewDb.Rows[e.RowIndex].Cells["適用"].Value = !(bool)dataGridViewDb.Rows[e.RowIndex].Cells["適用"].Value;
+            }
+        }
+
+        /// <summary>
+        /// DataGridViewDb_CellValueChanged
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void DataGridViewDb_CellValueChanged(object sender, DataGridViewCellEventArgs e)
+        {
+            // Check if the changed cell is a column checkbox
+            if (e.ColumnIndex == dataGridViewDb.Columns["適用"].Index && e.RowIndex >= 0) {
+                bool isChecked = (bool)dataGridViewDb.Rows[e.RowIndex].Cells["適用"].Value;
+                if (isChecked) {
+                    // Get value from column "候補" (column 3, index 2)
+                    string candidateText = dataGridViewDb.Rows[e.RowIndex].Cells["候補"].Value.ToString();
+                    // Convert string to IntPtr for proper Unicode encoding
+                    IntPtr ptr = Marshal.StringToHGlobalUni(candidateText);
+                    // Send message to change text (SendMessage is similar)
+                    SendMessage(handleTarget, WM_SETTEXT, 0, ptr);
+                    // Free memory
+                    Marshal.FreeHGlobal(ptr);
+                }
             }
         }
 
@@ -218,25 +362,6 @@ namespace marcury_ext
         [DllImport("user32.dll", CharSet = CharSet.Unicode, SetLastError = true)]
         private static extern int SendMessage(IntPtr hWnd, int Msg, int wParam, IntPtr lParam);
 
-       /* /// <summary>
-        ///  HighlightText
-        /// </summary>
-        /// <param name="handleTextB"></param>
-        /// <param name="startIndex"></param>
-        /// <param name="length"></param>
-        private void HighlightText(IntPtr handleTextB, int startIndex, int length)
-        {
-            int endIndex = startIndex + length;
-            // Chuyển startIndex và endIndex thành IntPtr
-            IntPtr startPtr = new IntPtr(startIndex);
-            IntPtr endPtr = new IntPtr(endIndex);
-            // Gửi thông điệp để chọn văn bản, làm highlight
-            SendMessage(handleTextB, EM_SETSEL, startPtr, endPtr);
-        }
-        // Declare the SendMessage function from the user32.dll library
-        [DllImport("user32.dll", CharSet = CharSet.Auto)]
-        private static extern IntPtr SendMessage(IntPtr hWnd, int msg, IntPtr wParam, IntPtr lParam);
-        private const int EM_SETSEL = 0xB1; // Message để chọn văn bản*/
 
         /// <summary>
         /// Handle click Get string distance button
