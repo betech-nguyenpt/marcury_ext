@@ -97,7 +97,6 @@ namespace marcury_ext.Utils
 
                 lineGroup++;
             }
-            int a = 0;
         }
 
         /// <summary>
