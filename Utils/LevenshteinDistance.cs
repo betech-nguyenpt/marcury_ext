@@ -9,8 +9,8 @@ namespace marcury_ext.Utils
 {
     internal class LevenshteinDistance
     {
-        /*public static Dictionary<string, List<int>> HighLightPositionstKeyStringDb = new Dictionary<string, List<int>>();
-        public static Dictionary<string, List<int>> HighLightPositionstKeyStringTarget = new Dictionary<string, List<int>>();*/
+        public static Dictionary<string, List<int>> HighLightPositionstKeyStringDb = new Dictionary<string, List<int>>();
+        public static Dictionary<string, List<int>> HighLightPositionstKeyStringTarget = new Dictionary<string, List<int>>();
         /// <summary>
         /// HandleLevenshtein
         /// </summary>
@@ -20,8 +20,8 @@ namespace marcury_ext.Utils
         /// <param name="txtDb"></param>
         public static void HandleLevenshtein(DataGridView dataGridViewDb, RichTextBox richTxtCopyText, string txtTarget, string txtDb)
         {
-            /*HighLightPositionstKeyStringDb.Clear();
-            HighLightPositionstKeyStringTarget.Clear();*/
+            HighLightPositionstKeyStringDb.Clear();
+            HighLightPositionstKeyStringTarget.Clear();
             // Separate lines
             var targetLines = txtTarget.Split(new[] { "\r\n" }, StringSplitOptions.None);
             var dbLines = txtDb.Split(new[] { "\r\n" }, StringSplitOptions.None);
@@ -37,7 +37,7 @@ namespace marcury_ext.Utils
 
                 // Take the 3 lines with the highest similarity
                 var topMatches = results.OrderByDescending(r => r.similarity).Take(3).ToList();
-/*
+
                 if (HighLightPositionstKeyStringDb.Count != 0) {
                     if (HighLightPositionstKeyStringDb.ContainsKey(topMatches[0].dbLine)) {
                         if (!HighLightPositionstKeyStringTarget.ContainsKey(topMatches[0].dbLine)) {
@@ -46,19 +46,16 @@ namespace marcury_ext.Utils
                         HighLightPositionstKeyStringTarget[targetLine] = HighLightPositionstKeyStringDb[topMatches[0].dbLine];
                         HighLightPositionstKeyStringDb.Clear();
                     }
-                }*/
+                }
 
                 // Color the different characters only in the line with the highest similarity
-                AddOriginalDataToRichTextBoxAndHighLight(richTxtCopyText, targetLine, topMatches[0].dbLine);
-                // Color the different characters only in the line with the highest similarity
-                /*if (HighLightPositionstKeyStringTarget.ContainsKey(targetLine)) {
+                if (HighLightPositionstKeyStringTarget.ContainsKey(targetLine)) {
                     // Lấy danh sách vị trí cần tô màu từ từ điển
                     List<int> highlightPositions = HighLightPositionstKeyStringTarget[targetLine];
                     AddOriginalDataToRichTextBoxAndHighLight(richTxtCopyText, targetLine, topMatches[0].dbLine, highlightPositions);
                 } else {
                     AddOriginalDataToRichTextBoxAndHighLight(richTxtCopyText, targetLine, topMatches[0].dbLine, null);
-                }*/
-
+                }
 
                 // Add data to DataGridView
                 bool isFirstRowInGroup = true;
@@ -72,7 +69,7 @@ namespace marcury_ext.Utils
                     row.Cells["候補"].Value = match.dbLine;
 
                     if (!isFirstRowInGroup) {
-                        // ẨHide values ​​in "原文" column but keep data
+                        // Hide values ​​in "原文" column but keep data
                         row.Cells["原文"].Style.ForeColor = Color.Transparent;
                         row.Cells["原文"].Style.SelectionForeColor = Color.Transparent;
 
@@ -94,23 +91,13 @@ namespace marcury_ext.Utils
         /// <param name="richTxtCopyText"></param>
         /// <param name="source"></param>
         /// <param name="target"></param>
-        //private static void AddOriginalDataToRichTextBoxAndHighLight(RichTextBox richTxtCopyText, string source, string target, List<int> highlightPositions)
-        private static void AddOriginalDataToRichTextBoxAndHighLight(RichTextBox richTxtCopyText, string source, string target)
+        private static void AddOriginalDataToRichTextBoxAndHighLight(RichTextBox richTxtCopyText, string source, string target, List<int> highlightPositions)
         {
-            int minLen = Math.Min(source.Length, target.Length);
-
             // Add original line to RichTextBox
             int start = richTxtCopyText.Text.Length;
             richTxtCopyText.AppendText(source + Environment.NewLine);
-
-            // Colorize only characters that are in the source but not in the target
-            for (int i = 0; i < minLen; i++) {
-                if (source[i] != target[i]) {
-                    richTxtCopyText.Select(start + i, 1);
-                    richTxtCopyText.SelectionBackColor = Color.Yellow; // Color different characters
-                }
-            }
-            /*if (highlightPositions != null) {
+            
+            if (highlightPositions != null) {
                 // Highlight the words based on the positions provided in highlightPositions
                 foreach (int position in highlightPositions) {
                     // Ensure that the position is within the bounds of the string
@@ -119,7 +106,7 @@ namespace marcury_ext.Utils
                         richTxtCopyText.SelectionBackColor = Color.Red; // Highlight the character (or word) in red
                     }
                 }
-            }*/
+            }
 
             richTxtCopyText.DeselectAll();
         }
@@ -148,15 +135,15 @@ namespace marcury_ext.Utils
                         distance[i, j - 1] + 1),   // insert
                         distance[i - 1, j - 1] + cost); // change
                                                         // Nếu phép biến đổi là "xóa", lưu vị trí ký tự bị xóa
-                    /*if (distance[i, j] == distance[i - 1, j] + 1) {
+                    if (distance[i, j] == distance[i - 1, j] + 1) {
                         if (j == n) {
                             if (!HighLightPositionstKeyStringDb.ContainsKey(target)) {
-                                // Nếu khóa chưa tồn tại, khởi tạo danh sách mới
+                                // If the key does not exist, initialize a new list.
                                 HighLightPositionstKeyStringDb[target] = new List<int>();
                             }
-                            HighLightPositionstKeyStringDb[target].Add(i - 1); // Lưu vị trí của ký tự bị xóa trong source
+                            HighLightPositionstKeyStringDb[target].Add(i - 1); // Save the position of the deleted character in the source
                         }
-                    }*/
+                    }
                 }
             }
             return distance[m, n];

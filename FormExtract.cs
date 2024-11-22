@@ -369,27 +369,27 @@ namespace marcury_ext
         /// <param name="e"></param>
         private void BtnDone_Click(object sender, EventArgs e)
         {
-            // Get the entire text from a RichTextBox and normalize line breaks
-            string updatedText = frmTransparent.GetDataRichTextBox();
-            updatedText = updatedText.Replace("\n", "\r\n"); // Ensure correct line breaks for TextBox
+            if (getStatus() == IN_UPDATING_STATUS) {
+                // Get the entire text from a RichTextBox and normalize line breaks
+                string updatedText = frmTransparent.GetDataRichTextBox();
+                updatedText = updatedText.Replace("\n", "\r\n"); // Ensure correct line breaks for TextBox
 
-            // Get the target TextBox (optional, for additional checks)
-            TextBox targetTextBox = (TextBox)Control.FromHandle(handleTarget);
-            if (targetTextBox != null) {
-                targetTextBox.Multiline = true; // Ensure it supports multiline
-            }
+                // Get the target TextBox (optional, for additional checks)
+                TextBox targetTextBox = (TextBox)Control.FromHandle(handleTarget);
+                if (targetTextBox != null) {
+                    targetTextBox.Multiline = true; // Ensure it supports multiline
+                }
 
-            // Convert text to IntPtr for SendMessage
-            IntPtr ptr = Marshal.StringToHGlobalUni(updatedText);
+                // Convert text to IntPtr for SendMessage
+                IntPtr ptr = Marshal.StringToHGlobalUni(updatedText);
 
-            // Send message to update text in TextBox
-            SendMessage(handleTarget, WM_SETTEXT, 0, ptr);
-
-            // Free allocated memory
-            Marshal.FreeHGlobal(ptr);
-
-            // Update status and close the form
-            setStatus(END_UPDATED_STATUS);
+                // Send message to update text in TextBox
+                SendMessage(handleTarget, WM_SETTEXT, 0, ptr);
+                // Free allocated memory
+                Marshal.FreeHGlobal(ptr);
+                // Update status and close the form
+                setStatus(END_UPDATED_STATUS);
+            } 
             CloseFrmLoadRich();
         }
 
