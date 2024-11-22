@@ -62,6 +62,7 @@ namespace marcury_ext.Utils
 
                 // Add data to DataGridView
                 bool isFirstRowInGroup = true;
+                int colorOder = 0;
                 foreach (var match in topMatches) {
                     int rowIndex = dataGridViewDb.Rows.Add();
                     var row = dataGridViewDb.Rows[rowIndex];
@@ -71,8 +72,19 @@ namespace marcury_ext.Utils
                     row.Cells["一致率"].Value = $"{match.similarity:F2}%";
                     row.Cells["候補"].Value = match.dbLine;
 
+                    colorOder++;
+                    if (colorOder == 1) {
+                        row.DefaultCellStyle.BackColor = Color.LightSalmon; // Light orange
+                    }
+                    // 2nd and 3rd lines (light purple)
+                    else if (colorOder == 2) {
+                        row.DefaultCellStyle.BackColor = Color.Lavender; // Light purple
+                    } else if (colorOder == 3) {
+                        row.DefaultCellStyle.BackColor = Color.Thistle; // Lighter purple
+                    }
+
                     if (!isFirstRowInGroup) {
-                        // ẨHide values ​​in "原文" column but keep data
+                        // Hide values ​​in "原文" column but keep data
                         row.Cells["原文"].Style.ForeColor = Color.Transparent;
                         row.Cells["原文"].Style.SelectionForeColor = Color.Transparent;
 

@@ -176,7 +176,7 @@
             this.dataGridViewDb.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
             this.dataGridViewDb.Location = new System.Drawing.Point(9, 42);
             this.dataGridViewDb.Name = "dataGridViewDb";
-            this.dataGridViewDb.Size = new System.Drawing.Size(773, 258);
+            this.dataGridViewDb.Size = new System.Drawing.Size(803, 258);
             this.dataGridViewDb.TabIndex = 16;
             // 
             // btnMark
@@ -203,7 +203,7 @@
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(800, 689);
+            this.ClientSize = new System.Drawing.Size(817, 689);
             this.Controls.Add(this.BtnDone);
             this.Controls.Add(this.btnMark);
             this.Controls.Add(this.dataGridViewDb);
