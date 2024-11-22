@@ -27,11 +27,6 @@ namespace marcury_ext
                 this.Left = rect.Left;
                 this.Width = rect.Right - rect.Left;
                 this.Height = rect.Bottom - rect.Top;
-
-               /* // Set background color and transparency
-                this.BackColor = Color.Lime; // The background color will be transparent.
-                this.TransparencyKey = Color.Lime; // Specify transparent background color
-                this.Opacity = 0.8; // Form transparency*/
             } else {
                 MessageBox.Show("Cannot get TextBox position information from handle.");
                 this.Close(); // Close the form
@@ -71,16 +66,6 @@ namespace marcury_ext
             richTxtCopyText.BackColor = Color.LightBlue;
             richTxtCopyText.ReadOnly = true;
         }
-
-       /* /// <summary>
-        /// HighlightTextInRichTextBox
-        /// </summary>
-        public void HighlightTextInRichTextBox()
-        {
-            if (richTxtCopyText.Text.Length < endIndex) endIndex = richTxtCopyText.Text.Length;
-            richTxtCopyText.Select(startIndex, endIndex);
-            richTxtCopyText.SelectionBackColor = Color.Yellow;
-        }*/
 
         /// <summary>
         /// UpdateTextOfLineRichTextBox

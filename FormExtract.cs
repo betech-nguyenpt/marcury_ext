@@ -10,7 +10,6 @@ using System.Text;
 using System.Windows.Forms;
 using TextBox = System.Windows.Forms.TextBox;
 using System.Windows.Automation;
-using System.Windows.Automation.Text;
 
 namespace marcury_ext
 {
@@ -285,12 +284,11 @@ namespace marcury_ext
             checkBoxColumn.HeaderText = "適用";
             checkBoxColumn.Name = "適用";  // Tên cột là "適用"
             dataGridViewDb.Columns.Add(checkBoxColumn);
-
             // Set column width
             dataGridViewDb.Columns["原文"].Width = 300;
             dataGridViewDb.Columns["一致率"].Width = 70;
             dataGridViewDb.Columns["候補"].Width = 300;
-
+         
             // Assign events to DataGridView
             dataGridViewDb.CellContentClick += DataGridViewDb_CellContentClick;         
             dataGridViewDb.CellValueChanged += DataGridViewDb_CellValueChanged;
@@ -342,7 +340,14 @@ namespace marcury_ext
 
                     // Change text in RichTextBox from indexStart to indexEnd
                     frmTransparent.UpdateTextOfLineRichTextBox(candidateText, textNeedEdit);
+                    // Lấy chỉ số hàng vừa click
+                    int clickedRowIndex = e.RowIndex;
 
+                    // Xác định nhóm dựa trên hàng click (mỗi nhóm 3 hàng)
+                    int groupIndex = clickedRowIndex/3;
+
+                    // Vô hiệu hóa checkbox của các cell trong nhóm
+                    DisableCheckboxesForGroup(groupIndex);
                     /*// Get the entire text from a RichTextBox
                     string updatedText = frmTransparent.GetDataRichTextBox();
 
@@ -355,12 +360,48 @@ namespace marcury_ext
                     // Free up memory
                     Marshal.FreeHGlobal(ptr);*/
                     // Call again becase content in RichTextBox changed TODO:
-                   // LevenshteinDistance.HandleLevenshtein(dataGridViewDb, frmTransparent.richTextBox, textTarget, txtDummy);
+                    // LevenshteinDistance.HandleLevenshtein(dataGridViewDb, frmTransparent.richTextBox, textTarget, txtDummy);
                 }            
                 /*// Once done, close and release frmTransparent
                 CloseFrmLoadRich();*/
             }
         }
+        
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="startRow"></param>
+        /// <param name="endRow"></param>
+        private void DisableGroupCheckbox(int startRow, int endRow)
+        {
+            // Loop through rows in the specified range
+            for (int i = startRow; i < endRow && i < dataGridViewDb.Rows.Count; i++) {
+                DataGridViewCell cell = dataGridViewDb.Rows[i].Cells["適用"];
+                // Disable cell (just make it non-editable)
+                cell.ReadOnly = true;
+                // Disable cell (just make it non-editable)
+                cell.ReadOnly = true;
+
+                // Change the background color of the cell when it is disabled (dark or whatever color you want)
+                cell.Style.BackColor = Color.LightGray;  // Màu sáng xám để biểu thị disable
+
+                // If this cell is a checkbox, disable the checkbox and change the color
+                if (cell is DataGridViewCheckBoxCell checkBoxCell) {
+                    checkBoxCell.ReadOnly = true;
+                    // Change the color of the checkbox so it looks disabled
+                    checkBoxCell.Style.BackColor = Color.Silver;
+                    checkBoxCell.Style.ForeColor = Color.Gray;
+                }
+            }
+        }
+
+        private void DisableCheckboxesForGroup(int groupIndex)
+        {
+            int startRow = groupIndex * 3;
+            int endRow = startRow + 3;
+            DisableGroupCheckbox(startRow, endRow);
+        }
+
 
         /// <summary>
         /// Send updated data from RichTextBox to TextBox and close the form
