@@ -2,17 +2,12 @@
 using marcury_ext.Utils;
 using System;
 using System.Collections.Generic;
-using System.ComponentModel;
 using System.Data;
 using System.Drawing;
 using System.Linq;
 using System.Runtime.InteropServices;
 using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
-using System.Xml;
-using System.Xml.Linq;
-using static System.Windows.Forms.VisualStyles.VisualStyleElement;
 using TextBox = System.Windows.Forms.TextBox;
 using System.Windows.Automation;
 using System.Windows.Automation.Text;
@@ -21,18 +16,33 @@ namespace marcury_ext
 {
     public partial class FormExtract : Form
     {
-        /// <summary>
-        /// Flag dragging mode
-        /// </summary>
+        private string txtDummy = "入力された2つの文章を比較し、差分チェックします。\r\n 発見された差分は以下のようにハイライト表示されます。\r\n・文字単位の比較を行い、変更部分を緑のハイライトで表示します。\r\n・文字単位の差分が発見された行番号を赤のハイライトで表示します。\r\n・改行や文章挿入箇所はグレーのハイライトが表示されます。";
         private bool isDragging = false;
         private bool isSearchMode = false;
+
+        // Step status
+        public static int m_status = NOTHING_STATUS;
+        public static int NOTHING_STATUS = 0;
+        public static int START_EDIT_STATUS = 1;
+        public static int IN_UPDATING_STATUS = 2;
+        public static int END_UPDATED_STATUS = 3;
+
         private OverlayForm overlayForm; // Declare overlayForm
         private CustomCursor customCursor; // Declare CustomCursor
 
         private IntPtr handleTarget;
         private string textTarget;
-        private string textChangeFromMarExtra = "changed the text and turned it red!";
-        private const int WM_SETTEXT = 0x0C;
+        const int WM_SETTEXT = 0x000C;
+        private FrmLoadRichTb frmTransparent;
+
+        public static void setStatus(int status) { m_status = status; }
+        public static int getStatus() { return m_status; }
+
+        private void BtnSearchRichTextBox_Click(object sender, EventArgs e)
+        {
+            // Btn BtnSearchRichTextBox
+
+        }
 
         /// <summary>
         /// Constructor
@@ -62,7 +72,7 @@ namespace marcury_ext
                 customCursor.IsSearching = isSearchMode;
                 customCursor.UpdateCursor();  // Update cursor
                 this.overlayForm.MouseClick += OverlayForm_MouseClick;
-                labelStatus.Text = "Search mode is on! Click on any window to get the handle.";
+                labelStatus.Text = "Search mode is on! Click on any window to get the handle.";            
             } else {
                 // Close OverlayForm if search mode is off
                 customCursor.Dispose();  //Free custom cursor
@@ -77,40 +87,78 @@ namespace marcury_ext
         /// <param name="e"></param>
         private void OverlayForm_MouseClick(object sender, MouseEventArgs e)
         {
-            // When clicking on a position in the OverlayForm, get the handle of the window there
-            IntPtr handle = GetWindowHandleAtCursor();
-            if (handle != IntPtr.Zero) {
-                // Display the window's handle information and text content
-                StringBuilder windowText = new StringBuilder(256);
-                //WinApi.GetWindowText(handle, windowText, windowText.Capacity); // Stop use WinApi.GetWindowText
-                AutomationElement textBoxElement = AutomationElement.FromHandle(handle); // Use UI Automation change 
+            try {
+                // When clicking on a position in the OverlayForm, get the handle of the window there
+                IntPtr handle = GetWindowHandleAtCursor();
                 string fullText = "";
-                if (textBoxElement.TryGetCurrentPattern(TextPattern.Pattern, out object patternObject)) {
-                    TextPattern textPattern = (TextPattern)patternObject;
-                    fullText = textPattern.DocumentRange.GetText(-1);
+                if (handle != IntPtr.Zero) {
+                    //WinApi.GetWindowText(handle, windowText, windowText.Capacity); // Stop use WinApi.GetWindowText
+                    AutomationElement textBoxElement = AutomationElement.FromHandle(handle); // Use UI Automation change 
+                    /* textBoxElement = null;*/
+                    int errorCode = UtilCheckError.CheckAutomationElement(textBoxElement);
+                    if (errorCode != UtilCheckError.NOT_ERROR) {
+                        fullText = UtilCheckError.GetErrorMessage(errorCode);
+                    } else if (textBoxElement.TryGetCurrentPattern(TextPattern.Pattern, out object patternObject)) {
+                        TextPattern textPattern = (TextPattern)patternObject;
+                        fullText = textPattern.DocumentRange.GetText(-1);
+                    }
+                    setStatus(START_EDIT_STATUS);
+                    txtHandle.Text = $"Handle: {handle}";
+                    //textTarget = windowText.ToString();
+                    //txtResult.Text = $"Text: {textTarget}";
+                    textTarget = fullText;
+                    txtResult.Text = $"Text: {fullText}";
+                    labelStatus.Text = "Target form information retrieved!";
+                    handleTarget = handle; // Set value handle target SendMessage(handle, WM_SETTEXT, 0, this.textChangeFromMarExtra);
+                    // Close OverlayForm after getting the handle
+                    this.overlayForm.Close();
+                    isSearchMode = false;  // Turn off search mode
+                    // Load form new have richtextbox
+                    LoadFormRich(errorCode);
+                    Handlelevenshtein();
+                    //Return to default mouse cursor
+                    this.Cursor = Cursors.Default;
+                    customCursor.IsSearching = isSearchMode;
+                    customCursor.UpdateCursor();  // Update cursor in handle search mode: (currently not working) 
+                } else {
+                    labelStatus.Text = "Target form not found at mouse position.";
+                    if (handle == IntPtr.Zero) UtilCheckError.GetErrorMessage(UtilCheckError.ERROR_HANDLE_ZERO);
                 }
-                txtHandle.Text = $"Handle: {handle}";
-                //textTarget = windowText.ToString();
-                //txtResult.Text = $"Text: {textTarget}";
-                textTarget = fullText;
-                txtResult.Text = $"Text: {fullText}";
-                labelStatus.Text = "Target form information retrieved!";
-                handleTarget = handle; // Set value handle target
-                // SendMessage(handle, WM_SETTEXT, 0, this.textChangeFromMarExtra);
-                // Close OverlayForm after getting the handle
-                this.overlayForm.Close();
-                isSearchMode = false;  // Turn off search mode
-                //Return to default mouse cursor
-                this.Cursor = Cursors.Default;
-                customCursor.IsSearching = isSearchMode;
-                customCursor.UpdateCursor();  // Update cursor in handle search mode: (currently not working)
-            } else {
-                labelStatus.Text = "Target form not found at mouse position.";
+            } catch (Exception) {
+
+                throw;
+                // TODO: output message error
             }
+           
+        }
+
+        /// <summary>
+        /// Handlelevenshtein
+        /// </summary>
+        private void Handlelevenshtein()
+        {
+            //Clear old content on DataGridView and RichTextBox
+            dataGridViewDb.Rows.Clear();
+            frmTransparent.richTextBox.Clear();
+            // Calculator Levenshtein after load Form have richTextBox
+            LevenshteinDistance.HandleLevenshtein(dataGridViewDb, frmTransparent.richTextBox, textTarget, txtDummy);
         }
 
         [DllImport("user32.dll")]
         private static extern int SendMessage(IntPtr hWnd, int wMsg, int wParam, [MarshalAs(UnmanagedType.LPStr)] string lParam);
+
+        /// <summary>
+        /// LoadFormRich
+        /// </summary>
+        private void LoadFormRich(int errorCode)
+        {
+            frmTransparent = new FrmLoadRichTb(handleTarget);
+            // Use public methods to update content and background color
+            frmTransparent.SetRichTextBoxText(textTarget);
+            if (errorCode == UtilCheckError.NOT_ERROR) setStatus(IN_UPDATING_STATUS);
+            // Show form frmLoadRichTb
+            frmTransparent.Show();
+        }
 
         // Get the Handle of the window at the mouse cursor position
         private IntPtr GetWindowHandleAtCursor()
@@ -187,14 +235,7 @@ namespace marcury_ext
             }  
         }
 
-        private void BtnSelectTextBox_Click(object sender, EventArgs e)
-        {
-            // Select text in TextBox of form other
-            /*SelectTextByHandle();*/
-            HighlightTextInExternalTextBox(handleTarget, 2, 5);
-        }
-
-        private void SelectTextByHandle()
+       /* private void SelectTextByHandle()
         {
             if (handleTarget != IntPtr.Zero) {
                 Console.WriteLine($"Text handleTarget: {handleTarget}");
@@ -205,48 +246,13 @@ namespace marcury_ext
                 // Gửi thông điệp để đảm bảo TextBox có focus (đảm bảo TextBox nhận sự kiện chọn văn bản)
                 SendMessage(handleTarget, 0x000B, 1, 0); // 0x000B là WM_SETREDRAW
             }
-        }
+        }*/
 
-        // P/Invoke to call Windows API
+      /*  // P/Invoke to call Windows API
         [DllImport("user32.dll", CharSet = CharSet.Auto)]
         public static extern IntPtr SendMessage(IntPtr hWnd, uint Msg, int wParam, int lParam);
-        private const int EM_SETSEL = 0xB1; // How to calculate lParam to select text
+        private const int EM_SETSEL = 0xB1; // How to calculate lParam to select text*/
 
-
-        /// <summary>
-        ///  
-        /// </summary>
-        /// <param name="handle"></param>
-        /// <param name="startIndex"></param>
-        /// <param name="endIndex"></param>
-        public void HighlightTextInExternalTextBox(IntPtr handle, int startIndex, int endIndex)
-        {
-            if (handle == IntPtr.Zero) {
-                return;
-            }
-            // Get the AutomationElement element from the TextBox handle
-            AutomationElement textBoxElement = AutomationElement.FromHandle(handle);
-            if (textBoxElement == null) {
-                Console.WriteLine("Could not find TextBox with the provided handle.");
-                return;
-            }
-
-            // Check if TextBox supports TextPattern pattern
-            if (textBoxElement.TryGetCurrentPattern(TextPattern.Pattern, out object patternObject)) {
-                TextPattern textPattern = (TextPattern)patternObject;
-                // Get TextPatternRange based on startIndex and endIndex
-                TextPatternRange textRange = textPattern.DocumentRange.Clone();
-                textRange.MoveEndpointByUnit(TextPatternRangeEndpoint.Start, TextUnit.Character, startIndex);
-                textRange.MoveEndpointByUnit(TextPatternRangeEndpoint.End, TextUnit.Character, endIndex - startIndex);
-                // Check selected text again
-                string selectedText = textRange.GetText(-1);  // Lấy tất cả văn bản trong phạm vi đã chọn
-                Console.WriteLine($"Selected Text: {selectedText}");
-                // Set textRange to highlight mode (by selecting it)
-                textRange.Select();
-            } else {
-                Console.WriteLine("TextBox does not support TextPattern. Cannot select text.");
-            }
-        }
 
         /// <summary>
         /// Handle mouse click on form
@@ -263,44 +269,36 @@ namespace marcury_ext
         }
 
         /// <summary>
-        /// Handle form load
+        /// FormExtract_Load
         /// </summary>
         /// <param name="sender">Sender</param>
         /// <param name="e">Event arguments</param>
         private void FormExtract_Load(object sender, EventArgs e)
         {
-            // Thêm các cột vào DataGridView
+            // Add columns to DataGridView
             dataGridViewDb.Columns.Add("原文", "原文");
             dataGridViewDb.Columns.Add("一致率", "一致率");
             dataGridViewDb.Columns.Add("候補", "候補");
 
-            // Thêm cột 適用 là cột checkbox (Đảm bảo thêm cột "適用" đúng cách)
+            // Add "適用" column as checkbox
             DataGridViewCheckBoxColumn checkBoxColumn = new DataGridViewCheckBoxColumn();
             checkBoxColumn.HeaderText = "適用";
-            checkBoxColumn.Name = "適用";  // Đặt tên cột là "適用"
+            checkBoxColumn.Name = "適用";  // Tên cột là "適用"
             dataGridViewDb.Columns.Add(checkBoxColumn);
 
-            // Đặt chiều rộng cho các cột còn lại
+            // Set column width
             dataGridViewDb.Columns["原文"].Width = 300;
             dataGridViewDb.Columns["一致率"].Width = 70;
             dataGridViewDb.Columns["候補"].Width = 300;
 
-            // Thêm dữ liệu vào DataGridView
-            for (int i = 1; i <= 10; i++) {
-                string originalText = (i % 3 == 1) ? $"原文 {i}-{i + 2}" : "";
-                string accuracy = $"{(i * 4)}%";
-                string candidate = $"候補 {i}";
-
-                dataGridViewDb.Rows.Add(originalText, accuracy, candidate, false); // Checkbox mặc định là false
-            }
-
-            // Gán sự kiện CellValueChanged cho DataGridView
+            // Assign events to DataGridView
+            dataGridViewDb.CellContentClick += DataGridViewDb_CellContentClick;         
             dataGridViewDb.CellValueChanged += DataGridViewDb_CellValueChanged;
-            dataGridViewDb.CellContentClick += DataGridViewDb_CellContentClick;
-
-            // Thay đổi chiều cao của DataGridView
-            dataGridViewDb.Height = 250;  // Tăng chiều cao của DataGridView (thay số 400 tùy theo yêu cầu)
+            // Change the height of the DataGridView
+            dataGridViewDb.Height = 250; // Customize the height of the DataGridView
         }
+
+        
 
         /// <summary>
         /// DataGridViewDb_CellContentClick
@@ -309,10 +307,20 @@ namespace marcury_ext
         /// <param name="e"></param>
         private void DataGridViewDb_CellContentClick(object sender, DataGridViewCellEventArgs e)
         {
-            // Check if the clicked cell is a column checkbox
-            if (e.ColumnIndex == dataGridViewDb.Columns["適用"].Index && e.RowIndex >= 0) {
-                // Change checkbox state when clicked
-                dataGridViewDb.Rows[e.RowIndex].Cells["適用"].Value = !(bool)dataGridViewDb.Rows[e.RowIndex].Cells["適用"].Value;
+            if (getStatus() == IN_UPDATING_STATUS) {
+                // Check if the clicked cell is a checkbox of the "適用" column
+                if (e.ColumnIndex == dataGridViewDb.Columns["適用"].Index && e.RowIndex >= 0) {
+                    // Get the current value of a cell
+                    var cellValue = dataGridViewDb.Rows[e.RowIndex].Cells["適用"].Value;
+
+                    // Check if value is null, set default value to false
+                    if (cellValue == null || !(cellValue is bool)) {
+                        dataGridViewDb.Rows[e.RowIndex].Cells["適用"].Value = true; // Check checkbox on click
+                    } else {
+                        // Otherwise, reverse the checkbox state
+                        dataGridViewDb.Rows[e.RowIndex].Cells["適用"].Value = !(bool)cellValue;
+                    }
+                }
             }
         }
 
@@ -326,17 +334,73 @@ namespace marcury_ext
             // Check if the changed cell is a column checkbox
             if (e.ColumnIndex == dataGridViewDb.Columns["適用"].Index && e.RowIndex >= 0) {
                 bool isChecked = (bool)dataGridViewDb.Rows[e.RowIndex].Cells["適用"].Value;
+
                 if (isChecked) {
                     // Get value from column "候補" (column 3, index 2)
                     string candidateText = dataGridViewDb.Rows[e.RowIndex].Cells["候補"].Value.ToString();
-                    // Convert string to IntPtr for proper Unicode encoding
-                    IntPtr ptr = Marshal.StringToHGlobalUni(candidateText);
-                    // Send message to change text (SendMessage is similar)
+                    string textNeedEdit = dataGridViewDb.Rows[e.RowIndex].Cells["原文"].Value.ToString();
+
+                    // Change text in RichTextBox from indexStart to indexEnd
+                    frmTransparent.UpdateTextOfLineRichTextBox(candidateText, textNeedEdit);
+
+                    /*// Get the entire text from a RichTextBox
+                    string updatedText = frmTransparent.GetDataRichTextBox();
+
+                    // Convert text to IntPtr for use with SendMessage
+                    IntPtr ptr = Marshal.StringToHGlobalUni(updatedText);
+
+                    // Send message to update text in handleTarget (TextBox)
                     SendMessage(handleTarget, WM_SETTEXT, 0, ptr);
-                    // Free memory
-                    Marshal.FreeHGlobal(ptr);
-                }
+
+                    // Free up memory
+                    Marshal.FreeHGlobal(ptr);*/
+                    // Call again becase content in RichTextBox changed TODO:
+                   // LevenshteinDistance.HandleLevenshtein(dataGridViewDb, frmTransparent.richTextBox, textTarget, txtDummy);
+                }            
+                /*// Once done, close and release frmTransparent
+                CloseFrmLoadRich();*/
             }
+        }
+
+        /// <summary>
+        /// Send updated data from RichTextBox to TextBox and close the form
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void BtnDone_Click(object sender, EventArgs e)
+        {
+            // Get the entire text from a RichTextBox and normalize line breaks
+            string updatedText = frmTransparent.GetDataRichTextBox();
+            updatedText = updatedText.Replace("\n", "\r\n"); // Ensure correct line breaks for TextBox
+
+            // Get the target TextBox (optional, for additional checks)
+            TextBox targetTextBox = (TextBox)Control.FromHandle(handleTarget);
+            if (targetTextBox != null) {
+                targetTextBox.Multiline = true; // Ensure it supports multiline
+            }
+
+            // Convert text to IntPtr for SendMessage
+            IntPtr ptr = Marshal.StringToHGlobalUni(updatedText);
+
+            // Send message to update text in TextBox
+            SendMessage(handleTarget, WM_SETTEXT, 0, ptr);
+
+            // Free allocated memory
+            Marshal.FreeHGlobal(ptr);
+
+            // Update status and close the form
+            setStatus(END_UPDATED_STATUS);
+            CloseFrmLoadRich();
+        }
+
+        /// <summary>
+        /// CloseFrmLoadRich
+        /// </summary>
+        private void CloseFrmLoadRich()
+        {
+            // Once done, close and release frmTransparent
+            frmTransparent.Close();  // Close form
+            frmTransparent.Dispose();  // Free up resources
         }
 
         /// <summary>
@@ -370,7 +434,7 @@ namespace marcury_ext
         /// <param name="e">Event arguments</param>
         private void BtnGetStringDistance_Click(object sender, EventArgs e)
         {
-            int dist = LevenshteinDistance.Calculate(TBXStr1.Text, TBXStr2.Text);
+            int dist = LevenshteinDistance.CalculateLevenshteinDistance(TBXStr1.Text, TBXStr2.Text);
             LBLResult.Text = "Distance is " + dist;
         }
 
@@ -514,6 +578,11 @@ namespace marcury_ext
         
         [DllImport("user32.dll", CharSet = CharSet.Auto)]
         private static extern IntPtr SendMessage(IntPtr hWnd, uint msg, IntPtr wParam, [Out] StringBuilder lParam);
+
+        private void TBXStr1_TextChanged(object sender, EventArgs e)
+        {
+
+        }
     }
 }
 

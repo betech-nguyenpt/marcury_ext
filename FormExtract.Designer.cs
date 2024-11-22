@@ -43,7 +43,7 @@
             this.labelStatus = new System.Windows.Forms.Label();
             this.dataGridViewDb = new System.Windows.Forms.DataGridView();
             this.btnMark = new System.Windows.Forms.Button();
-            this.btnSelect = new System.Windows.Forms.Button();
+            this.BtnDone = new System.Windows.Forms.Button();
             ((System.ComponentModel.ISupportInitialize)(this.dataGridViewDb)).BeginInit();
             this.SuspendLayout();
             // 
@@ -59,7 +59,7 @@
             // BtnClose
             // 
             this.BtnClose.DialogResult = System.Windows.Forms.DialogResult.Cancel;
-            this.BtnClose.Location = new System.Drawing.Point(700, 654);
+            this.BtnClose.Location = new System.Drawing.Point(652, 600);
             this.BtnClose.Name = "BtnClose";
             this.BtnClose.Size = new System.Drawing.Size(88, 23);
             this.BtnClose.TabIndex = 1;
@@ -69,7 +69,7 @@
             // 
             // BtnGetTextData
             // 
-            this.BtnGetTextData.Location = new System.Drawing.Point(700, 625);
+            this.BtnGetTextData.Location = new System.Drawing.Point(652, 562);
             this.BtnGetTextData.Name = "BtnGetTextData";
             this.BtnGetTextData.Size = new System.Drawing.Size(88, 23);
             this.BtnGetTextData.TabIndex = 2;
@@ -95,6 +95,7 @@
             this.TBXStr1.Size = new System.Drawing.Size(776, 23);
             this.TBXStr1.TabIndex = 7;
             this.TBXStr1.Text = "第１条　貸主（以下「甲」という。）及び借主（以下「乙」という。）は、頭書（１）に記載する賃貸の目的物（以下「本物件」と";
+            this.TBXStr1.TextChanged += new System.EventHandler(this.TBXStr1_TextChanged);
             // 
             // TBXStr2
             // 
@@ -153,7 +154,7 @@
             // 
             // BtnStartSearch
             // 
-            this.BtnStartSearch.Location = new System.Drawing.Point(175, 514);
+            this.BtnStartSearch.Location = new System.Drawing.Point(133, 515);
             this.BtnStartSearch.Name = "BtnStartSearch";
             this.BtnStartSearch.Size = new System.Drawing.Size(75, 21);
             this.BtnStartSearch.TabIndex = 14;
@@ -180,7 +181,7 @@
             // 
             // btnMark
             // 
-            this.btnMark.Location = new System.Drawing.Point(700, 598);
+            this.btnMark.Location = new System.Drawing.Point(652, 639);
             this.btnMark.Name = "btnMark";
             this.btnMark.Size = new System.Drawing.Size(88, 21);
             this.btnMark.TabIndex = 17;
@@ -188,22 +189,22 @@
             this.btnMark.UseVisualStyleBackColor = true;
             this.btnMark.Click += new System.EventHandler(this.BtnMarkDataTextBox_Click);
             // 
-            // btnSelect
+            // BtnDone
             // 
-            this.btnSelect.Location = new System.Drawing.Point(703, 563);
-            this.btnSelect.Name = "btnSelect";
-            this.btnSelect.Size = new System.Drawing.Size(84, 24);
-            this.btnSelect.TabIndex = 18;
-            this.btnSelect.Text = "select text";
-            this.btnSelect.UseVisualStyleBackColor = true;
-            this.btnSelect.Click += new System.EventHandler(this.BtnSelectTextBox_Click);
+            this.BtnDone.Location = new System.Drawing.Point(223, 515);
+            this.BtnDone.Name = "BtnDone";
+            this.BtnDone.Size = new System.Drawing.Size(70, 20);
+            this.BtnDone.TabIndex = 19;
+            this.BtnDone.Text = "Done";
+            this.BtnDone.UseVisualStyleBackColor = true;
+            this.BtnDone.Click += new System.EventHandler(this.BtnDone_Click);
             // 
             // FormExtract
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(800, 689);
-            this.Controls.Add(this.btnSelect);
+            this.Controls.Add(this.BtnDone);
             this.Controls.Add(this.btnMark);
             this.Controls.Add(this.dataGridViewDb);
             this.Controls.Add(this.labelStatus);
@@ -246,7 +247,7 @@
         private System.Windows.Forms.Label labelStatus;
         private System.Windows.Forms.DataGridView dataGridViewDb;
         private System.Windows.Forms.Button btnMark;
-        private System.Windows.Forms.Button btnSelect;
+        private System.Windows.Forms.Button BtnDone;
     }
 }
 
