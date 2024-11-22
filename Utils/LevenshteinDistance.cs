@@ -72,7 +72,7 @@ namespace marcury_ext.Utils
                     row.Cells["候補"].Value = match.dbLine;
 
                     if (!isFirstRowInGroup) {
-                        // ẨHide values ​​in "原文" column but keep data
+                        // Hide values ​​in "原文" column but keep data
                         row.Cells["原文"].Style.ForeColor = Color.Transparent;
                         row.Cells["原文"].Style.SelectionForeColor = Color.Transparent;
 
@@ -85,7 +85,6 @@ namespace marcury_ext.Utils
 
                 lineGroup++;
             }
-            int a = 0;
         }
 
         /// <summary>
