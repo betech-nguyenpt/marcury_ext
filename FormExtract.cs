@@ -63,6 +63,10 @@ namespace marcury_ext
         /// <param name="e"></param>
         private void BtnStartSearch_Click(object sender, EventArgs e)
         {
+            if (getStatus() == IN_UPDATING_STATUS) {
+                // Case not yet update content for textbox, but start search handle
+                UpdateContentForTextBoxOriginAndCloseFormLoad();
+            }
             isSearchMode = !isSearchMode;
             this.overlayForm = new OverlayForm();
             if (isSearchMode) {
@@ -368,6 +372,14 @@ namespace marcury_ext
         /// <param name="sender"></param>
         /// <param name="e"></param>
         private void BtnDone_Click(object sender, EventArgs e)
+        {
+            UpdateContentForTextBoxOriginAndCloseFormLoad();
+        }
+
+        /// <summary>
+        /// UpdateContentForTextBoxOriginAndCloseFormLoad
+        /// </summary>
+        private void UpdateContentForTextBoxOriginAndCloseFormLoad()
         {
             // Get the entire text from a RichTextBox and normalize line breaks
             string updatedText = frmTransparent.GetDataRichTextBox();
