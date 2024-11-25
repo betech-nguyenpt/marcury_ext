@@ -13,7 +13,7 @@ namespace marcury_ext.Utils
         public const int ERROR_UTOMATION_TARGET_NULL = 2;
         public const int ERROR_AUTOMATION_PROPERTY_DISABLED = 3;
         public const int ERROR_HANDLE_TARGET_NOT_EDIT = 4;
-        public const int UERROR_UNKNOW_CODE = 100;
+        public const int ERROR_UNKNOW_CODE = 100;
 
         public const string TextBoxForTest = "textBox2";
 
@@ -27,7 +27,7 @@ namespace marcury_ext.Utils
             { ERROR_HANDLE_TARGET_NOT_EDIT, "制御対象を編集しない" }, // ERROR_HANDLE_TARGET_NOT_EDIT
             { ERROR_UTOMATION_TARGET_NULL, "ERROR: 自動化要素のターゲットが空です" }, // AUTOMATION_TARGET_NULL
             { ERROR_AUTOMATION_PROPERTY_DISABLED, "ERROR: エラー オートメーション要素プロパティが無効です" }, // AUTOMATION_PROPERTY_DISABLED
-            { UERROR_UNKNOW_CODE, "ERROR: 未知のエラーコードです。" } // UNKNOW_ERROR_CODE
+            { ERROR_UNKNOW_CODE, "ERROR: 未知のエラーコードです。" } // UNKNOW_ERROR_CODE
         };
 
         /// <summary>

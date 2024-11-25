@@ -10,7 +10,6 @@ using System.Text;
 using System.Windows.Forms;
 using TextBox = System.Windows.Forms.TextBox;
 using System.Windows.Automation;
-using System.Windows.Automation.Text;
 
 namespace marcury_ext
 {
@@ -465,10 +464,9 @@ namespace marcury_ext
         /// </summary>
         /// <param name="sender">Sender</param>
         /// <param name="e">Event arguments</param>
-        private void BtnGetStringDistance_Click(object sender, EventArgs e)
+        private void BtnHighLight_Click(object sender, EventArgs e)
         {
-            int dist = LevenshteinDistance.CalculateLevenshteinDistance(TBXStr1.Text, TBXStr2.Text);
-            LBLResult.Text = "Distance is " + dist;
+            LevenshteinDistance.HighlightDifferences(RichTextBoxHighLight, RichTextBoxHighLight.Text, TextBoxDB.Text);
         }
 
         /// <summary>
