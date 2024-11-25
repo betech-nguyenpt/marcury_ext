@@ -30,6 +30,7 @@ namespace marcury_ext.Utils
             // Compare each row in txtTarget with the rows in txtDb
             int lineGroup = 0;
             foreach (var targetLine in targetLines) {
+                if (targetLine.Length <= 0) continue;
                 var results = new List<(string dbLine, double similarity)>();
                 foreach (var dbLine in dbLines) {
                     double similarity = ComputeSimilarity(targetLine, dbLine);
@@ -159,41 +160,40 @@ namespace marcury_ext.Utils
             var chunker = new CharacterChunker(); // Sử dụng CharacterChunker
             var diff = dmp.CreateDiffs(highLightText, textDb, false, false, chunker);
 
-            //richTextBox.Clear(); // Xóa nội dung trước đó
-
             int currentIndex = 0;
 
             foreach (var block in diff.DiffBlocks) {
-                // Thêm đoạn không thay đổi
+                // Add unchanged paragraph
                 if (block.DeleteStartA > currentIndex) {
                     string unchanged = highLightText.Substring(currentIndex, block.DeleteStartA - currentIndex);
-                    //richTextBox.AppendText(unchanged + Environment.NewLine);
                     richTextBox.AppendText(unchanged);
                 }
 
                 if (block.DeleteCountA > 0) {
                     string deletedPart = highLightText.Substring(block.DeleteStartA, block.DeleteCountA);
 
-                    // Tô đậm và highlight nền
-                    richTextBox.SelectionColor = Color.Green; // Tô màu chữ
-                    richTextBox.SelectionBackColor = Color.Yellow; // Tô màu nền (highlight)
-                    richTextBox.SelectionFont = new Font(richTextBox.Font, FontStyle.Bold); // Tô đậm chữ
+                    // Highlight and darken the background
+                    richTextBox.SelectionColor = Color.Green;
+                    richTextBox.SelectionBackColor = Color.Yellow;
+                    richTextBox.SelectionFont = new Font(richTextBox.Font, FontStyle.Bold);
 
                     richTextBox.AppendText(deletedPart);
 
-                    // Reset về màu mặc định
+                    // Reset to default color
                     richTextBox.SelectionColor = richTextBox.ForeColor;
-                    richTextBox.SelectionBackColor = richTextBox.BackColor; // Reset màu nền
-                    richTextBox.SelectionFont = richTextBox.Font; // Reset font
+                    richTextBox.SelectionBackColor = richTextBox.BackColor;
+                    richTextBox.SelectionFont = richTextBox.Font;
                 }
 
-                // Cập nhật chỉ số hiện tại
+                // Update current index
                 currentIndex = block.DeleteStartA + block.DeleteCountA;
+               /* richTextBox.AppendText(Environment.NewLine);*/
             }
 
-            // Thêm đoạn cuối nếu còn sót
+            //Add the last paragraph if missing
             if (currentIndex < highLightText.Length) {
                 richTextBox.AppendText(highLightText.Substring(currentIndex));
+                /*richTextBox.AppendText(Environment.NewLine);*/
             }
             richTextBox.AppendText(Environment.NewLine);
         }
