@@ -1,9 +1,10 @@
-﻿using System;
+﻿using DiffPlex;
+using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
 using System.Windows.Forms;
-using System.Windows.Input;
+using DiffPlex.Chunkers;
 
 namespace marcury_ext.Utils
 {
@@ -37,28 +38,8 @@ namespace marcury_ext.Utils
 
                 // Take the 3 lines with the highest similarity
                 var topMatches = results.OrderByDescending(r => r.similarity).Take(3).ToList();
-/*
-                if (HighLightPositionstKeyStringDb.Count != 0) {
-                    if (HighLightPositionstKeyStringDb.ContainsKey(topMatches[0].dbLine)) {
-                        if (!HighLightPositionstKeyStringTarget.ContainsKey(topMatches[0].dbLine)) {
-                            HighLightPositionstKeyStringTarget[targetLine] = new List<int>();
-                        }
-                        HighLightPositionstKeyStringTarget[targetLine] = HighLightPositionstKeyStringDb[topMatches[0].dbLine];
-                        HighLightPositionstKeyStringDb.Clear();
-                    }
-                }*/
-
-                // Color the different characters only in the line with the highest similarity
-                AddOriginalDataToRichTextBoxAndHighLight(richTxtCopyText, targetLine, topMatches[0].dbLine);
-                // Color the different characters only in the line with the highest similarity
-                /*if (HighLightPositionstKeyStringTarget.ContainsKey(targetLine)) {
-                    // Lấy danh sách vị trí cần tô màu từ từ điển
-                    List<int> highlightPositions = HighLightPositionstKeyStringTarget[targetLine];
-                    AddOriginalDataToRichTextBoxAndHighLight(richTxtCopyText, targetLine, topMatches[0].dbLine, highlightPositions);
-                } else {
-                    AddOriginalDataToRichTextBoxAndHighLight(richTxtCopyText, targetLine, topMatches[0].dbLine, null);
-                }*/
-
+                // AddOriginalDataToRichTextBoxAndHighLight(richTxtCopyText, targetLine, topMatches[0].dbLine); // Old not use
+                HighlightDifferences(richTxtCopyText, targetLine, topMatches[0].dbLine);
 
                 // Add data to DataGridView
                 bool isFirstRowInGroup = true;
@@ -93,7 +74,6 @@ namespace marcury_ext.Utils
         /// <param name="richTxtCopyText"></param>
         /// <param name="source"></param>
         /// <param name="target"></param>
-        //private static void AddOriginalDataToRichTextBoxAndHighLight(RichTextBox richTxtCopyText, string source, string target, List<int> highlightPositions)
         private static void AddOriginalDataToRichTextBoxAndHighLight(RichTextBox richTxtCopyText, string source, string target)
         {
             int minLen = Math.Min(source.Length, target.Length);
@@ -109,16 +89,6 @@ namespace marcury_ext.Utils
                     richTxtCopyText.SelectionBackColor = Color.Yellow; // Color different characters
                 }
             }
-            /*if (highlightPositions != null) {
-                // Highlight the words based on the positions provided in highlightPositions
-                foreach (int position in highlightPositions) {
-                    // Ensure that the position is within the bounds of the string
-                    if (position >= 0 && position < source.Length) {
-                        richTxtCopyText.Select(start + position, 1); // Select the character at the given position
-                        richTxtCopyText.SelectionBackColor = Color.Red; // Highlight the character (or word) in red
-                    }
-                }
-            }*/
 
             richTxtCopyText.DeselectAll();
         }
@@ -146,16 +116,6 @@ namespace marcury_ext.Utils
                         distance[i - 1, j] + 1,    // delete
                         distance[i, j - 1] + 1),   // insert
                         distance[i - 1, j - 1] + cost); // change
-                                                        // Nếu phép biến đổi là "xóa", lưu vị trí ký tự bị xóa
-                    /*if (distance[i, j] == distance[i - 1, j] + 1) {
-                        if (j == n) {
-                            if (!HighLightPositionstKeyStringDb.ContainsKey(target)) {
-                                // Nếu khóa chưa tồn tại, khởi tạo danh sách mới
-                                HighLightPositionstKeyStringDb[target] = new List<int>();
-                            }
-                            HighLightPositionstKeyStringDb[target].Add(i - 1); // Lưu vị trí của ký tự bị xóa trong source
-                        }
-                    }*/
                 }
             }
             return distance[m, n];
@@ -174,5 +134,56 @@ namespace marcury_ext.Utils
             int levenshteinDistance = CalculateLevenshteinDistance(source, target);
             return (1.0 - (double)levenshteinDistance / maxLength) * 100;
         }
-    }
+
+        /// <summary>
+        /// HighlightDifferences
+        /// </summary>
+        /// <param name="richTextBox"></param>
+        /// <param name="highLightText"></param>
+        /// <param name="textDb"></param>
+        public static void HighlightDifferences(RichTextBox richTextBox, string highLightText, string textDb)
+        {
+            var dmp = new Differ();
+            var chunker = new CharacterChunker(); // Sử dụng CharacterChunker
+            var diff = dmp.CreateDiffs(highLightText, textDb, false, false, chunker);
+
+            //richTextBox.Clear(); // Xóa nội dung trước đó
+
+            int currentIndex = 0;
+
+            foreach (var block in diff.DiffBlocks) {
+                // Thêm đoạn không thay đổi
+                if (block.DeleteStartA > currentIndex) {
+                    string unchanged = highLightText.Substring(currentIndex, block.DeleteStartA - currentIndex);
+                    //richTextBox.AppendText(unchanged + Environment.NewLine);
+                    richTextBox.AppendText(unchanged);
+                }
+
+                if (block.DeleteCountA > 0) {
+                    string deletedPart = highLightText.Substring(block.DeleteStartA, block.DeleteCountA);
+
+                    // Tô đậm và highlight nền
+                    richTextBox.SelectionColor = Color.Green; // Tô màu chữ
+                    richTextBox.SelectionBackColor = Color.Yellow; // Tô màu nền (highlight)
+                    richTextBox.SelectionFont = new Font(richTextBox.Font, FontStyle.Bold); // Tô đậm chữ
+
+                    richTextBox.AppendText(deletedPart);
+
+                    // Reset về màu mặc định
+                    richTextBox.SelectionColor = richTextBox.ForeColor;
+                    richTextBox.SelectionBackColor = richTextBox.BackColor; // Reset màu nền
+                    richTextBox.SelectionFont = richTextBox.Font; // Reset font
+                }
+
+                // Cập nhật chỉ số hiện tại
+                currentIndex = block.DeleteStartA + block.DeleteCountA;
+            }
+
+            // Thêm đoạn cuối nếu còn sót
+            if (currentIndex < highLightText.Length) {
+                richTextBox.AppendText(highLightText.Substring(currentIndex));
+            }
+            richTextBox.AppendText(Environment.NewLine);
+        }
+    }  
 }
