@@ -5,13 +5,12 @@ using System.Drawing;
 using System.Linq;
 using System.Windows.Forms;
 using DiffPlex.Chunkers;
+using System.Windows.Forms.VisualStyles;
 
 namespace marcury_ext.Utils
 {
     internal class LevenshteinDistance
     {
-        /*public static Dictionary<string, List<int>> HighLightPositionstKeyStringDb = new Dictionary<string, List<int>>();
-        public static Dictionary<string, List<int>> HighLightPositionstKeyStringTarget = new Dictionary<string, List<int>>();*/
         /// <summary>
         /// HandleLevenshtein
         /// </summary>
@@ -21,15 +20,14 @@ namespace marcury_ext.Utils
         /// <param name="txtDb"></param>
         public static void HandleLevenshtein(DataGridView dataGridViewDb, RichTextBox richTxtCopyText, string txtTarget, string txtDb)
         {
-            /*HighLightPositionstKeyStringDb.Clear();
-            HighLightPositionstKeyStringTarget.Clear();*/
             // Separate lines
-            var targetLines = txtTarget.Split(new[] { "\r\n" }, StringSplitOptions.None);
+            //var targetLines = txtTarget.Split(new[] { "\r\n" }, StringSplitOptions.None);
+            var targetLines = txtTarget.Split(new[] { "\r\n" }, StringSplitOptions.RemoveEmptyEntries);
             var dbLines = txtDb.Split(new[] { "\r\n" }, StringSplitOptions.None);
 
             // Compare each row in txtTarget with the rows in txtDb
-            int lineGroup = 0;
             foreach (var targetLine in targetLines) {
+                if (targetLine.Length < 0) continue;
                 var results = new List<(string dbLine, double similarity)>();
                 foreach (var dbLine in dbLines) {
                     double similarity = ComputeSimilarity(targetLine, dbLine);
@@ -51,6 +49,17 @@ namespace marcury_ext.Utils
                     row.Cells["原文"].Value = targetLine;
                     row.Cells["一致率"].Value = $"{match.similarity:F2}%";
                     row.Cells["候補"].Value = match.dbLine;
+                    // Create a checkbox for the "適用" column on the fly for this row
+                    DataGridViewCheckBoxCell checkBoxCell = new DataGridViewCheckBoxCell();
+                    /* checkBoxCell.Value = false; // You can set it to true if you want the checkbox to be checked by default
+                     row.Cells["適用"] = checkBoxCell;  // Add the checkbox to the "適用" column*/
+                    if (FormExtract.checkboxStates.Count > 0 && FormExtract.checkboxStates.TryGetValue(rowIndex, out bool isChecked)) {
+                        checkBoxCell.Value = isChecked; // Get previously saved value
+                    } else {
+                        checkBoxCell.Value = false; // Defaults to unchecked if there is no saved state
+                    }
+
+                    row.Cells["適用"] = checkBoxCell;  // Add the checkbox to the "適用" column
 
                     if (!isFirstRowInGroup) {
                         // Hide values ​​in "原文" column but keep data
@@ -63,8 +72,6 @@ namespace marcury_ext.Utils
 
                     isFirstRowInGroup = false;
                 }
-
-                lineGroup++;
             }
         }
 
@@ -147,12 +154,10 @@ namespace marcury_ext.Utils
             var chunker = new CharacterChunker(); // Sử dụng CharacterChunker
             var diff = dmp.CreateDiffs(highLightText, textDb, false, false, chunker);
 
-            //richTextBox.Clear(); // Xóa nội dung trước đó
-
             int currentIndex = 0;
 
             foreach (var block in diff.DiffBlocks) {
-                // Thêm đoạn không thay đổi
+                // Add unchanged paragraph
                 if (block.DeleteStartA > currentIndex) {
                     string unchanged = highLightText.Substring(currentIndex, block.DeleteStartA - currentIndex);
                     //richTextBox.AppendText(unchanged + Environment.NewLine);
@@ -162,28 +167,28 @@ namespace marcury_ext.Utils
                 if (block.DeleteCountA > 0) {
                     string deletedPart = highLightText.Substring(block.DeleteStartA, block.DeleteCountA);
 
-                    // Tô đậm và highlight nền
-                    richTextBox.SelectionColor = Color.Green; // Tô màu chữ
-                    richTextBox.SelectionBackColor = Color.Yellow; // Tô màu nền (highlight)
-                    richTextBox.SelectionFont = new Font(richTextBox.Font, FontStyle.Bold); // Tô đậm chữ
+                    // Highlight and darken the background
+                    richTextBox.SelectionColor = Color.Green; // Color the text
+                    richTextBox.SelectionBackColor = Color.Yellow; // Highlight
+                    richTextBox.SelectionFont = new Font(richTextBox.Font, FontStyle.Bold); // Bold text
 
                     richTextBox.AppendText(deletedPart);
 
                     // Reset về màu mặc định
                     richTextBox.SelectionColor = richTextBox.ForeColor;
-                    richTextBox.SelectionBackColor = richTextBox.BackColor; // Reset màu nền
+                    richTextBox.SelectionBackColor = richTextBox.BackColor; // Reset
                     richTextBox.SelectionFont = richTextBox.Font; // Reset font
                 }
 
-                // Cập nhật chỉ số hiện tại
+                // Update current index
                 currentIndex = block.DeleteStartA + block.DeleteCountA;
             }
 
-            // Thêm đoạn cuối nếu còn sót
+            // Add the last paragraph if missing
             if (currentIndex < highLightText.Length) {
                 richTextBox.AppendText(highLightText.Substring(currentIndex));
             }
-            richTextBox.AppendText(Environment.NewLine);
+            richTextBox.AppendText(Environment.NewLine); //TODO: when test in visual studio can add \n
         }
     }  
 }

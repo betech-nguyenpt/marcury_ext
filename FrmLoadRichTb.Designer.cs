@@ -37,7 +37,7 @@
             this.richTxtCopyText.Size = new System.Drawing.Size(802, 255);
             this.richTxtCopyText.TabIndex = 0;
             this.richTxtCopyText.Text = "";
-            this.richTxtCopyText.TextChanged += new System.EventHandler(this.richTxtCopyText_TextChanged);
+            //this.richTxtCopyText.TextChanged += new System.EventHandler(this.richTxtCopyText_TextChanged);
             // 
             // frmLoadRichTb
             // 

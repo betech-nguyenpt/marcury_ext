@@ -10,6 +10,7 @@ using System.Text;
 using System.Windows.Forms;
 using TextBox = System.Windows.Forms.TextBox;
 using System.Windows.Automation;
+using System.Windows.Forms.VisualStyles;
 
 namespace marcury_ext
 {
@@ -28,6 +29,7 @@ namespace marcury_ext
 
         private OverlayForm overlayForm; // Declare overlayForm
         private CustomCursor customCursor; // Declare CustomCursor
+        //public void List<bool> checkboxStates = new List<bool>();
 
         private IntPtr handleTarget;
         private string textTarget;
@@ -118,7 +120,7 @@ namespace marcury_ext
                     isSearchMode = false;  // Turn off search mode
                     // Load form new have richtextbox
                     LoadFormRich(errorCode);
-                    Handlelevenshtein();
+                    Handlelevenshtein(true);
                     //Return to default mouse cursor
                     this.Cursor = Cursors.Default;
                     customCursor.IsSearching = isSearchMode;
@@ -138,6 +140,30 @@ namespace marcury_ext
         /// <summary>
         /// Handlelevenshtein
         /// </summary>
+        private void Handlelevenshtein(bool isFirstTime)
+        {
+            if (isFirstTime) {
+                //Clear old content on DataGridView and RichTextBox
+                dataGridViewDb.Rows.Clear();
+                frmTransparent.richTextBox.Clear();
+                // Calculator Levenshtein after load Form have richTextBox
+                LevenshteinDistance.HandleLevenshtein(dataGridViewDb, frmTransparent.richTextBox, textTarget, txtDummy);
+            } else {
+                string contentNewRichTextBox = frmTransparent.richTextBox.Text;               
+                if (contentNewRichTextBox.Length > 0) {
+                    var newText = contentNewRichTextBox.Replace("\n", "\r\n");
+                    //Clear old content on DataGridView and RichTextBox
+                    dataGridViewDb.Rows.Clear();
+                    frmTransparent.richTextBox.Clear();
+                    // Calculator Levenshtein after load Form have richTextBox
+                    LevenshteinDistance.HandleLevenshtein(dataGridViewDb, frmTransparent.richTextBox, newText, txtDummy);                  
+               }             
+            }          
+        }
+
+        /*/// <summary>
+        /// Handlelevenshtein
+        /// </summary>
         private void Handlelevenshtein()
         {
             //Clear old content on DataGridView and RichTextBox
@@ -145,7 +171,7 @@ namespace marcury_ext
             frmTransparent.richTextBox.Clear();
             // Calculator Levenshtein after load Form have richTextBox
             LevenshteinDistance.HandleLevenshtein(dataGridViewDb, frmTransparent.richTextBox, textTarget, txtDummy);
-        }
+        }*/
 
         [DllImport("user32.dll")]
         private static extern int SendMessage(IntPtr hWnd, int wMsg, int wParam, [MarshalAs(UnmanagedType.LPStr)] string lParam);
@@ -282,12 +308,7 @@ namespace marcury_ext
             dataGridViewDb.Columns.Add("原文", "原文");
             dataGridViewDb.Columns.Add("一致率", "一致率");
             dataGridViewDb.Columns.Add("候補", "候補");
-
-            // Add "適用" column as checkbox
-            DataGridViewCheckBoxColumn checkBoxColumn = new DataGridViewCheckBoxColumn();
-            checkBoxColumn.HeaderText = "適用";
-            checkBoxColumn.Name = "適用";  // Tên cột là "適用"
-            dataGridViewDb.Columns.Add(checkBoxColumn);
+            dataGridViewDb.Columns.Add("適用", "適用");
 
             // Set column width
             dataGridViewDb.Columns["原文"].Width = 300;
@@ -301,8 +322,8 @@ namespace marcury_ext
             dataGridViewDb.Height = 250; // Customize the height of the DataGridView
         }
 
-        
-
+        // Checkbox state save list
+        public static Dictionary<int, bool> checkboxStates = new Dictionary<int, bool>();
         /// <summary>
         /// DataGridViewDb_CellContentClick
         /// </summary>
@@ -313,16 +334,16 @@ namespace marcury_ext
             if (getStatus() == IN_UPDATING_STATUS) {
                 // Check if the clicked cell is a checkbox of the "適用" column
                 if (e.ColumnIndex == dataGridViewDb.Columns["適用"].Index && e.RowIndex >= 0) {
-                    // Get the current value of a cell
-                    var cellValue = dataGridViewDb.Rows[e.RowIndex].Cells["適用"].Value;
+                    var cellValue = (bool)dataGridViewDb.Rows[e.RowIndex].Cells["適用"].Value;
 
-                    // Check if value is null, set default value to false
-                    if (cellValue == null || !(cellValue is bool)) {
-                        dataGridViewDb.Rows[e.RowIndex].Cells["適用"].Value = true; // Check checkbox on click
+                    // Update storage status
+                    if (!cellValue) {
+                        checkboxStates[e.RowIndex] = true; // Checkbox is selected
                     } else {
-                        // Otherwise, reverse the checkbox state
-                        dataGridViewDb.Rows[e.RowIndex].Cells["適用"].Value = !(bool)cellValue;
+                        checkboxStates.Remove(e.RowIndex); // Checkbox is unchecked
                     }
+                    // Invert checkbox state
+                    dataGridViewDb.Rows[e.RowIndex].Cells["適用"].Value = !cellValue; // When cell change value call DataGridViewDb_CellValueChanged
                 }
             }
         }
@@ -345,7 +366,8 @@ namespace marcury_ext
 
                     // Change text in RichTextBox from indexStart to indexEnd
                     frmTransparent.UpdateTextOfLineRichTextBox(candidateText, textNeedEdit);
-
+                    // Calculator again LeventshteinAfter update content on RichTextBox.
+                    Handlelevenshtein(false);
                     /*// Get the entire text from a RichTextBox
                     string updatedText = frmTransparent.GetDataRichTextBox();
 
@@ -358,7 +380,7 @@ namespace marcury_ext
                     // Free up memory
                     Marshal.FreeHGlobal(ptr);*/
                     // Call again becase content in RichTextBox changed TODO:
-                   // LevenshteinDistance.HandleLevenshtein(dataGridViewDb, frmTransparent.richTextBox, textTarget, txtDummy);
+                    // LevenshteinDistance.HandleLevenshtein(dataGridViewDb, frmTransparent.richTextBox, textTarget, txtDummy);
                 }            
                 /*// Once done, close and release frmTransparent
                 CloseFrmLoadRich();*/
@@ -372,6 +394,7 @@ namespace marcury_ext
         /// <param name="e"></param>
         private void BtnDone_Click(object sender, EventArgs e)
         {
+            checkboxStates.Clear();// Clear data when update content into TextBox
             UpdateContentForTextBoxOriginAndCloseFormLoad();
         }
 

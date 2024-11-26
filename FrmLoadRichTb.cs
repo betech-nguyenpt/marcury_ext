@@ -55,10 +55,10 @@ namespace marcury_ext
         [return: MarshalAs(UnmanagedType.Bool)]
         public static extern bool GetWindowRect(IntPtr hWnd, out RECT lpRect);
 
-        private void richTxtCopyText_TextChanged(object sender, EventArgs e)
+        /*private void richTxtCopyText_TextChanged(object sender, EventArgs e)
         {
 
-        }
+        }*/
 
         /// <summary>
         /// SetRichTextBoxText
