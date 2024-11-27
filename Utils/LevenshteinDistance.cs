@@ -27,7 +27,7 @@ namespace marcury_ext.Utils
 
             // Compare each row in txtTarget with the rows in txtDb
             foreach (var targetLine in targetLines) {
-                if (targetLine.Length < 0) continue;
+                if (targetLine.Length <= 0) continue;
                 var results = new List<(string dbLine, double similarity)>();
                 foreach (var dbLine in dbLines) {
                     double similarity = ComputeSimilarity(targetLine, dbLine);
@@ -41,6 +41,7 @@ namespace marcury_ext.Utils
 
                 // Add data to DataGridView
                 bool isFirstRowInGroup = true;
+                int colorOder = 0;
                 foreach (var match in topMatches) {
                     int rowIndex = dataGridViewDb.Rows.Add();
                     var row = dataGridViewDb.Rows[rowIndex];
@@ -60,6 +61,17 @@ namespace marcury_ext.Utils
                     }
 
                     row.Cells["適用"] = checkBoxCell;  // Add the checkbox to the "適用" column
+
+                    colorOder++;
+                    if (colorOder == 1) {
+                        row.DefaultCellStyle.BackColor = Color.LightSalmon; // Light orange
+                    }
+                    // 2nd and 3rd lines (light purple)
+                    else if (colorOder == 2) {
+                        row.DefaultCellStyle.BackColor = Color.Lavender; // Light purple
+                    } else if (colorOder == 3) {
+                        row.DefaultCellStyle.BackColor = Color.Thistle; // Lighter purple
+                    }
 
                     if (!isFirstRowInGroup) {
                         // Hide values ​​in "原文" column but keep data
@@ -160,7 +172,6 @@ namespace marcury_ext.Utils
                 // Add unchanged paragraph
                 if (block.DeleteStartA > currentIndex) {
                     string unchanged = highLightText.Substring(currentIndex, block.DeleteStartA - currentIndex);
-                    //richTextBox.AppendText(unchanged + Environment.NewLine);
                     richTextBox.AppendText(unchanged);
                 }
 
@@ -174,7 +185,7 @@ namespace marcury_ext.Utils
 
                     richTextBox.AppendText(deletedPart);
 
-                    // Reset về màu mặc định
+                    // Reset to default color
                     richTextBox.SelectionColor = richTextBox.ForeColor;
                     richTextBox.SelectionBackColor = richTextBox.BackColor; // Reset
                     richTextBox.SelectionFont = richTextBox.Font; // Reset font
@@ -182,11 +193,13 @@ namespace marcury_ext.Utils
 
                 // Update current index
                 currentIndex = block.DeleteStartA + block.DeleteCountA;
+               /* richTextBox.AppendText(Environment.NewLine);*/
             }
 
-            // Add the last paragraph if missing
+            //Add the last paragraph if missing
             if (currentIndex < highLightText.Length) {
                 richTextBox.AppendText(highLightText.Substring(currentIndex));
+                /*richTextBox.AppendText(Environment.NewLine);*/
             }
             richTextBox.AppendText(Environment.NewLine); //TODO: when test in visual studio can add \n
         }
