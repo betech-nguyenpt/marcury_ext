@@ -22,7 +22,7 @@ namespace marcury_ext
             RECT rect;
             if (GetWindowRect(handleTarget, out rect)) {
                 // Form configuration
-                this.FormBorderStyle = FormBorderStyle.None;
+                //this.FormBorderStyle = FormBorderStyle.None;
                 this.StartPosition = FormStartPosition.Manual;
                 this.Top = rect.Top;
                 this.Left = rect.Left;
@@ -30,10 +30,14 @@ namespace marcury_ext
                 this.Height = rect.Bottom - rect.Top;*/
                 if (!IsNotLimitSize) {
                     // Limit form size if IsLimitSize is true
+                    this.FormBorderStyle = FormBorderStyle.FixedSingle;
+                    this.MaximizeBox = false;
+                    this.MinimizeBox = false;
                     this.Width = 400;
                     this.Height = 100;
                 } else {
                     // Unlimited, use original size
+                    this.FormBorderStyle = FormBorderStyle.None;
                     this.Width = rect.Right - rect.Left;
                     this.Height = rect.Bottom - rect.Top;
                 }
