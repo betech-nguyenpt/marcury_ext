@@ -32,18 +32,17 @@
             this.BtnClose = new System.Windows.Forms.Button();
             this.BtnGetTextData = new System.Windows.Forms.Button();
             this.label1 = new System.Windows.Forms.Label();
-            this.TBXStr1 = new System.Windows.Forms.TextBox();
-            this.TBXStr2 = new System.Windows.Forms.TextBox();
+            this.TextBoxDB = new System.Windows.Forms.TextBox();
             this.label2 = new System.Windows.Forms.Label();
             this.label3 = new System.Windows.Forms.Label();
-            this.BtnGetStringDistance = new System.Windows.Forms.Button();
-            this.LBLResult = new System.Windows.Forms.Label();
+            this.BtnHighLight = new System.Windows.Forms.Button();
             this.txtHandle = new System.Windows.Forms.TextBox();
             this.BtnStartSearch = new System.Windows.Forms.Button();
             this.labelStatus = new System.Windows.Forms.Label();
             this.dataGridViewDb = new System.Windows.Forms.DataGridView();
             this.btnMark = new System.Windows.Forms.Button();
             this.BtnDone = new System.Windows.Forms.Button();
+            this.RichTextBoxHighLight = new System.Windows.Forms.RichTextBox();
             ((System.ComponentModel.ISupportInitialize)(this.dataGridViewDb)).BeginInit();
             this.SuspendLayout();
             // 
@@ -87,63 +86,44 @@
             this.label1.TabIndex = 4;
             this.label1.Text = "特記文候補検索";
             // 
-            // TBXStr1
+            // TextBoxDB
             // 
-            this.TBXStr1.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.TBXStr1.Location = new System.Drawing.Point(12, 342);
-            this.TBXStr1.Name = "TBXStr1";
-            this.TBXStr1.Size = new System.Drawing.Size(776, 23);
-            this.TBXStr1.TabIndex = 7;
-            this.TBXStr1.Text = "第１条　貸主（以下「甲」という。）及び借主（以下「乙」という。）は、頭書（１）に記載する賃貸の目的物（以下「本物件」と";
-            this.TBXStr1.TextChanged += new System.EventHandler(this.TBXStr1_TextChanged);
-            // 
-            // TBXStr2
-            // 
-            this.TBXStr2.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.TBXStr2.Location = new System.Drawing.Point(12, 385);
-            this.TBXStr2.Name = "TBXStr2";
-            this.TBXStr2.Size = new System.Drawing.Size(776, 23);
-            this.TBXStr2.TabIndex = 8;
-            this.TBXStr2.Text = "第１条　貸主（以下「甲」という。）及び借主（以下「乙」という。）は、頭書（１）に記載する賃貸の目本的物（以下「物件」という";
+            this.TextBoxDB.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.TextBoxDB.Location = new System.Drawing.Point(6, 424);
+            this.TextBoxDB.Name = "TextBoxDB";
+            this.TextBoxDB.Size = new System.Drawing.Size(776, 23);
+            this.TextBoxDB.TabIndex = 8;
+            this.TextBoxDB.Text = "・改行や文章挿入箇所はグレーのハイライトが表示されます。";
             // 
             // label2
             // 
             this.label2.AutoSize = true;
             this.label2.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label2.Location = new System.Drawing.Point(9, 322);
+            this.label2.Location = new System.Drawing.Point(9, 327);
             this.label2.Name = "label2";
-            this.label2.Size = new System.Drawing.Size(57, 17);
+            this.label2.Size = new System.Drawing.Size(150, 17);
             this.label2.TabIndex = 9;
-            this.label2.Text = "String 1";
+            this.label2.Text = "RichTextBox HighLight";
             // 
             // label3
             // 
             this.label3.AutoSize = true;
             this.label3.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label3.Location = new System.Drawing.Point(9, 365);
+            this.label3.Location = new System.Drawing.Point(6, 404);
             this.label3.Name = "label3";
-            this.label3.Size = new System.Drawing.Size(57, 17);
+            this.label3.Size = new System.Drawing.Size(58, 17);
             this.label3.TabIndex = 10;
-            this.label3.Text = "String 2";
+            this.label3.Text = "Text DB";
             // 
-            // BtnGetStringDistance
+            // BtnHighLight
             // 
-            this.BtnGetStringDistance.Location = new System.Drawing.Point(12, 414);
-            this.BtnGetStringDistance.Name = "BtnGetStringDistance";
-            this.BtnGetStringDistance.Size = new System.Drawing.Size(75, 23);
-            this.BtnGetStringDistance.TabIndex = 11;
-            this.BtnGetStringDistance.Text = "Calculate Distance";
-            this.BtnGetStringDistance.UseVisualStyleBackColor = true;
-            this.BtnGetStringDistance.Click += new System.EventHandler(this.BtnGetStringDistance_Click);
-            // 
-            // LBLResult
-            // 
-            this.LBLResult.AutoSize = true;
-            this.LBLResult.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.LBLResult.Location = new System.Drawing.Point(93, 417);
-            this.LBLResult.Name = "LBLResult";
-            this.LBLResult.Size = new System.Drawing.Size(0, 17);
-            this.LBLResult.TabIndex = 12;
+            this.BtnHighLight.Location = new System.Drawing.Point(9, 459);
+            this.BtnHighLight.Name = "BtnHighLight";
+            this.BtnHighLight.Size = new System.Drawing.Size(106, 23);
+            this.BtnHighLight.TabIndex = 11;
+            this.BtnHighLight.Text = "HighLight Diff";
+            this.BtnHighLight.UseVisualStyleBackColor = true;
+            this.BtnHighLight.Click += new System.EventHandler(this.BtnHighLight_Click);
             // 
             // txtHandle
             // 
@@ -176,7 +156,7 @@
             this.dataGridViewDb.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
             this.dataGridViewDb.Location = new System.Drawing.Point(9, 42);
             this.dataGridViewDb.Name = "dataGridViewDb";
-            this.dataGridViewDb.Size = new System.Drawing.Size(773, 258);
+            this.dataGridViewDb.Size = new System.Drawing.Size(803, 258);
             this.dataGridViewDb.TabIndex = 16;
             // 
             // btnMark
@@ -199,23 +179,30 @@
             this.BtnDone.UseVisualStyleBackColor = true;
             this.BtnDone.Click += new System.EventHandler(this.BtnDone_Click);
             // 
+            // RichTextBoxHighLight
+            // 
+            this.RichTextBoxHighLight.Location = new System.Drawing.Point(9, 356);
+            this.RichTextBoxHighLight.Name = "RichTextBoxHighLight";
+            this.RichTextBoxHighLight.Size = new System.Drawing.Size(773, 29);
+            this.RichTextBoxHighLight.TabIndex = 20;
+            this.RichTextBoxHighLight.Text = "・改行やテキスト挿入箇所はグレーのハイライトで";
+            // 
             // FormExtract
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(800, 689);
+            this.Controls.Add(this.RichTextBoxHighLight);
             this.Controls.Add(this.BtnDone);
             this.Controls.Add(this.btnMark);
             this.Controls.Add(this.dataGridViewDb);
             this.Controls.Add(this.labelStatus);
             this.Controls.Add(this.BtnStartSearch);
             this.Controls.Add(this.txtHandle);
-            this.Controls.Add(this.LBLResult);
-            this.Controls.Add(this.BtnGetStringDistance);
+            this.Controls.Add(this.BtnHighLight);
             this.Controls.Add(this.label3);
             this.Controls.Add(this.label2);
-            this.Controls.Add(this.TBXStr2);
-            this.Controls.Add(this.TBXStr1);
+            this.Controls.Add(this.TextBoxDB);
             this.Controls.Add(this.label1);
             this.Controls.Add(this.BtnGetTextData);
             this.Controls.Add(this.BtnClose);
@@ -236,18 +223,17 @@
         private System.Windows.Forms.Button BtnClose;
         private System.Windows.Forms.Button BtnGetTextData;
         private System.Windows.Forms.Label label1;
-        private System.Windows.Forms.TextBox TBXStr1;
-        private System.Windows.Forms.TextBox TBXStr2;
+        private System.Windows.Forms.TextBox TextBoxDB;
         private System.Windows.Forms.Label label2;
         private System.Windows.Forms.Label label3;
-        private System.Windows.Forms.Button BtnGetStringDistance;
-        private System.Windows.Forms.Label LBLResult;
+        private System.Windows.Forms.Button BtnHighLight;
         private System.Windows.Forms.TextBox txtHandle;
         private System.Windows.Forms.Button BtnStartSearch;
         private System.Windows.Forms.Label labelStatus;
         private System.Windows.Forms.DataGridView dataGridViewDb;
         private System.Windows.Forms.Button btnMark;
         private System.Windows.Forms.Button BtnDone;
+        private System.Windows.Forms.RichTextBox RichTextBoxHighLight;
     }
 }
 

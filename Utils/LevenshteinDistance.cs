@@ -1,9 +1,10 @@
-﻿using System;
+﻿using DiffPlex;
+using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
 using System.Windows.Forms;
-using System.Windows.Input;
+using DiffPlex.Chunkers;
 
 namespace marcury_ext.Utils
 {
@@ -25,6 +26,7 @@ namespace marcury_ext.Utils
             // Compare each row in txtTarget with the rows in txtDb
             int lineGroup = 0;
             foreach (var targetLine in targetLines) {
+                if (targetLine.Length <= 0) continue;
                 var results = new List<(string dbLine, double similarity)>();
                 foreach (var dbLine in dbLines) {
                     double similarity = ComputeSimilarity(targetLine, dbLine);
@@ -33,12 +35,13 @@ namespace marcury_ext.Utils
 
                 // Take the 3 lines with the highest similarity
                 var topMatches = results.OrderByDescending(r => r.similarity).Take(3).ToList();
-
-                // Color the different characters only in the line with the highest similarity
-                AddOriginalDataToRichTextBoxAndHighLight(richTxtCopyText, targetLine, topMatches[0].dbLine);               
+                // Color the different characters only in the line with the highest similarity            
+                // AddOriginalDataToRichTextBoxAndHighLight(richTxtCopyText, targetLine, topMatches[0].dbLine); // Old not use
+                HighlightDifferences(richTxtCopyText, targetLine, topMatches[0].dbLine);
 
                 // Add data to DataGridView
                 bool isFirstRowInGroup = true;
+                int colorOder = 0;
                 foreach (var match in topMatches) {
                     int rowIndex = dataGridViewDb.Rows.Add();
                     var row = dataGridViewDb.Rows[rowIndex];
@@ -47,6 +50,17 @@ namespace marcury_ext.Utils
                     row.Cells["原文"].Value = targetLine;
                     row.Cells["一致率"].Value = $"{match.similarity:F2}%";
                     row.Cells["候補"].Value = match.dbLine;
+
+                    colorOder++;
+                    if (colorOder == 1) {
+                        row.DefaultCellStyle.BackColor = Color.LightSalmon; // Light orange
+                    }
+                    // 2nd and 3rd lines (light purple)
+                    else if (colorOder == 2) {
+                        row.DefaultCellStyle.BackColor = Color.Lavender; // Light purple
+                    } else if (colorOder == 3) {
+                        row.DefaultCellStyle.BackColor = Color.Thistle; // Lighter purple
+                    }
 
                     if (!isFirstRowInGroup) {
                         // Hide values ​​in "原文" column but keep data
@@ -62,7 +76,6 @@ namespace marcury_ext.Utils
 
                 lineGroup++;
             }
-            int a = 0;
         }
 
         /// <summary>
@@ -112,7 +125,7 @@ namespace marcury_ext.Utils
                     distance[i, j] = Math.Min(Math.Min(
                         distance[i - 1, j] + 1,    // delete
                         distance[i, j - 1] + 1),   // insert
-                        distance[i - 1, j - 1] + cost); // change            
+                        distance[i - 1, j - 1] + cost); // change
                 }
             }
             return distance[m, n];
@@ -131,5 +144,55 @@ namespace marcury_ext.Utils
             int levenshteinDistance = CalculateLevenshteinDistance(source, target);
             return (1.0 - (double)levenshteinDistance / maxLength) * 100;
         }
-    }
+
+        /// <summary>
+        /// HighlightDifferences
+        /// </summary>
+        /// <param name="richTextBox"></param>
+        /// <param name="highLightText"></param>
+        /// <param name="textDb"></param>
+        public static void HighlightDifferences(RichTextBox richTextBox, string highLightText, string textDb)
+        {
+            var dmp = new Differ();
+            var chunker = new CharacterChunker(); // Sử dụng CharacterChunker
+            var diff = dmp.CreateDiffs(highLightText, textDb, false, false, chunker);
+
+            int currentIndex = 0;
+
+            foreach (var block in diff.DiffBlocks) {
+                // Add unchanged paragraph
+                if (block.DeleteStartA > currentIndex) {
+                    string unchanged = highLightText.Substring(currentIndex, block.DeleteStartA - currentIndex);
+                    richTextBox.AppendText(unchanged);
+                }
+
+                if (block.DeleteCountA > 0) {
+                    string deletedPart = highLightText.Substring(block.DeleteStartA, block.DeleteCountA);
+
+                    // Highlight and darken the background
+                    richTextBox.SelectionColor = Color.Green;
+                    richTextBox.SelectionBackColor = Color.Yellow;
+                    richTextBox.SelectionFont = new Font(richTextBox.Font, FontStyle.Bold);
+
+                    richTextBox.AppendText(deletedPart);
+
+                    // Reset to default color
+                    richTextBox.SelectionColor = richTextBox.ForeColor;
+                    richTextBox.SelectionBackColor = richTextBox.BackColor;
+                    richTextBox.SelectionFont = richTextBox.Font;
+                }
+
+                // Update current index
+                currentIndex = block.DeleteStartA + block.DeleteCountA;
+               /* richTextBox.AppendText(Environment.NewLine);*/
+            }
+
+            //Add the last paragraph if missing
+            if (currentIndex < highLightText.Length) {
+                richTextBox.AppendText(highLightText.Substring(currentIndex));
+                /*richTextBox.AppendText(Environment.NewLine);*/
+            }
+            richTextBox.AppendText(Environment.NewLine);
+        }
+    }  
 }

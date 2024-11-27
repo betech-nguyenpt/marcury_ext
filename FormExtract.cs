@@ -51,8 +51,23 @@ namespace marcury_ext
             InitializeComponent();
             // Initialize custom cursor, initial state is not searching
             customCursor = new CustomCursor();
+            SetTitleBarColor();
             // Attach the ItemChecked event to the ListView
             //lvData.ItemChecked += LvData_ItemChecked;
+        }
+
+        [DllImport("dwmapi.dll")]
+        public static extern int DwmSetWindowAttribute(IntPtr hwnd, int attr, ref int attrValue, int attrSize);
+
+        private const int DWMWA_USE_IMMERSIVE_DARK_MODE = 20; // Hoặc 19 cho các phiên bản cũ
+
+        /// <summary>
+        /// 
+        /// </summary>
+        private void SetTitleBarColor()
+        {
+            int color = 0x00FF00; // Mã màu xanh (RGB: 00FF00)
+            DwmSetWindowAttribute(this.Handle, 35, ref color, Marshal.SizeOf(color)); // 35 là mã thuộc tính màu
         }
 
         /// <summary>
@@ -62,6 +77,10 @@ namespace marcury_ext
         /// <param name="e"></param>
         private void BtnStartSearch_Click(object sender, EventArgs e)
         {
+            if (getStatus() == IN_UPDATING_STATUS) {
+                // Case not yet update content for textbox, but start search handle
+                UpdateContentForTextBoxOriginAndCloseFormLoad();
+            }
             isSearchMode = !isSearchMode;
             this.overlayForm = new OverlayForm();
             if (isSearchMode) {
@@ -284,6 +303,16 @@ namespace marcury_ext
             checkBoxColumn.HeaderText = "適用";
             checkBoxColumn.Name = "適用";  // Tên cột là "適用"
             dataGridViewDb.Columns.Add(checkBoxColumn);
+<<<<<<< HEAD
+=======
+
+            // Setup color for headers
+            dataGridViewDb.ColumnHeadersDefaultCellStyle.BackColor = Color.Purple; // Nền màu tím
+            dataGridViewDb.ColumnHeadersDefaultCellStyle.ForeColor = Color.White;  // Chữ màu trắng
+            dataGridViewDb.ColumnHeadersDefaultCellStyle.Font = new Font("Arial", 12, FontStyle.Bold); // Font chữ in đậm
+            dataGridViewDb.ColumnHeadersDefaultCellStyle.Alignment = DataGridViewContentAlignment.MiddleCenter; // Căn giữa
+            dataGridViewDb.EnableHeadersVisualStyles = false; // Tắt visual styles mặc định
+>>>>>>> c2021fc18da9a1e614ef30b4ed221cc6f7353028
             // Set column width
             dataGridViewDb.Columns["原文"].Width = 300;
             dataGridViewDb.Columns["一致率"].Width = 70;
@@ -410,6 +439,14 @@ namespace marcury_ext
         /// <param name="e"></param>
         private void BtnDone_Click(object sender, EventArgs e)
         {
+            UpdateContentForTextBoxOriginAndCloseFormLoad();
+        }
+
+        /// <summary>
+        /// UpdateContentForTextBoxOriginAndCloseFormLoad
+        /// </summary>
+        private void UpdateContentForTextBoxOriginAndCloseFormLoad()
+        {
             // Get the entire text from a RichTextBox and normalize line breaks
             string updatedText = frmTransparent.GetDataRichTextBox();
             updatedText = updatedText.Replace("\n", "\r\n"); // Ensure correct line breaks for TextBox
@@ -473,10 +510,9 @@ namespace marcury_ext
         /// </summary>
         /// <param name="sender">Sender</param>
         /// <param name="e">Event arguments</param>
-        private void BtnGetStringDistance_Click(object sender, EventArgs e)
+        private void BtnHighLight_Click(object sender, EventArgs e)
         {
-            int dist = LevenshteinDistance.CalculateLevenshteinDistance(TBXStr1.Text, TBXStr2.Text);
-            LBLResult.Text = "Distance is " + dist;
+            LevenshteinDistance.HighlightDifferences(RichTextBoxHighLight, RichTextBoxHighLight.Text, TextBoxDB.Text);
         }
 
         /// <summary>
