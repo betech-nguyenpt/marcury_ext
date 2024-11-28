@@ -202,77 +202,6 @@ namespace marcury_ext
         }
 
         /// <summary>
-        /// Handle click Get text data button
-        /// </summary>
-        /// <param name="sender">Sender</param>
-        /// <param name="e">Event arguments</param>
-        private void BtnGetTextData_Click(object sender, EventArgs e)
-        {
-            var allText = GetAllTextFromWindowByTitle("FormMarcury");
-            this.AppendTextToResult(allText.ToString());
-            // Turn on dragging mode
-            //this.isDragging = true;
-            //this.AppendTextToResult("Dragging mode is ON");
-        }
-
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
-        private void BtnMarkDataTextBox_Click(object sender, EventArgs e)
-        {
-            // Mark text in TextBox of form other
-            MarkTextWithRange();
-        }
-
-        /// <summary>
-        /// 
-        /// </summary>
-        private void MarkTextWithRange()
-        {
-            // Get content from TextBox
-            string textMark = textTarget;
-            // Check if index range is valid
-            int startIndex = 19;
-            int endIndex = 34;
-            if (textMark != null) {
-                if (startIndex >= 0 && endIndex <= textMark.Length) {
-                    // Split the text before the paragraph to be edited
-                    string before = textMark.Substring(0, startIndex);
-                    // Split the text to be edited (from index 10 to 20)
-                    string middle = textMark.Substring(startIndex, endIndex - startIndex);
-                    // Split the text after the paragraph to be edited
-                    string after = textMark.Substring(endIndex);
-                    // Insert (***) into the part to be edited
-                    string newText = before + "(***" + middle + "***)" + after;
-                    IntPtr ptr = Marshal.StringToHGlobalUni(newText);
-                    // Reattach content to TextBox
-                    SendMessage(handleTarget, WM_SETTEXT, 0, ptr);
-                }
-            }  
-        }
-
-       /* private void SelectTextByHandle()
-        {
-            if (handleTarget != IntPtr.Zero) {
-                Console.WriteLine($"Text handleTarget: {handleTarget}");
-                int startIndex = 5;
-                int endIndex = 10;
-                int lParam = (endIndex << 16) | startIndex; // Cách tính lParam để chọn văn bản
-                SendMessage(handleTarget, EM_SETSEL, 0, lParam);
-                // Gửi thông điệp để đảm bảo TextBox có focus (đảm bảo TextBox nhận sự kiện chọn văn bản)
-                SendMessage(handleTarget, 0x000B, 1, 0); // 0x000B là WM_SETREDRAW
-            }
-        }*/
-
-      /*  // P/Invoke to call Windows API
-        [DllImport("user32.dll", CharSet = CharSet.Auto)]
-        public static extern IntPtr SendMessage(IntPtr hWnd, uint Msg, int wParam, int lParam);
-        private const int EM_SETSEL = 0xB1; // How to calculate lParam to select text*/
-
-
-        /// <summary>
         /// Handle mouse click on form
         /// </summary>
         /// <param name="sender">Sender</param>
@@ -436,7 +365,7 @@ namespace marcury_ext
         }
 
         /// <summary>
-        ///  LvData_ItemChecked send text when checked box
+        ///  LvData_ItemChecked send text when checked box // Not use
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
@@ -457,17 +386,6 @@ namespace marcury_ext
         // Import library with IntPtr receiving version
         [DllImport("user32.dll", CharSet = CharSet.Unicode, SetLastError = true)]
         private static extern int SendMessage(IntPtr hWnd, int Msg, int wParam, IntPtr lParam);
-
-
-        /// <summary>
-        /// Handle click Get string distance button
-        /// </summary>
-        /// <param name="sender">Sender</param>
-        /// <param name="e">Event arguments</param>
-        private void BtnHighLight_Click(object sender, EventArgs e)
-        {
-            LevenshteinDistance.HighlightDifferences(RichTextBoxHighLight, RichTextBoxHighLight.Text, TextBoxDB.Text);
-        }
 
         /// <summary>
         /// Append text to result textbox
