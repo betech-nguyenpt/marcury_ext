@@ -37,12 +37,6 @@ namespace marcury_ext
         public static void setStatus(int status) { m_status = status; }
         public static int getStatus() { return m_status; }
 
-        private void BtnSearchRichTextBox_Click(object sender, EventArgs e)
-        {
-            // Btn BtnSearchRichTextBox
-
-        }
-
         /// <summary>
         /// Constructor
         /// </summary>
@@ -58,8 +52,6 @@ namespace marcury_ext
 
         [DllImport("dwmapi.dll")]
         public static extern int DwmSetWindowAttribute(IntPtr hwnd, int attr, ref int attrValue, int attrSize);
-
-        private const int DWMWA_USE_IMMERSIVE_DARK_MODE = 20; // Hoặc 19 cho các phiên bản cũ
 
         /// <summary>
         /// 

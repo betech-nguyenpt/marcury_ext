@@ -1,5 +1,6 @@
 ﻿using System.Windows.Forms;
 using System;
+using marcury_ext.Utils;
 
 namespace marcury_ext
 {
@@ -33,7 +34,6 @@ namespace marcury_ext
         {
             this.txtResult = new System.Windows.Forms.TextBox();
             this.BtnClose = new System.Windows.Forms.Button();
-            this.label1 = new System.Windows.Forms.Label();
             this.txtHandle = new System.Windows.Forms.TextBox();
             this.BtnStartSearch = new System.Windows.Forms.Button();
             this.labelStatus = new System.Windows.Forms.Label();
@@ -60,20 +60,13 @@ namespace marcury_ext
             this.BtnClose.BackColor = System.Drawing.Color.LightCoral;
             this.BtnClose.DialogResult = System.Windows.Forms.DialogResult.Cancel;
             this.BtnClose.ForeColor = System.Drawing.SystemColors.Desktop;
-            this.BtnClose.Location = new System.Drawing.Point(715, 37);
+            this.BtnClose.Location = new System.Drawing.Point(688, 36);
             this.BtnClose.Name = "BtnClose";
-            this.BtnClose.Size = new System.Drawing.Size(75, 25);
+            this.BtnClose.Size = new System.Drawing.Size(102, 21);
             this.BtnClose.TabIndex = 1;
             this.BtnClose.Text = "閉じる";
             this.BtnClose.UseVisualStyleBackColor = false;
             this.BtnClose.Click += new System.EventHandler(this.BtnClose_Click);
-            // 
-            // label1
-            // 
-            this.label1.Location = new System.Drawing.Point(0, 0);
-            this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(100, 23);
-            this.label1.TabIndex = 22;
             // 
             // txtHandle
             // 
@@ -87,7 +80,7 @@ namespace marcury_ext
             this.BtnStartSearch.BackColor = System.Drawing.Color.LightSkyBlue;
             this.BtnStartSearch.Location = new System.Drawing.Point(158, 36);
             this.BtnStartSearch.Name = "BtnStartSearch";
-            this.BtnStartSearch.Size = new System.Drawing.Size(75, 25);
+            this.BtnStartSearch.Size = new System.Drawing.Size(91, 21);
             this.BtnStartSearch.TabIndex = 14;
             this.BtnStartSearch.Text = "検索";
             this.BtnStartSearch.UseVisualStyleBackColor = false;
@@ -109,7 +102,7 @@ namespace marcury_ext
             this.dataGridViewDb.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
             this.dataGridViewDb.Location = new System.Drawing.Point(6, 19);
             this.dataGridViewDb.Name = "dataGridViewDb";
-            this.dataGridViewDb.Size = new System.Drawing.Size(784, 300);
+            this.dataGridViewDb.Size = new System.Drawing.Size(784, 283);
             this.dataGridViewDb.TabIndex = 16;
             // 
             // BtnDone
@@ -117,7 +110,7 @@ namespace marcury_ext
             this.BtnDone.BackColor = System.Drawing.Color.LightGreen;
             this.BtnDone.Location = new System.Drawing.Point(255, 36);
             this.BtnDone.Name = "BtnDone";
-            this.BtnDone.Size = new System.Drawing.Size(75, 25);
+            this.BtnDone.Size = new System.Drawing.Size(99, 21);
             this.BtnDone.TabIndex = 19;
             this.BtnDone.Text = "適用";
             this.BtnDone.UseVisualStyleBackColor = false;
@@ -156,7 +149,6 @@ namespace marcury_ext
             this.ClientSize = new System.Drawing.Size(813, 581);
             this.Controls.Add(this.groupBox2);
             this.Controls.Add(this.groupBox1);
-            this.Controls.Add(this.label1);
             this.Name = "FormExtract";
             this.Text = "特記サポート";
             this.Load += new System.EventHandler(this.FormExtract_Load);
@@ -173,7 +165,6 @@ namespace marcury_ext
 
         private System.Windows.Forms.TextBox txtResult;
         private System.Windows.Forms.Button BtnClose;
-        private System.Windows.Forms.Label label1;
         private System.Windows.Forms.TextBox txtHandle;
         private System.Windows.Forms.Button BtnStartSearch;
         private System.Windows.Forms.Label labelStatus;
