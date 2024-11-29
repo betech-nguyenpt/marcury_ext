@@ -153,7 +153,6 @@ namespace marcury_ext
             this.Name = "FormExtract";
             this.Text = "特記サポート";
             this.Load += new System.EventHandler(this.FormExtract_Load);
-            this.MouseClick += new System.Windows.Forms.MouseEventHandler(this.FormExtract_MouseClick);
             ((System.ComponentModel.ISupportInitialize)(this.dataGridViewDb)).EndInit();
             this.groupBoxControls.ResumeLayout(false);
             this.groupBoxControls.PerformLayout();
