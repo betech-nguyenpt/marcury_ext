@@ -82,6 +82,7 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="ThrowException\MarcuryExtractException.cs" />
     <Compile Include="ThrowException\UtilErrors.cs" />
+    <Compile Include="Utils\SizeControlslUI.cs" />
     <Compile Include="Utils\LevenshteinDistance.cs" />
     <EmbeddedResource Include="FrmLoadRichTb.resx">
       <DependentUpon>FrmLoadRichTb.cs</DependentUpon>

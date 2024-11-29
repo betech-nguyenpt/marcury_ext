@@ -13,6 +13,8 @@ namespace marcury_ext
         public FrmLoadRichTb(IntPtr targetHandle)
         {
             InitializeComponent();
+            // Keep this form top in windown
+            this.TopMost = true;
             handleTarget = targetHandle;
         }
 
