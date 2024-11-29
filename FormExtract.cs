@@ -135,7 +135,6 @@ namespace marcury_ext
                 m_handleTarget = handle;
                 string fullText = "";
                 if (handle == IntPtr.Zero) {
-                    labelStatus.Text = "Target form not found at mouse position.";
                     throw new MarcuryExtractException(UtilErrors.ERROR_HANDLE_ZERO, UtilErrors.GetErrorMessage(UtilErrors.ERROR_HANDLE_ZERO));
                 }
                 //WinApi.GetWindowText(handle, windowText, windowText.Capacity);
@@ -152,7 +151,6 @@ namespace marcury_ext
                 //txtResult.Text = $"Text: {textTarget}";
                 m_textTarget = fullText;   
                 txtResult.Text = $"Text: {fullText}";
-                labelStatus.Text = "Target form information retrieved!";
                 // Close OverlayForm after getting the handle
                 this.overlayForm.Close();
                 isSearchMode = false; // Turn off search mode
@@ -164,11 +162,13 @@ namespace marcury_ext
                 customCursor.IsSearching = isSearchMode;
                 customCursor.UpdateCursor();  // Update cursor in handle search mode: (currently not working) 
             } catch (MarcuryExtractException ex) {
+                labelStatus.Text = GetStatusMessage(ERROR_STATUS);
                 setStatus(ERROR_STATUS);
                 // TODO: write log file
                 Console.WriteLine($"Error code: {ex.ErrorCode}, Exception caught: {ex.Message}");
                 LoadFormRich(ex.ErrorCode);
             } catch (Exception ex) {
+                labelStatus.Text = GetStatusMessage(ERROR_STATUS);
                 setStatus(ERROR_STATUS);
                 // Print error information before rethrowing exception
                 Console.WriteLine($"Error code: {UtilErrors.ERROR_UNKNOW_CODE}, Exception caught: {ex.Message}");
@@ -198,7 +198,8 @@ namespace marcury_ext
         private void LoadFormRich(int errorCode)
         {
             frmTransparent = new FrmLoadRichTb(m_handleTarget);
-            if (errorCode == UtilErrors.SUCCESS) {            
+            if (errorCode == UtilErrors.SUCCESS) {
+                labelStatus.Text = GetStatusMessage(IN_UPDATING_STATUS);
                 // Move status in update Text
                 setStatus(IN_UPDATING_STATUS);           
                 frmTransparent.SetRichTextBoxText(m_textTarget);
@@ -287,23 +288,7 @@ namespace marcury_ext
 
                     // Change text in RichTextBox from indexStart to indexEnd
                     frmTransparent.UpdateTextOfLineRichTextBox(candidateText, textNeedEdit);
-
-                    /*// Get the entire text from a RichTextBox
-                    string updatedText = frmTransparent.GetDataRichTextBox();
-
-                    // Convert text to IntPtr for use with SendMessage
-                    IntPtr ptr = Marshal.StringToHGlobalUni(updatedText);
-
-                    // Send message to update text in m_handleTarget (TextBox)
-                    SendMessage(m_handleTarget, WM_SETTEXT, 0, ptr);
-
-                    // Free up memory
-                    Marshal.FreeHGlobal(ptr);*/
-                    // Call again becase content in RichTextBox changed TODO:
-                   // LevenshteinDistance.HandleLevenshtein(dataGridViewDb, frmTransparent.richTextBox, m_textTarget, txtDummy);
                 }            
-                /*// Once done, close and release frmTransparent
-                CloseFrmLoadRich();*/
             }
         }
 
@@ -382,16 +367,6 @@ namespace marcury_ext
         // Import library with IntPtr receiving version
         [DllImport("user32.dll", CharSet = CharSet.Unicode, SetLastError = true)]
         private static extern int SendMessage(IntPtr hWnd, int Msg, int wParam, IntPtr lParam);
-
-        /// <summary>
-        /// Append text to result textbox
-        /// </summary>
-        /// <param name="text">Text to append</param>
-        private void AppendTextToResult(String text)
-        {
-            txtResult.AppendText(text);
-            txtResult.AppendText(Environment.NewLine);
-        }
 
         /// <summary>
         /// Callback method used to collect a list of child windows we need to capture text from.
