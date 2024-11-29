@@ -1,6 +1,7 @@
 ﻿using System.Windows.Forms;
 using System;
 using marcury_ext.Utils;
+using System.Drawing;
 
 namespace marcury_ext
 {
@@ -39,11 +40,11 @@ namespace marcury_ext
             this.labelStatus = new System.Windows.Forms.Label();
             this.dataGridViewDb = new System.Windows.Forms.DataGridView();
             this.BtnDone = new System.Windows.Forms.Button();
-            this.groupBox1 = new System.Windows.Forms.GroupBox();
-            this.groupBox2 = new System.Windows.Forms.GroupBox();
+            this.groupBoxControls = new System.Windows.Forms.GroupBox();
+            this.groupBoxViewData = new System.Windows.Forms.GroupBox();
             ((System.ComponentModel.ISupportInitialize)(this.dataGridViewDb)).BeginInit();
-            this.groupBox1.SuspendLayout();
-            this.groupBox2.SuspendLayout();
+            this.groupBoxControls.SuspendLayout();
+            this.groupBoxViewData.SuspendLayout();
             this.SuspendLayout();
             // 
             // txtResult
@@ -92,9 +93,9 @@ namespace marcury_ext
             this.labelStatus.ForeColor = System.Drawing.Color.Red;
             this.labelStatus.Location = new System.Drawing.Point(360, 40);
             this.labelStatus.Name = "labelStatus";
-            this.labelStatus.Size = new System.Drawing.Size(52, 13);
+            this.labelStatus.Size = new System.Drawing.Size(63, 13);
             this.labelStatus.TabIndex = 15;
-            this.labelStatus.Text = "ステータス";
+            this.labelStatus.Text = "※ ステータス";
             // 
             // dataGridViewDb
             // 
@@ -116,47 +117,47 @@ namespace marcury_ext
             this.BtnDone.UseVisualStyleBackColor = false;
             this.BtnDone.Click += new System.EventHandler(this.BtnDone_Click);
             // 
-            // groupBox1
+            // groupBoxControls
             // 
-            this.groupBox1.Controls.Add(this.BtnDone);
-            this.groupBox1.Controls.Add(this.txtHandle);
-            this.groupBox1.Controls.Add(this.BtnClose);
-            this.groupBox1.Controls.Add(this.labelStatus);
-            this.groupBox1.Controls.Add(this.txtResult);
-            this.groupBox1.Controls.Add(this.BtnStartSearch);
-            this.groupBox1.ForeColor = System.Drawing.SystemColors.ActiveCaptionText;
-            this.groupBox1.Location = new System.Drawing.Point(9, 340);
-            this.groupBox1.Name = "groupBox1";
-            this.groupBox1.Size = new System.Drawing.Size(796, 229);
-            this.groupBox1.TabIndex = 21;
-            this.groupBox1.TabStop = false;
-            this.groupBox1.Text = "Function";
+            this.groupBoxControls.Controls.Add(this.BtnDone);
+            this.groupBoxControls.Controls.Add(this.txtHandle);
+            this.groupBoxControls.Controls.Add(this.BtnClose);
+            this.groupBoxControls.Controls.Add(this.labelStatus);
+            this.groupBoxControls.Controls.Add(this.txtResult);
+            this.groupBoxControls.Controls.Add(this.BtnStartSearch);
+            this.groupBoxControls.ForeColor = System.Drawing.SystemColors.ActiveCaptionText;
+            this.groupBoxControls.Location = new System.Drawing.Point(9, 340);
+            this.groupBoxControls.Name = "groupBoxControls";
+            this.groupBoxControls.Size = new System.Drawing.Size(796, 229);
+            this.groupBoxControls.TabIndex = 21;
+            this.groupBoxControls.TabStop = false;
+            this.groupBoxControls.Text = "Function";
             // 
-            // groupBox2
+            // groupBoxViewData
             // 
-            this.groupBox2.Controls.Add(this.dataGridViewDb);
-            this.groupBox2.Location = new System.Drawing.Point(9, 12);
-            this.groupBox2.Name = "groupBox2";
-            this.groupBox2.Size = new System.Drawing.Size(796, 308);
-            this.groupBox2.TabIndex = 23;
-            this.groupBox2.TabStop = false;
-            this.groupBox2.Text = "特記文候補検索";
+            this.groupBoxViewData.Controls.Add(this.dataGridViewDb);
+            this.groupBoxViewData.Location = new System.Drawing.Point(9, 12);
+            this.groupBoxViewData.Name = "groupBoxViewData";
+            this.groupBoxViewData.Size = new System.Drawing.Size(796, 308);
+            this.groupBoxViewData.TabIndex = 23;
+            this.groupBoxViewData.TabStop = false;
+            this.groupBoxViewData.Text = "特記文候補検索";
             // 
             // FormExtract
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(813, 581);
-            this.Controls.Add(this.groupBox2);
-            this.Controls.Add(this.groupBox1);
+            this.Controls.Add(this.groupBoxViewData);
+            this.Controls.Add(this.groupBoxControls);
             this.Name = "FormExtract";
             this.Text = "特記サポート";
             this.Load += new System.EventHandler(this.FormExtract_Load);
             this.MouseClick += new System.Windows.Forms.MouseEventHandler(this.FormExtract_MouseClick);
             ((System.ComponentModel.ISupportInitialize)(this.dataGridViewDb)).EndInit();
-            this.groupBox1.ResumeLayout(false);
-            this.groupBox1.PerformLayout();
-            this.groupBox2.ResumeLayout(false);
+            this.groupBoxControls.ResumeLayout(false);
+            this.groupBoxControls.PerformLayout();
+            this.groupBoxViewData.ResumeLayout(false);
             this.ResumeLayout(false);
 
         }
@@ -170,8 +171,43 @@ namespace marcury_ext
         private System.Windows.Forms.Label labelStatus;
         private System.Windows.Forms.DataGridView dataGridViewDb;
         private System.Windows.Forms.Button BtnDone;
-        private System.Windows.Forms.GroupBox groupBox1;
-        private GroupBox groupBox2;
+        private System.Windows.Forms.GroupBox groupBoxControls;
+        private GroupBox groupBoxViewData;
+
+        /// <summary>
+        /// CreateColumnsForDataGridView
+        /// </summary>
+        private void CreateColumnsForDataGridView()
+        {
+            // Add columns to DataGridView
+            dataGridViewDb.Columns.Add("原文", "原文");
+            dataGridViewDb.Columns.Add("一致率", "一致率");
+            dataGridViewDb.Columns.Add("候補", "候補");
+
+            // Add "適用" column as checkbox
+            DataGridViewCheckBoxColumn checkBoxColumn = new DataGridViewCheckBoxColumn();
+            checkBoxColumn.HeaderText = "適用";
+            checkBoxColumn.Name = "適用";
+            dataGridViewDb.Columns.Add(checkBoxColumn);
+
+            // Setup color for headers
+            dataGridViewDb.ColumnHeadersDefaultCellStyle.BackColor = Color.Purple; // Purple background
+            dataGridViewDb.ColumnHeadersDefaultCellStyle.ForeColor = Color.White;  // White text
+            dataGridViewDb.ColumnHeadersDefaultCellStyle.Font = new Font("Arial", 9, FontStyle.Bold); // Bold font
+            this.dataGridViewDb.ColumnHeadersDefaultCellStyle.Font = new Font("Arial", 9);
+            dataGridViewDb.ColumnHeadersDefaultCellStyle.Alignment = DataGridViewContentAlignment.MiddleCenter; // Căn giữa
+            dataGridViewDb.EnableHeadersVisualStyles = false; // Tắt visual styles mặc định
+            // Set column width
+            dataGridViewDb.Columns["原文"].Width = 300;
+            dataGridViewDb.Columns["一致率"].Width = 70;
+            dataGridViewDb.Columns["候補"].Width = 300;
+
+            // Assign events to DataGridView
+            dataGridViewDb.CellContentClick += DataGridViewDb_CellContentClick;
+            dataGridViewDb.CellValueChanged += DataGridViewDb_CellValueChanged;
+            // Change the height of the DataGridView
+            dataGridViewDb.Height = 280; // Customize the height of the DataGridView
+        }
     }
 }
 

@@ -16,15 +16,15 @@ namespace marcury_ext
     public partial class FormExtract : Form
     {
         private string txtDummy = "入力された2つの文章を比較し、差分チェックします。\r\n 発見された差分は以下のようにハイライト表示されます。\r\n・文字単位の比較を行い、変更部分を緑のハイライトで表示します。\r\n・文字単位の差分が発見された行番号を赤のハイライトで表示します。\r\n・改行や文章挿入箇所はグレーのハイライトが表示されます。";
-        private bool isDragging = false;
         private bool isSearchMode = false;
 
         // Step status
         public static int m_status = NOTHING_STATUS;
-        public static int NOTHING_STATUS = 0;
-        public static int START_EDIT_STATUS = 1;
-        public static int IN_UPDATING_STATUS = 2;
-        public static int END_UPDATED_STATUS = 3;
+        public const int ERROR_STATUS = -1;
+        public const int NOTHING_STATUS = 0;
+        public const int START_EDIT_STATUS = 1;
+        public const int IN_UPDATING_STATUS = 2;
+        public const int END_UPDATED_STATUS = 3;
 
         private OverlayForm overlayForm; // Declare overlayForm
         private CustomCursor customCursor; // Declare CustomCursor
@@ -58,7 +58,7 @@ namespace marcury_ext
         /// </summary>
         private void SetTitleBarColor()
         {
-            int color = 0x00FF00; // Mã màu xanh (RGB: 00FF00)
+            int color = 0x00FF00; // 青色のカラーコード (RGB: 00FF00)
             DwmSetWindowAttribute(this.Handle, 35, ref color, Marshal.SizeOf(color)); // 35 là mã thuộc tính màu
         }
 
@@ -82,13 +82,45 @@ namespace marcury_ext
                 customCursor.IsSearching = isSearchMode;
                 customCursor.UpdateCursor();  // Update cursor
                 this.overlayForm.MouseClick += OverlayForm_MouseClick;
-                labelStatus.Text = "Search mode is on! Click on any window to get the handle.";            
+                labelStatus.Text = GetStatusMessage(START_EDIT_STATUS);            
             } else {
                 // Close OverlayForm if search mode is off
                 customCursor.Dispose();  //Free custom cursor
                 this.overlayForm?.Close();
+                this.overlayForm.Dispose();
             }
         }
+
+        /// <summary>
+        /// Get Status Message
+        /// </summary>
+        /// <param name="statusCode"></param>
+        /// <returns></returns>
+        public string GetStatusMessage(int statusCodeNotice)
+        {
+            string message;
+
+            switch (statusCodeNotice) {
+                case START_EDIT_STATUS:
+                    message = "※ ハンドルを取得するには任意のウィンドウをクリックします.";
+                    break;
+                case IN_UPDATING_STATUS:
+                    message = "※ ターゲットフォーム情報が取得されました!";
+                    break;
+                case END_UPDATED_STATUS:
+                    message = "※ テキスト編集を終了!";
+                    break;
+                case ERROR_STATUS:
+                    message = "※ エラー。もう一度お試しください.";
+                    break;
+                default:
+                    message = "※ 無効なステータスコード.";
+                    break;
+            }
+
+            return message;
+        }
+
 
         /// <summary>
         /// Load OverLoadForm for get handle textbox target
@@ -118,7 +150,7 @@ namespace marcury_ext
                     //txtResult.Text = $"Text: {textTarget}";
                     textTarget = fullText;
                     txtResult.Text = $"Text: {fullText}";
-                    labelStatus.Text = "Target form information retrieved!";
+                    labelStatus.Text = GetStatusMessage(IN_UPDATING_STATUS);
                     handleTarget = handle; // Set value handle target SendMessage(handle, WM_SETTEXT, 0, this.textChangeFromMarExtra);
                     // Close OverlayForm after getting the handle
                     this.overlayForm.Close();
@@ -131,7 +163,7 @@ namespace marcury_ext
                     customCursor.IsSearching = isSearchMode;
                     customCursor.UpdateCursor();  // Update cursor in handle search mode: (currently not working) 
                 } else {
-                    labelStatus.Text = "Target form not found at mouse position.";
+                    labelStatus.Text = GetStatusMessage(ERROR_STATUS);
                     if (handle == IntPtr.Zero) UtilCheckError.GetErrorMessage(UtilCheckError.ERROR_HANDLE_ZERO);
                 }
             } catch (Exception) {
@@ -194,56 +226,14 @@ namespace marcury_ext
         }
 
         /// <summary>
-        /// Handle mouse click on form
-        /// </summary>
-        /// <param name="sender">Sender</param>
-        /// <param name="e">Event arguments</param>
-        private void FormExtract_MouseClick(object sender, MouseEventArgs e)
-        {
-            if (this.isDragging)
-            {
-                this.isDragging = false;
-                this.AppendTextToResult("Dragging mode is OFF");
-            }
-        }
-
-        /// <summary>
         /// FormExtract_Load
         /// </summary>
         /// <param name="sender">Sender</param>
         /// <param name="e">Event arguments</param>
         private void FormExtract_Load(object sender, EventArgs e)
         {
-            // Add columns to DataGridView
-            dataGridViewDb.Columns.Add("原文", "原文");
-            dataGridViewDb.Columns.Add("一致率", "一致率");
-            dataGridViewDb.Columns.Add("候補", "候補");
-
-            // Add "適用" column as checkbox
-            DataGridViewCheckBoxColumn checkBoxColumn = new DataGridViewCheckBoxColumn();
-            checkBoxColumn.HeaderText = "適用";
-            checkBoxColumn.Name = "適用";  // Tên cột là "適用"
-            dataGridViewDb.Columns.Add(checkBoxColumn);
-
-            // Setup color for headers
-            dataGridViewDb.ColumnHeadersDefaultCellStyle.BackColor = Color.Purple; // Nền màu tím
-            dataGridViewDb.ColumnHeadersDefaultCellStyle.ForeColor = Color.White;  // Chữ màu trắng
-            dataGridViewDb.ColumnHeadersDefaultCellStyle.Font = new Font("Arial", 12, FontStyle.Bold); // Font chữ in đậm
-            dataGridViewDb.ColumnHeadersDefaultCellStyle.Alignment = DataGridViewContentAlignment.MiddleCenter; // Căn giữa
-            dataGridViewDb.EnableHeadersVisualStyles = false; // Tắt visual styles mặc định
-            // Set column width
-            dataGridViewDb.Columns["原文"].Width = 300;
-            dataGridViewDb.Columns["一致率"].Width = 70;
-            dataGridViewDb.Columns["候補"].Width = 300;
-
-            // Assign events to DataGridView
-            dataGridViewDb.CellContentClick += DataGridViewDb_CellContentClick;         
-            dataGridViewDb.CellValueChanged += DataGridViewDb_CellValueChanged;
-            // Change the height of the DataGridView
-            dataGridViewDb.Height = 250; // Customize the height of the DataGridView
+            CreateColumnsForDataGridView();
         }
-
-        
 
         /// <summary>
         /// DataGridViewDb_CellContentClick
@@ -342,6 +332,7 @@ namespace marcury_ext
             Marshal.FreeHGlobal(ptr);
 
             // Update status and close the form
+            labelStatus.Text = GetStatusMessage(END_UPDATED_STATUS);
             setStatus(END_UPDATED_STATUS);
             CloseFrmLoadRich();
         }
