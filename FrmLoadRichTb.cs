@@ -9,9 +9,12 @@ namespace marcury_ext
     {
         private IntPtr handleTarget;
         public RichTextBox richTextBox;
+        public bool IsNotLimitSize { get; set; } = true; // Variable to check for size limit.
         public FrmLoadRichTb(IntPtr targetHandle)
         {
             InitializeComponent();
+            // Keep this form top in windown
+            this.TopMost = true;
             handleTarget = targetHandle;
         }
 
@@ -21,17 +24,30 @@ namespace marcury_ext
             RECT rect;
             if (GetWindowRect(handleTarget, out rect)) {
                 // Form configuration
-                this.FormBorderStyle = FormBorderStyle.None;
+                //this.FormBorderStyle = FormBorderStyle.None;
                 this.StartPosition = FormStartPosition.Manual;
                 this.Top = rect.Top;
                 this.Left = rect.Left;
-                this.Width = rect.Right - rect.Left;
-                this.Height = rect.Bottom - rect.Top;
+               /* this.Width = rect.Right - rect.Left;
+                this.Height = rect.Bottom - rect.Top;*/
+                if (!IsNotLimitSize) {
+                    // Limit form size if IsLimitSize is true
+                    this.FormBorderStyle = FormBorderStyle.FixedSingle;
+                    this.MaximizeBox = false;
+                    this.MinimizeBox = false;
+                    this.Width = 400;
+                    this.Height = 100;
+                } else {
+                    // Unlimited, use original size
+                    this.FormBorderStyle = FormBorderStyle.None;
+                    this.Width = rect.Right - rect.Left;
+                    this.Height = rect.Bottom - rect.Top;
+                }
 
-               /* // Set background color and transparency
-                this.BackColor = Color.Lime; // The background color will be transparent.
-                this.TransparencyKey = Color.Lime; // Specify transparent background color
-                this.Opacity = 0.8; // Form transparency*/
+                /* // Set background color and transparency
+                 this.BackColor = Color.Lime; // The background color will be transparent.
+                 this.TransparencyKey = Color.Lime; // Specify transparent background color
+                 this.Opacity = 0.8; // Form transparency*/
             } else {
                 MessageBox.Show("Cannot get TextBox position information from handle.");
                 this.Close(); // Close the form

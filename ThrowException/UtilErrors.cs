@@ -2,30 +2,43 @@
 using System.Collections.Generic;
 using System.Windows.Automation;
 
-namespace marcury_ext.Utils
+namespace marcury_ext.ThrowException
 {
-    internal class UtilCheckError
+    internal class UtilErrors
     {
         // Error codes
-        public const int NOT_ERROR = 0;
+        public const int SUCCESS = 0;
         public const int ERROR_HANDLE_ZERO = 1;
- 
-        public const int ERROR_UTOMATION_TARGET_NULL = 2;
+
+        public const int ERROR_AUTOMATION_TARGET_NULL = 2;
         public const int ERROR_AUTOMATION_PROPERTY_DISABLED = 3;
         public const int ERROR_HANDLE_TARGET_NOT_EDIT = 4;
         public const int ERROR_UNKNOW_CODE = 100;
 
         public const string TextBoxForTest = "textBox2";
+        //Declare readonly list of ControlTypes
+        private static readonly List<ControlType> controlTypeCanNotEditList = new List<ControlType>
+        {
+            ControlType.Window,
+            ControlType.Button,
+            ControlType.CheckBox,
+            ControlType.RadioButton,
+            ControlType.ComboBox,
+            ControlType.List,
+            ControlType.Image,
+            ControlType.Slider,
+            ControlType.Tab
+        };
 
         /// <summary>
         ///  Dictionary containing error codes and corresponding error messages
         /// </summary>
         public static readonly Dictionary<int, string> ErrorMessages = new Dictionary<int, string>
         {
-            { NOT_ERROR, "エラーはありません" }, // NOT_ERROR
+            { SUCCESS, "エラーはありません" }, // NOT_ERROR
             { ERROR_HANDLE_ZERO, "エラー ハンドルが見つかりません" }, // ERROR_HANDLE_ZERO
             { ERROR_HANDLE_TARGET_NOT_EDIT, "制御対象を編集しない" }, // ERROR_HANDLE_TARGET_NOT_EDIT
-            { ERROR_UTOMATION_TARGET_NULL, "ERROR: 自動化要素のターゲットが空です" }, // AUTOMATION_TARGET_NULL
+            { ERROR_AUTOMATION_TARGET_NULL, "ERROR: 自動化要素のターゲットが空です" }, // AUTOMATION_TARGET_NULL
             { ERROR_AUTOMATION_PROPERTY_DISABLED, "ERROR: エラー オートメーション要素プロパティが無効です" }, // AUTOMATION_PROPERTY_DISABLED
             { ERROR_UNKNOW_CODE, "ERROR: 未知のエラーコードです。" } // UNKNOW_ERROR_CODE
         };
@@ -49,17 +62,16 @@ namespace marcury_ext.Utils
         /// </summary>
         /// <param name="autoElement"></param>
         /// <returns></returns>
-        public static int CheckAutomationElement(AutomationElement autoElement)
+        public static void CheckAutomationElement(AutomationElement autoElement)
         {
-            int error = NOT_ERROR;
             // Check autoElement
-            if (autoElement is null) error = ERROR_UTOMATION_TARGET_NULL;
+            if (autoElement is null) throw new MarcuryExtractException(ERROR_AUTOMATION_TARGET_NULL, GetErrorMessage(ERROR_HANDLE_ZERO));
             // if # null check isEnabled
             bool isEnabled = (bool)autoElement.GetCurrentPropertyValue(System.Windows.Automation.AutomationElement.IsEnabledProperty);
-            if (!isEnabled) error = ERROR_AUTOMATION_PROPERTY_DISABLED;
+            if (!isEnabled) throw new MarcuryExtractException(ERROR_AUTOMATION_PROPERTY_DISABLED, GetErrorMessage(ERROR_AUTOMATION_PROPERTY_DISABLED));
 
-            if (!IsControlTypeEditOrDocument(autoElement)) error = ERROR_HANDLE_TARGET_NOT_EDIT;
-            return error;
+            // Check case ControlType not edit text
+            if (IsControlTypeCanNotEditText(autoElement)) throw new MarcuryExtractException(ERROR_HANDLE_TARGET_NOT_EDIT, GetErrorMessage(ERROR_HANDLE_TARGET_NOT_EDIT));
         }
 
         /// <summary>
@@ -68,7 +80,7 @@ namespace marcury_ext.Utils
         /// <param name="handleTarget"></param>
         /// <returns></returns>
         public static bool CheckIfTextBoxSupportsUIAutomation(IntPtr handleTarget)
-        {
+        { 
             try {
                 // Get AutomationElement from TextBox handle
                 AutomationElement autoElement = AutomationElement.FromHandle(handleTarget);
@@ -90,13 +102,10 @@ namespace marcury_ext.Utils
         /// </summary>
         /// <param name="handle"></param>
         /// <returns></returns>
-        public static bool IsControlTypeEditOrDocument(AutomationElement autoElement)
+        public static bool IsControlTypeCanNotEditText(AutomationElement autoElement)
         {
             // Check if ControlType is Edit or Document
-            if (autoElement != null) {
-               if ((autoElement.Current.ControlType == ControlType.Edit) || (autoElement.Current.ControlType == ControlType.Document)) { return true; }
-            }
-            return false ;
+            return controlTypeCanNotEditList.Contains(autoElement.Current.ControlType);
         }
     }
 }

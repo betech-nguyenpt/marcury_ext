@@ -1,4 +1,7 @@
-﻿namespace marcury_ext
+﻿using System.Drawing;
+using System.Windows.Forms;
+
+namespace marcury_ext
 {
     partial class FrmLoadRichTb
     {
@@ -35,18 +38,18 @@
             this.richTxtCopyText.Location = new System.Drawing.Point(-2, 2);
             this.richTxtCopyText.Name = "richTxtCopyText";
             this.richTxtCopyText.Size = new System.Drawing.Size(802, 255);
+            this.richTxtCopyText.Font = new Font("Segoe UI", 9, FontStyle.Regular);
             this.richTxtCopyText.TabIndex = 0;
             this.richTxtCopyText.Text = "";
             this.richTxtCopyText.TextChanged += new System.EventHandler(this.richTxtCopyText_TextChanged);
             // 
-            // frmLoadRichTb
+            // FrmLoadRichTb
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(802, 260);
             this.Controls.Add(this.richTxtCopyText);
-            this.Name = "frmLoadRichTb";
-            this.Text = "frmLoadRichTb";
+            this.Name = "FrmLoadRichTb";
             this.Load += new System.EventHandler(this.frmLoadRichTb_Load);
             this.ResumeLayout(false);
 
