@@ -9,13 +9,22 @@ namespace marcury_ext
     {
         private IntPtr handleTarget;
         public RichTextBox richTextBox;
-        public bool IsNotLimitSize { get; set; } = true; // Variable to check for size limit.
+        private FormBeExtract formMain;
+        public bool IsNotLimitSize;
         public FrmLoadRichTb(IntPtr targetHandle)
         {
             InitializeComponent();
             // Keep this form top in windown
             this.TopMost = true;
             handleTarget = targetHandle;
+        }
+        public FrmLoadRichTb(IntPtr targetHandle, FormBeExtract frmExtract)
+        {
+            InitializeComponent();
+            // Keep this form top in windown
+            this.TopMost = true;
+            handleTarget = targetHandle;
+            formMain = frmExtract;
         }
 
         private void frmLoadRichTb_Load(object sender, EventArgs e)
@@ -33,13 +42,13 @@ namespace marcury_ext
                 if (!IsNotLimitSize) {
                     // Limit form size if IsLimitSize is true
                     this.FormBorderStyle = FormBorderStyle.FixedSingle;
-                    this.MaximizeBox = false;
-                    this.MinimizeBox = false;
-                    this.Width = 400;
-                    this.Height = 100;
+                    this.MaximizeBox = true;
+                    this.MinimizeBox = true;
+                    this.Width = 360;
+                    this.Height = 400;
                 } else {
                     // Unlimited, use original size
-                    this.FormBorderStyle = FormBorderStyle.None;
+                    //this.FormBorderStyle = FormBorderStyle.None;
                     this.Width = rect.Right - rect.Left;
                     this.Height = rect.Bottom - rect.Top;
                 }
@@ -83,8 +92,7 @@ namespace marcury_ext
         public void SetRichTextBoxText(string text)
         {
             richTxtCopyText.Text = text;
-            // Make sure RichTextBox is not transparent
-            richTxtCopyText.BackColor = Color.LightBlue;
+            // Make sure RichTextBox is not transparent         
             richTxtCopyText.ReadOnly = true;
         }
 
@@ -105,7 +113,7 @@ namespace marcury_ext
         /// <param name="oldText"></param>
         public void UpdateTextOfLineRichTextBox(string newText, string oldText)
         {
-            if (FormExtract.getStatus() == FormExtract.IN_UPDATING_STATUS) {
+           /* if (FormExtract.getStatus() == FormExtract.IN_UPDATING_STATUS) {
                 string textCurrent = richTxtCopyText.Text;
                 // Check if textb exists in texta
                 if (textCurrent.Contains(oldText)) {
@@ -114,7 +122,15 @@ namespace marcury_ext
                 } else {
                     Console.WriteLine("The text to replace was not found.");
                 }
-            }           
+            }*/
+            string textCurrent = richTxtCopyText.Text;
+            // Check if textb exists in texta
+            if (textCurrent.Contains(oldText)) {
+                // Replace textb with textupdate
+                richTxtCopyText.Text = textCurrent.Replace(oldText, newText);
+            } else {
+                Console.WriteLine("The text to replace was not found.");
+            }
         }
 
         /// <summary>
@@ -124,6 +140,27 @@ namespace marcury_ext
         public string GetDataRichTextBox()
         {
             return richTxtCopyText.Text;
+        }
+
+        /// <summary>
+        /// Send updated data from RichTextBox to TextBox and close the form
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void btnUpdate_Click(object sender, EventArgs e)
+        {
+            formMain.UpdateContentForTextBoxOriginAndCloseFormLoad();
+        }
+
+        /// <summary>
+        /// Send updated data from RichTextBox to TextBox and close the form
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void btnCancel_Click(object sender, EventArgs e)
+        {
+            formMain.CloseFrmLoadRich();
+            formMain.CloseFrmShop();
         }
     }
 }

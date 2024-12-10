@@ -5,13 +5,13 @@ using System.Drawing;
 using System.Linq;
 using System.Windows.Forms;
 using DiffPlex.Chunkers;
+using System.IO;
+using System.Reflection;
 
 namespace marcury_ext.Utils
 {
     internal class LevenshteinDistance
     {
-        /*public static Dictionary<string, List<int>> HighLightPositionstKeyStringDb = new Dictionary<string, List<int>>();
-        public static Dictionary<string, List<int>> HighLightPositionstKeyStringTarget = new Dictionary<string, List<int>>();*/
         /// <summary>
         /// HandleLevenshtein
         /// </summary>
@@ -23,6 +23,105 @@ namespace marcury_ext.Utils
         {
             /*HighLightPositionstKeyStringDb.Clear();
             HighLightPositionstKeyStringTarget.Clear();*/
+            // Separate lines
+            var targetLines = txtTarget.Split(new[] { "\r\n" }, StringSplitOptions.None);
+            var dbLines = txtDb.Split(new[] { "\r\n" }, StringSplitOptions.None);
+
+            Color clA = Color.FromArgb(255, 240, 255, 255); // Xanh lá chuối tối xạm
+            Color clB = Color.FromArgb(255, 245, 245, 220); // Màu xen kẽ với clA
+            string imagePath = @"Images\selectImg.png"; // Đường dẫn tuyệt đối
+            Image selectImg = Image.FromFile(imagePath);  // Đọc hình ảnh từ file
+            imagePath = @"Images\unselectImg.png"; // Đường dẫn tuyệt đối
+            Image unselectImg = Image.FromFile(imagePath);  // Đọc hình ảnh từ file
+            imagePath = @"Images\btnRefer.png"; // Đường dẫn tuyệt đối
+            Image referenceImg = Image.FromFile(imagePath);  // Đọc hình ảnh từ file
+            // Compare each row in txtTarget with the rows in txtDb
+            int colorOder = 0;
+            foreach (var targetLine in targetLines) {
+                if (targetLine.Length <= 0) continue;
+                var results = new List<(string dbLine, double similarity)>();
+                foreach (var dbLine in dbLines) {
+                    double similarity = ComputeSimilarity(targetLine, dbLine);
+                    results.Add((dbLine, similarity));
+                }
+
+                // Take the 3 lines with the highest similarity
+                var topMatches = results.OrderByDescending(r => r.similarity).Take(1).ToList();
+                //var topMatches = results.OrderByDescending(r => r.similarity).Take(3).ToList();
+                // AddOriginalDataToRichTextBoxAndHighLight(richTxtCopyText, targetLine, topMatches[0].dbLine); // Old not use
+                HighlightDifferences(richTxtCopyText, targetLine, topMatches[0].dbLine);
+
+                // Add data to DataGridView
+                //bool isFirstRowInGroup = true;
+              
+                foreach (var match in topMatches) {
+                    int rowIndex = dataGridViewDb.Rows.Add();
+                    var row = dataGridViewDb.Rows[rowIndex];
+
+                    // Add plain text (no color) data to DataGridView
+                    //row.Cells["dgvCol1"].Value = targetLine;
+                    row.Cells["dgvCol1"].Value = targetLine;
+                    string formattedValue = ((int)Math.Round(match.similarity)).ToString() + "%";
+                    row.Cells["dgvCol5"].Value = formattedValue;
+                    row.Cells["dgvCol6"].Value = match.dbLine;
+                    if (formattedValue.Equals("100%")) {
+                        row.Cells["dgvCol3"].Value = selectImg;
+                        row.Cells["dgvCol4"].Value = selectImg;
+                        row.Cells["dgvCol7"].Value = selectImg;
+                    } else {
+                        row.Cells["dgvCol3"].Value = unselectImg;
+                        row.Cells["dgvCol4"].Value = unselectImg;
+                        row.Cells["dgvCol7"].Value = unselectImg;
+                    }
+                    row.Cells["dgvCol9"].Value = targetLine;
+                    row.Cells["dgvCol10"].Value = referenceImg;
+
+                    // Xen kẽ màu nền
+                    if (colorOder % 2 == 1)  // Dòng lẻ
+                    {
+                        row.Cells["dgvCol2"].Value = selectImg; // TODO: 
+                        /* // Lấy đường dẫn tài nguyên nhúng
+                         var assembly = Assembly.GetExecutingAssembly();
+                         var resourceName = "marcury_extract.Images.imgSelect.png"; // Tên tài nguyên nhúng
+
+                         // Lấy hình ảnh từ tài nguyên nhúng
+                         using (Stream stream = assembly.GetManifestResourceStream(resourceName)) {
+                             if (stream != null) {
+                                 Image iamge = Image.FromStream(stream);
+                                 // Sử dụng hình ảnh img (ví dụ chèn vào DataGridView)
+                                 dataGridViewDb.Rows.Add(); // Thêm dòng mới vào DataGridView
+                                 dataGridViewDb.Rows[0].Cells["ImageColumn"].Value = img;  // Chèn hình ảnh vào cột
+                             } else {
+                                 MessageBox.Show("Hình ảnh không tìm thấy.");
+                             }
+                         }*/
+                    } else {
+                        row.DefaultCellStyle.BackColor = clB;
+                        row.Cells["dgvCol2"].Value = unselectImg;
+                    }
+                    var cell = dataGridViewDb.Rows[rowIndex].Cells["dgvCol6"];
+                    //HighlightDifferences(cell, topMatches[0].dbLine, targetLine);
+
+                    colorOder++;
+
+                   /* if (!isFirstRowInGroup) {
+                        // Hide values ​​in "原文" column but keep data
+                        row.Cells["原文"].Style.ForeColor = Color.Transparent;
+                        row.Cells["原文"].Style.SelectionForeColor = Color.Transparent;
+
+                        // If you want to hide the entire row, use the following line instead:
+                        // row.Visible = false;
+                    }
+
+                    isFirstRowInGroup = false;*/
+                }
+            }
+        }
+
+       /* public static void HandleLevenshtein(DataGridView dataGridViewDb, RichTextBox richTxtCopyText, string txtTarget, string txtDb)
+        {
+            *//*HighLightPositionstKeyStringDb.Clear();
+            HighLightPositionstKeyStringTarget.Clear();*//*
             // Separate lines
             var targetLines = txtTarget.Split(new[] { "\r\n" }, StringSplitOptions.None);
             var dbLines = txtDb.Split(new[] { "\r\n" }, StringSplitOptions.None);
@@ -79,7 +178,7 @@ namespace marcury_ext.Utils
 
                 lineGroup++;
             }
-        }
+        }*/
 
         /// <summary>
         /// Add original data to RichTextBoxAndHighLight
@@ -197,5 +296,66 @@ namespace marcury_ext.Utils
             }
             richTextBox.AppendText(Environment.NewLine);
         }
-    }  
+
+        public static void HighlightDifferences(object target, string textNeedHightLight, string textCompare)
+        {
+            var dmp = new Differ();
+            var chunker = new CharacterChunker(); // Sử dụng CharacterChunker
+            var diff = dmp.CreateDiffs(textNeedHightLight, textCompare, false, false, chunker);
+
+            int currentIndex = 0;
+
+            foreach (var block in diff.DiffBlocks) {
+                // Add unchanged paragraph
+                if (block.DeleteStartA > currentIndex) {
+                    string unchanged = textNeedHightLight.Substring(currentIndex, block.DeleteStartA - currentIndex);
+                    AppendToTarget(target, unchanged, false);
+                }
+
+                if (block.DeleteCountA > 0) {
+                    string deletedPart = textNeedHightLight.Substring(block.DeleteStartA, block.DeleteCountA);
+
+                    // Highlight and darken the background
+                    AppendToTarget(target, deletedPart, true);
+                }
+
+                // Update current index
+                currentIndex = block.DeleteStartA + block.DeleteCountA;
+            }
+
+            // Add the last paragraph if missing
+            if (currentIndex < textNeedHightLight.Length) {
+                AppendToTarget(target, textNeedHightLight.Substring(currentIndex), false);
+            }
+        }
+
+        private static void AppendToTarget(object target, string text, bool highlight)
+        {
+            if (target is RichTextBox rtb) {
+                // Nếu target là RichTextBox, thực hiện việc highlight
+                if (highlight) {
+                    rtb.SelectionColor = Color.Green;
+                    rtb.SelectionBackColor = Color.Yellow;
+                    rtb.SelectionFont = new Font(rtb.Font, FontStyle.Bold);
+                }
+
+                rtb.AppendText(text);
+
+                if (highlight) {
+                    rtb.SelectionColor = rtb.ForeColor;
+                    rtb.SelectionBackColor = rtb.BackColor;
+                    rtb.SelectionFont = rtb.Font;
+                }
+            } else if (target is DataGridViewCell cell) {
+                // Nếu target là DataGridViewCell, chúng ta sẽ highlight trong cell
+                var cellValue = cell.FormattedValue?.ToString();
+                if (cellValue != null && cellValue.Contains(text)) {
+                    // Highlight trực tiếp trong cell bằng cách vẽ lại
+                    cell.Style.ForeColor = Color.Green;
+                    cell.Style.BackColor = Color.Yellow;
+                }
+            }
+        }
+
+    }
 }
