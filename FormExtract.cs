@@ -129,7 +129,7 @@ namespace marcury_ext
                 //m_textTarget = windowText.ToString();
                 //txtResult.Text = $"Text: {textTarget}";
                 m_textTarget = fullText;   
-                txtResult.Text = $"Text: {fullText}";
+               /* txtResult.Text = $"Text: {fullText}";*/
                 labelStatus.Text = "Target form information retrieved!";
                 // Close OverlayForm after getting the handle
                 this.overlayForm.Close();
@@ -160,11 +160,9 @@ namespace marcury_ext
         /// </summary>
         private void Handlelevenshtein()
         {
-            //Clear old content on DataGridView and RichTextBox
-            dataGridViewDb.Rows.Clear();
             frmTransparent.richTextBox.Clear();
             // Calculator Levenshtein after load Form have richTextBox
-            LevenshteinDistance.HandleLevenshtein(dataGridViewDb, frmTransparent.richTextBox, m_textTarget, txtDummy);
+            LevenshteinDistance.HandleLevenshtein(frmTransparent.richTextBox, m_textTarget, txtDummy);
         }
 
         [DllImport("user32.dll")]
@@ -211,20 +209,6 @@ namespace marcury_ext
         {
             // Quit application
             Application.Exit();
-        }
-
-        /// <summary>
-        /// Handle click Get text data button
-        /// </summary>
-        /// <param name="sender">Sender</param>
-        /// <param name="e">Event arguments</param>
-        private void BtnGetTextData_Click(object sender, EventArgs e)
-        {
-            var allText = GetAllTextFromWindowByTitle("FormMarcury");
-            this.AppendTextToResult(allText.ToString());
-            // Turn on dragging mode
-            //this.isDragging = true;
-            //this.AppendTextToResult("Dragging mode is ON");
         }
 
         /// <summary>
@@ -294,7 +278,7 @@ namespace marcury_ext
             if (this.isDragging)
             {
                 this.isDragging = false;
-                this.AppendTextToResult("Dragging mode is OFF");
+                //this.AppendTextToResult("Dragging mode is OFF");
             }
         }
 
@@ -305,98 +289,9 @@ namespace marcury_ext
         /// <param name="e">Event arguments</param>
         private void FormExtract_Load(object sender, EventArgs e)
         {
-            // Add columns to DataGridView
-            dataGridViewDb.Columns.Add("原文", "原文");
-            dataGridViewDb.Columns.Add("一致率", "一致率");
-            dataGridViewDb.Columns.Add("候補", "候補");
-
-            // Add "適用" column as checkbox
-            DataGridViewCheckBoxColumn checkBoxColumn = new DataGridViewCheckBoxColumn();
-            checkBoxColumn.HeaderText = "適用";
-            checkBoxColumn.Name = "適用";  // Tên cột là "適用"
-            dataGridViewDb.Columns.Add(checkBoxColumn);
-
-            // Setup color for headers
-            dataGridViewDb.ColumnHeadersDefaultCellStyle.BackColor = Color.Purple; // Nền màu tím
-            dataGridViewDb.ColumnHeadersDefaultCellStyle.ForeColor = Color.White;  // Chữ màu trắng
-            dataGridViewDb.ColumnHeadersDefaultCellStyle.Font = new Font("Arial", 12, FontStyle.Bold); // Font chữ in đậm
-            dataGridViewDb.ColumnHeadersDefaultCellStyle.Alignment = DataGridViewContentAlignment.MiddleCenter; // Căn giữa
-            dataGridViewDb.EnableHeadersVisualStyles = false; // Tắt visual styles mặc định
-            // Set column width
-            dataGridViewDb.Columns["原文"].Width = 300;
-            dataGridViewDb.Columns["一致率"].Width = 70;
-            dataGridViewDb.Columns["候補"].Width = 300;
-
-            // Assign events to DataGridView
-            dataGridViewDb.CellContentClick += DataGridViewDb_CellContentClick;         
-            dataGridViewDb.CellValueChanged += DataGridViewDb_CellValueChanged;
-            // Change the height of the DataGridView
-            dataGridViewDb.Height = 250; // Customize the height of the DataGridView
+           
         }
-
-        
-
-        /// <summary>
-        /// DataGridViewDb_CellContentClick
-        /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
-        private void DataGridViewDb_CellContentClick(object sender, DataGridViewCellEventArgs e)
-        {
-            if (getStatus() == IN_UPDATING_STATUS) {
-                // Check if the clicked cell is a checkbox of the "適用" column
-                if (e.ColumnIndex == dataGridViewDb.Columns["適用"].Index && e.RowIndex >= 0) {
-                    // Get the current value of a cell
-                    var cellValue = dataGridViewDb.Rows[e.RowIndex].Cells["適用"].Value;
-
-                    // Check if value is null, set default value to false
-                    if (cellValue == null || !(cellValue is bool)) {
-                        dataGridViewDb.Rows[e.RowIndex].Cells["適用"].Value = true; // Check checkbox on click
-                    } else {
-                        // Otherwise, reverse the checkbox state
-                        dataGridViewDb.Rows[e.RowIndex].Cells["適用"].Value = !(bool)cellValue;
-                    }
-                }
-            }
-        }
-
-        /// <summary>
-        /// DataGridViewDb_CellValueChanged
-        /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
-        private void DataGridViewDb_CellValueChanged(object sender, DataGridViewCellEventArgs e)
-        {
-            // Check if the changed cell is a column checkbox
-            if (e.ColumnIndex == dataGridViewDb.Columns["適用"].Index && e.RowIndex >= 0) {
-                bool isChecked = (bool)dataGridViewDb.Rows[e.RowIndex].Cells["適用"].Value;
-
-                if (isChecked) {
-                    // Get value from column "候補" (column 3, index 2)
-                    string candidateText = dataGridViewDb.Rows[e.RowIndex].Cells["候補"].Value.ToString();
-                    string textNeedEdit = dataGridViewDb.Rows[e.RowIndex].Cells["原文"].Value.ToString();
-
-                    // Change text in RichTextBox from indexStart to indexEnd
-                    frmTransparent.UpdateTextOfLineRichTextBox(candidateText, textNeedEdit);
-
-                    /*// Get the entire text from a RichTextBox
-                    string updatedText = frmTransparent.GetDataRichTextBox();
-
-                    // Convert text to IntPtr for use with SendMessage
-                    IntPtr ptr = Marshal.StringToHGlobalUni(updatedText);
-
-                    // Send message to update text in m_handleTarget (TextBox)
-                    SendMessage(m_handleTarget, WM_SETTEXT, 0, ptr);
-
-                    // Free up memory
-                    Marshal.FreeHGlobal(ptr);*/
-                    // Call again becase content in RichTextBox changed TODO:
-                   // LevenshteinDistance.HandleLevenshtein(dataGridViewDb, frmTransparent.richTextBox, m_textTarget, txtDummy);
-                }            
-                /*// Once done, close and release frmTransparent
-                CloseFrmLoadRich();*/
-            }
-        }
+     
 
         /// <summary>
         /// Send updated data from RichTextBox to TextBox and close the form
@@ -413,7 +308,7 @@ namespace marcury_ext
         /// </summary>
         private void UpdateContentForTextBoxOriginAndCloseFormLoad()
         {
-            if (getStatus() == ERROR_STATUS || getStatus() != IN_UPDATING_STATUS) {
+            /*if (getStatus() == ERROR_STATUS || getStatus() != IN_UPDATING_STATUS) {
                 // Do nothing
             } else {
                 // Get the entire text from a RichTextBox and normalize line breaks
@@ -437,7 +332,7 @@ namespace marcury_ext
             }
             // Update status and close the form
             setStatus(END_UPDATED_STATUS);
-            CloseFrmLoadRich();
+            CloseFrmLoadRich();*/
         }
 
         /// <summary>
@@ -473,18 +368,7 @@ namespace marcury_ext
         [DllImport("user32.dll", CharSet = CharSet.Unicode, SetLastError = true)]
         private static extern int SendMessage(IntPtr hWnd, int Msg, int wParam, IntPtr lParam);
 
-
-        /// <summary>
-        /// Handle click Get string distance button
-        /// </summary>
-        /// <param name="sender">Sender</param>
-        /// <param name="e">Event arguments</param>
-        private void BtnHighLight_Click(object sender, EventArgs e)
-        {
-            LevenshteinDistance.HighlightDifferences(RichTextBoxHighLight, RichTextBoxHighLight.Text, TextBoxDB.Text);
-        }
-
-        /// <summary>
+       /* /// <summary>
         /// Append text to result textbox
         /// </summary>
         /// <param name="text">Text to append</param>
@@ -493,7 +377,7 @@ namespace marcury_ext
             txtResult.AppendText(text);
             txtResult.AppendText(Environment.NewLine);
         }
-
+*/
         /// <summary>
         /// Callback method used to collect a list of child windows we need to capture text from.
         /// </summary>
@@ -626,6 +510,11 @@ namespace marcury_ext
         private static extern IntPtr SendMessage(IntPtr hWnd, uint msg, IntPtr wParam, [Out] StringBuilder lParam);
 
         private void TBXStr1_TextChanged(object sender, EventArgs e)
+        {
+
+        }
+
+        private void label1_Click(object sender, EventArgs e)
         {
 
         }

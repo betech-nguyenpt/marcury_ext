@@ -19,7 +19,7 @@ namespace marcury_ext.Utils
         /// <param name="richTxtCopyText"></param>
         /// <param name="txtTarget"></param>
         /// <param name="txtDb"></param>
-        public static void HandleLevenshtein(DataGridView dataGridViewDb, RichTextBox richTxtCopyText, string txtTarget, string txtDb)
+        public static void HandleLevenshtein(RichTextBox richTxtCopyText, string txtTarget, string txtDb)
         {
             /*HighLightPositionstKeyStringDb.Clear();
             HighLightPositionstKeyStringTarget.Clear();*/
@@ -28,7 +28,7 @@ namespace marcury_ext.Utils
             var dbLines = txtDb.Split(new[] { "\r\n" }, StringSplitOptions.None);
 
             // Compare each row in txtTarget with the rows in txtDb
-            int lineGroup = 0;
+            //int lineGroup = 0;
             foreach (var targetLine in targetLines) {
                 if (targetLine.Length <= 0) continue;
                 var results = new List<(string dbLine, double similarity)>();
@@ -41,43 +41,7 @@ namespace marcury_ext.Utils
                 var topMatches = results.OrderByDescending(r => r.similarity).Take(3).ToList();
                 // AddOriginalDataToRichTextBoxAndHighLight(richTxtCopyText, targetLine, topMatches[0].dbLine); // Old not use
                 HighlightDifferences(richTxtCopyText, targetLine, topMatches[0].dbLine);
-
-                // Add data to DataGridView
-                bool isFirstRowInGroup = true;
-                int colorOder = 0;
-                foreach (var match in topMatches) {
-                    int rowIndex = dataGridViewDb.Rows.Add();
-                    var row = dataGridViewDb.Rows[rowIndex];
-
-                    // Add plain text (no color) data to DataGridView
-                    row.Cells["原文"].Value = targetLine;
-                    row.Cells["一致率"].Value = $"{match.similarity:F2}%";
-                    row.Cells["候補"].Value = match.dbLine;
-
-                    colorOder++;
-                    if (colorOder == 1) {
-                        row.DefaultCellStyle.BackColor = Color.LightSalmon; // Light orange
-                    }
-                    // 2nd and 3rd lines (light purple)
-                    else if (colorOder == 2) {
-                        row.DefaultCellStyle.BackColor = Color.Lavender; // Light purple
-                    } else if (colorOder == 3) {
-                        row.DefaultCellStyle.BackColor = Color.Thistle; // Lighter purple
-                    }
-
-                    if (!isFirstRowInGroup) {
-                        // Hide values ​​in "原文" column but keep data
-                        row.Cells["原文"].Style.ForeColor = Color.Transparent;
-                        row.Cells["原文"].Style.SelectionForeColor = Color.Transparent;
-
-                        // If you want to hide the entire row, use the following line instead:
-                        // row.Visible = false;
-                    }
-
-                    isFirstRowInGroup = false;
-                }
-
-                lineGroup++;
+                //lineGroup++;
             }
         }
 
