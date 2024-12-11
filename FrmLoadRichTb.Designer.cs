@@ -46,6 +46,7 @@
             this.ClientSize = new System.Drawing.Size(802, 260);
             this.Controls.Add(this.richTxtCopyText);
             this.Name = "FrmLoadRichTb";
+            this.Text = "特記サポート ";
             this.Load += new System.EventHandler(this.frmLoadRichTb_Load);
             this.ResumeLayout(false);
 
