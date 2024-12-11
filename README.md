@@ -5,10 +5,12 @@ MARCURY exention soft
 - Run MARCURY_demo.exe
 
 # Rule: variable name rules
-Type Tool box: type + function
-	Button: ex: btnSearch
-	TextBox: ex txtResult.
-	ListView: ex litDataSearch
-	lable: ex: labStatus
-Name form: class name same as form name
-In class: name method: Capitalize the first letter of each wordS
+- Common C# coding standards
+   https://learn.microsoft.com/en-us/dotnet/csharp/fundamentals/coding-style/coding-conventions
+- Example
+   - Button: ex: btnSearch
+   - TextBox: ex txtResult.
+   - ListView: ex litDataSearch
+   - Lable: ex: labStatus
+   - Name form: class name same as form name
+   - In class: name method: Capitalize the first letter of each wordS
