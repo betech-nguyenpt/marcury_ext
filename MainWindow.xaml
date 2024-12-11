@@ -7,6 +7,35 @@
         mc:Ignorable="d"
         Title="MainWindow" Height="450" Width="800">
     <Grid>
-
+        <StatusBar Name="barStatus" 
+           VerticalAlignment="Bottom" Background="Beige" >
+            <StatusBarItem Name="sbiVersion" MouseDown="sbiVersion_MouseDown">
+                <TextBlock Text="{StaticResource VERSION}"></TextBlock>
+            </StatusBarItem>
+            <StatusBarItem>
+                <ProgressBar Width="100" Height="20"
+                 Name="progressBar1">
+                    <ProgressBar.Triggers>
+                        <EventTrigger RoutedEvent="ProgressBar.Loaded">
+                            <BeginStoryboard>
+                                <Storyboard>
+                                    <DoubleAnimation
+                Storyboard.TargetName="progressBar1" 
+                Storyboard.TargetProperty="Value"
+                From="0" To="100" Duration="0:0:5"  />
+                                </Storyboard>
+                            </BeginStoryboard>
+                        </EventTrigger>
+                    </ProgressBar.Triggers>
+                </ProgressBar>
+            </StatusBarItem>
+            <Separator/>
+            <StatusBarItem>
+                <TextBlock Name="tbxStatus">Online</TextBlock>
+            </StatusBarItem>
+            <StatusBarItem HorizontalAlignment="Left">
+                <Image Source="Images\help.png" Width="16" Height="16"/>
+            </StatusBarItem>
+        </StatusBar>
     </Grid>
 </Window>

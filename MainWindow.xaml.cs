@@ -20,5 +20,14 @@ namespace marcury_wpf_prj
         {
             InitializeComponent();
         }
+        /// <summary>
+        /// Handle mouse down in version StatusBarItem
+        /// </summary>
+        /// <param name="sender">Sender</param>
+        /// <param name="e">Event Arguments</param>
+        private void sbiVersion_MouseDown(object sender, MouseButtonEventArgs e)
+        {
+            tbxStatus.Text = "Changed log form need implement first!";
+        }
     }
 }
