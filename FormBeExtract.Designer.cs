@@ -196,6 +196,79 @@ namespace marcury_ext
 
         private void CreateColumnDataGridView()
         {
+            DataGridViewImageColumn imageColumn = new DataGridViewImageColumn();
+            imageColumn.Name = "dgvCol1";
+            imageColumn.HeaderText = "dgvCol1";
+            dgvExtract.Columns.Add(imageColumn);
+            dgvExtract.Columns.Add("dgvCol2", "dgvCol2");
+            dgvExtract.Columns.Add("dgvCol3", "dgvCol3");
+
+            imageColumn = new DataGridViewImageColumn();
+            imageColumn.Name = "dgvCol4";
+            imageColumn.HeaderText = "dgvCol4";
+            dgvExtract.Columns.Add(imageColumn);
+        
+            dgvExtract.Columns.Add("dgvCol5", "dgvCol5");
+            dgvExtract.Columns.Add("dgvCol6", "dgvCol6");
+
+            imageColumn = new DataGridViewImageColumn();
+            imageColumn.Name = "dgvCol7";
+            imageColumn.HeaderText = "dgvCol7";
+            dgvExtract.Columns.Add(imageColumn);
+      
+            dgvExtract.Columns.Add("dgvCol8", "dgvCol8");
+            dgvExtract.Columns.Add("dgvCol9", "dgvCol9");
+
+            dgvExtract.Columns.Add("dgvCol10", "dgvCol10");
+            dgvExtract.Columns.Add("dgvCol11", "dgvCol11");
+
+            imageColumn = new DataGridViewImageColumn();
+            imageColumn.Name = "dgvCol12";
+            imageColumn.HeaderText = "dgvCol12";
+            dgvExtract.Columns.Add(imageColumn);
+
+            imageColumn = new DataGridViewImageColumn();
+            imageColumn.Name = "dgvCol13";
+            imageColumn.HeaderText = "dgvCol13";
+            dgvExtract.Columns.Add(imageColumn);
+
+            dgvExtract.Columns.Add("dgvCol14", "dgvCol14");
+            dgvExtract.Columns.Add("dgvCol15", "dgvCol15");
+            dgvExtract.Columns.Add("dgvCol16", "dgvCol16");
+            dgvExtract.Columns.Add("dgvCol17", "dgvCol17");
+
+
+            // Setup color for headers
+            dgvExtract.ColumnHeadersDefaultCellStyle.BackColor = Color.FromArgb(124, 170, 66); ;
+            dgvExtract.ColumnHeadersDefaultCellStyle.ForeColor = Color.White;  // Chữ màu trắng
+            dgvExtract.ColumnHeadersDefaultCellStyle.Font = new Font("Arial", 12, FontStyle.Bold); // Font chữ in đậm
+            dgvExtract.ColumnHeadersDefaultCellStyle.Alignment = DataGridViewContentAlignment.MiddleCenter; // Căn giữa
+            dgvExtract.EnableHeadersVisualStyles = false; // Tắt visual styles mặc định
+            // Set column width
+            dgvExtract.Columns["dgvCol1"].Width = 80;
+            dgvExtract.Columns["dgvCol2"].Width = 350;
+            dgvExtract.Columns["dgvCol3"].Width = 200;
+            dgvExtract.Columns["dgvCol4"].Width = 80;
+            dgvExtract.Columns["dgvCol5"].Width = 350;
+            dgvExtract.Columns["dgvCol6"].Width = 200;
+            dgvExtract.Columns["dgvCol7"].Width = 350;
+            dgvExtract.Columns["dgvCol8"].Width = 200;
+            dgvExtract.Columns["dgvCol9"].Width = 200;
+            dgvExtract.Columns["dgvCol10"].Width = 100;
+
+            dgvExtract.Columns["dgvCol11"].Width = 100;
+            dgvExtract.Columns["dgvCol12"].Width = 200;
+            dgvExtract.Columns["dgvCol13"].Width = 100;
+            dgvExtract.Columns["dgvCol14"].Width = 100;
+            dgvExtract.Columns["dgvCol15"].Width = 100;
+            dgvExtract.Columns["dgvCol16"].Width = 350;
+            dgvExtract.Columns["dgvCol17"].Width = 200;
+
+
+        }
+
+        private void CreateColumnDataGridViewOld()
+        {
             // Add columns to DataGridView
             dgvExtract.Columns.Add("dgvCol1", "原文");
 

@@ -275,16 +275,16 @@ namespace marcury_ext
         private void dgvExtract_CellContentClick(object sender, DataGridViewCellEventArgs e)
         {
             // Kiểm tra xem có click vào cell của cột chứa ảnh (ví dụ cột "dgvCol10")
-            if (e.ColumnIndex == dgvExtract.Columns["dgvCol10"].Index) {
+            if (e.ColumnIndex == dgvExtract.Columns["dgvCol12"].Index) {
                 // Lấy dòng của cell đã click
                 DataGridViewRow clickedRow = dgvExtract.Rows[e.RowIndex];
                 // Lấy text của cell trong cột "dgvCol6"
-                string col6Text = dgvExtract.Rows[e.RowIndex].Cells["dgvCol6"].Value.ToString();
+                string col6Text = dgvExtract.Rows[e.RowIndex].Cells["dgvCol8"].Value.ToString();
                 // Thay đổi màu nền của cell khi click
-                clickedRow.Cells["dgvCol10"].Style.BackColor = Color.Yellow; // Ví dụ thay đổi màu vàng
+                clickedRow.Cells["dgvCol12"].Style.BackColor = Color.Yellow; // Ví dụ thay đổi màu vàng
 
                 // Hoặc thay đổi màu nền của cả dòng
-                clickedRow.DefaultCellStyle.BackColor = Color.LightGreen; // Ví dụ thay đổi màu nền của dòng
+                //clickedRow.DefaultCellStyle.BackColor = Color.LightGreen; // Ví dụ thay đổi màu nền của dòng
                 // Load form new have richtextbox
                 LoadFormShop(e, col6Text, UtilErrors.SUCCESS);
             }

@@ -42,7 +42,8 @@ namespace marcury_ext.Utils
         /// <param name="e"></param>
         private void BtnApply_Click(object sender, EventArgs e)
         {
-            DataGridViewCell cell = dgvFormMain.Rows[cellIndexTarget.RowIndex].Cells["dgvCol9"];
+            //DataGridViewCell cell = dgvFormMain.Rows[cellIndexTarget.RowIndex].Cells["dgvCol9"];
+            DataGridViewCell cell = dgvFormMain.Rows[cellIndexTarget.RowIndex].Cells["dgvCol16"];
             string oldText = cell.Value.ToString();
             // Thêm hoặc sửa nội dung của ô
             cell.Value = rtbShop1.Text; // Thay thế "New Text" bằng nội dung bạn muốn thêm

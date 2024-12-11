@@ -59,27 +59,29 @@ namespace marcury_ext.Utils
                     var row = dataGridViewDb.Rows[rowIndex];
 
                     // Add plain text (no color) data to DataGridView
-                    //row.Cells["dgvCol1"].Value = targetLine;
-                    row.Cells["dgvCol1"].Value = targetLine;
+                    row.Cells["dgvCol1"].Value = selectImg;
+                    row.Cells["dgvCol2"].Value = targetLine;
                     string formattedValue = ((int)Math.Round(match.similarity)).ToString() + "%";
-                    row.Cells["dgvCol5"].Value = formattedValue;
-                    row.Cells["dgvCol6"].Value = match.dbLine;
+                    row.Cells["dgvCol5"].Value = match.dbLine;
+                    row.Cells["dgvCol6"].Value = formattedValue;
                     if (formattedValue.Equals("100%")) {
-                        row.Cells["dgvCol3"].Value = selectImg;
+                        //row.Cells["dgvCol3"].Value = selectImg;
                         row.Cells["dgvCol4"].Value = selectImg;
                         row.Cells["dgvCol7"].Value = selectImg;
                     } else {
-                        row.Cells["dgvCol3"].Value = unselectImg;
+                        //row.Cells["dgvCol3"].Value = unselectImg;
                         row.Cells["dgvCol4"].Value = unselectImg;
                         row.Cells["dgvCol7"].Value = unselectImg;
                     }
-                    row.Cells["dgvCol9"].Value = targetLine;
-                    row.Cells["dgvCol10"].Value = referenceImg;
-
+                    row.Cells["dgvCol8"].Value = match.dbLine;
+                    row.Cells["dgvCol9"].Value = formattedValue;
+                    //row.Cells["dgvCol10"].Value = referenceImg;
+                    row.Cells["dgvCol12"].Value = referenceImg;
+                    row.Cells["dgvCol16"].Value = targetLine;
                     // Xen kẽ màu nền
                     if (colorOder % 2 == 1)  // Dòng lẻ
                     {
-                        row.Cells["dgvCol2"].Value = selectImg; // TODO: 
+                        row.Cells["dgvCol13"].Value = selectImg; // TODO: 
                         /* // Lấy đường dẫn tài nguyên nhúng
                          var assembly = Assembly.GetExecutingAssembly();
                          var resourceName = "marcury_extract.Images.imgSelect.png"; // Tên tài nguyên nhúng
@@ -97,7 +99,7 @@ namespace marcury_ext.Utils
                          }*/
                     } else {
                         row.DefaultCellStyle.BackColor = clB;
-                        row.Cells["dgvCol2"].Value = unselectImg;
+                       row.Cells["dgvCol13"].Value = unselectImg;
                     }
                     var cell = dataGridViewDb.Rows[rowIndex].Cells["dgvCol6"];
                     //HighlightDifferences(cell, topMatches[0].dbLine, targetLine);
