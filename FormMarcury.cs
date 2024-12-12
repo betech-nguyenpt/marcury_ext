@@ -16,5 +16,10 @@ namespace marcury_ext
         {
             InitializeComponent();
         }
+
+        private void MARCURY_Load(object sender, EventArgs e)
+        {
+
+        }
     }
 }

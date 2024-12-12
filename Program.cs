@@ -16,8 +16,9 @@ namespace marcury_ext
         {
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
-            Application.Run(new FormExtract());
+            //Application.Run(new FormExtract());
             //Application.Run(new MARCURY());
+            Application.Run(new FormBeExtract());
         }
     }
 }
