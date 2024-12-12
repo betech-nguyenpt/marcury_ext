@@ -8,6 +8,23 @@
         Title="WndUserControl" Height="450" Width="800">
     <StackPanel>
         <local:LimitedInputUserControl Title="Enter title:" MaxLength="30" Height="50" />
-        <local:LimitedInputUserControl Title="Blabla:" MaxLength="50" Height="150" />
+        <local:BoundWorld></local:BoundWorld>
+        <Label>Data Binding 1</Label>
+        <WrapPanel>
+            <TextBlock Text="Window title:  " />
+            <TextBox Text="{Binding Title, UpdateSourceTrigger=PropertyChanged}" Width="150" />
+        </WrapPanel>
+        <WrapPanel Margin="0,10,0,0">
+            <TextBlock Text="Window dimensions: " />
+            <TextBox Text="{Binding Width}" Width="50" />
+            <TextBlock Text=" x " />
+            <TextBox Text="{Binding Height}" Width="50" />
+        </WrapPanel>
+        <Label>Data Binding 2</Label>
+        <TextBox Name="txtValue" />
+        <WrapPanel Margin="0,10">
+            <TextBlock Text="Value: " FontWeight="Bold" />
+            <TextBlock Name="lblValue" />
+        </WrapPanel>
     </StackPanel>
 </Window>

@@ -10,23 +10,19 @@ using System.Windows.Documents;
 using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
+using System.Windows.Navigation;
 using System.Windows.Shapes;
 
 namespace wpf_example.UserControlExt
 {
     /// <summary>
-    /// Interaction logic for WndUserControl.xaml
+    /// Interaction logic for BoundWorld.xaml
     /// </summary>
-    public partial class WndUserControl : Window
+    public partial class BoundWorld : UserControl
     {
-        public WndUserControl()
+        public BoundWorld()
         {
             InitializeComponent();
-            this.DataContext = this;
-
-            Binding binding = new Binding("Text");
-            binding.Source = txtValue;
-            lblValue.SetBinding(TextBlock.TextProperty, binding);
         }
     }
 }
