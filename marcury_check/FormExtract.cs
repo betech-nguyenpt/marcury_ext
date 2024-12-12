@@ -27,6 +27,7 @@ namespace marcury_ext
         public static int START_EDIT_STATUS = 1;
         public static int IN_UPDATING_STATUS = 2;
         public static int END_UPDATED_STATUS = 3;
+        public static string VERSION = "0.0.1";
 
         private OverlayForm overlayForm; // Declare overlayForm
         private CustomCursor customCursor; // Declare CustomCursor
@@ -289,7 +290,8 @@ namespace marcury_ext
         /// <param name="e">Event arguments</param>
         private void FormExtract_Load(object sender, EventArgs e)
         {
-           
+            // Set version
+            toolStripStatusLabelVersion.Text = "v" + FormExtract.VERSION;
         }
      
 
