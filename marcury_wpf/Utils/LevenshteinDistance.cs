@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace marcury_ext.Utils
+namespace marcury_wpf.Utils
 {
     internal class LevenshteinDistance
     {

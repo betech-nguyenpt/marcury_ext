@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace marcury_wpf_prj.Utils
+namespace marcury_wpf.Utils
 {
     public class DomainConst
     {
