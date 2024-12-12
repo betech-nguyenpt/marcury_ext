@@ -1,6 +1,6 @@
-﻿namespace marcury_check
+﻿namespace marcury_ext
 {
-    partial class Form1
+    partial class OverlayForm
     {
         /// <summary>
         /// Required designer variable.
@@ -13,8 +13,7 @@
         /// <param name="disposing">true if managed resources should be disposed; otherwise, false.</param>
         protected override void Dispose(bool disposing)
         {
-            if (disposing && (components != null))
-            {
+            if (disposing && (components != null)) {
                 components.Dispose();
             }
             base.Dispose(disposing);
@@ -28,13 +27,21 @@
         /// </summary>
         private void InitializeComponent()
         {
-            this.components = new System.ComponentModel.Container();
+            this.SuspendLayout();
+            // 
+            // OverlayForm
+            // 
+            this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
+            this.BackColor = System.Drawing.SystemColors.Control;
             this.ClientSize = new System.Drawing.Size(800, 450);
-            this.Text = "Form1";
+            this.Name = "OverlayForm";
+            this.Text = "OverlayForm";
+            this.Load += new System.EventHandler(this.OverlayForm_Load);
+            this.ResumeLayout(false);
+
         }
 
         #endregion
     }
 }
-

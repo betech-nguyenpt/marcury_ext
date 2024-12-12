@@ -8,13 +8,18 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 
-namespace marcury_check
+namespace marcury_ext
 {
-    public partial class Form1 : Form
+    public partial class MARCURY : Form
     {
-        public Form1()
+        public MARCURY()
         {
             InitializeComponent();
+        }
+
+        private void MARCURY_Load(object sender, EventArgs e)
+        {
+
         }
     }
 }
