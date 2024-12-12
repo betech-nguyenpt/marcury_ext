@@ -9,7 +9,7 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 
-namespace marcury_wpf_prj
+namespace marcury_wpf
 {
     /// <summary>
     /// Interaction logic for MainWindow.xaml
@@ -19,15 +19,6 @@ namespace marcury_wpf_prj
         public MainWindow()
         {
             InitializeComponent();
-        }
-        /// <summary>
-        /// Handle mouse down in version StatusBarItem
-        /// </summary>
-        /// <param name="sender">Sender</param>
-        /// <param name="e">Event Arguments</param>
-        private void sbiVersion_MouseDown(object sender, MouseButtonEventArgs e)
-        {
-            tbxStatus.Text = "Changed log form need implement first!";
         }
     }
 }

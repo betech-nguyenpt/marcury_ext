@@ -3,7 +3,7 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.12.35506.116 d17.12
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "marcury_wpf_prj", "marcury_wpf_prj.csproj", "{3896B5B6-8DC4-4383-BD94-74C2B0121BCF}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "marcury_wpf", "marcury_wpf\marcury_wpf.csproj", "{DC6C0FC9-58B2-4B7D-A60E-175CD48C2EAF}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -11,10 +11,10 @@ Global
 		Release|Any CPU = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{3896B5B6-8DC4-4383-BD94-74C2B0121BCF}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{3896B5B6-8DC4-4383-BD94-74C2B0121BCF}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{3896B5B6-8DC4-4383-BD94-74C2B0121BCF}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{3896B5B6-8DC4-4383-BD94-74C2B0121BCF}.Release|Any CPU.Build.0 = Release|Any CPU
+		{DC6C0FC9-58B2-4B7D-A60E-175CD48C2EAF}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{DC6C0FC9-58B2-4B7D-A60E-175CD48C2EAF}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{DC6C0FC9-58B2-4B7D-A60E-175CD48C2EAF}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{DC6C0FC9-58B2-4B7D-A60E-175CD48C2EAF}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
