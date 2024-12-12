@@ -5,76 +5,129 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:wpf_example"
         mc:Ignorable="d"
-        Title="MainWindow" Height="450" Width="800">
+        Title="MainWindow" Height="1000" Width="800" WindowStartupLocation="CenterScreen">
     <Window.Resources>
         <Style TargetType="{x:Type Button}">
             <Setter Property="Padding" Value="5,2"/>
         </Style>
     </Window.Resources>
-    <Grid>
-        <StackPanel Margin="10">
-            <!--TextBox-->
-            <Label>The TextBox control</Label>
-            <TextBox Text="Hello, world!" />
-            <TextBox Text="Multi-line TextBox"  AcceptsReturn="True" TextWrapping="Wrap" />
-            <TextBox Text="Spellcheck with TextBox" AcceptsReturn="True" TextWrapping="Wrap" SpellCheck.IsEnabled="True" Language="en-US" />
-            <Separator></Separator>
-
-            <!--Button-->
-            <Label>The Button control</Label>
-            <Button Click="Button_Click">Hello, world!</Button>
-            <Button Background="Beige" Foreground="Blue" FontWeight="Bold">Formatted Button</Button>
+    <DockPanel>
+        <ToolBar DockPanel.Dock="Top">
+            <Button ToolTip="Create a new file">
+                <Button.Content>
+                    <Image Source="/Images/page_white.png" Width="16" Height="16" />
+                </Button.Content>
+            </Button>
             <Button>
-                <StackPanel Orientation="Horizontal">
-                    <TextBlock>Formatted</TextBlock>
-                    <TextBlock Foreground="Blue" FontWeight="Bold" Margin="2,0">Button</TextBlock>
-                    <TextBlock Foreground="Gray" FontStyle="Italic">[Various]</TextBlock>
-                </StackPanel>
+                <Button.Content>
+                    <Image Source="/Images/folder.jpg" Width="16" Height="16" />
+                </Button.Content>
+                <Button.ToolTip>
+                    <StackPanel>
+                        <TextBlock FontWeight="Bold" FontSize="14" Margin="0,0,0,5">Open file</TextBlock>
+                        <TextBlock>
+                        Search your computer or local network
+                        <LineBreak />
+                        for a file and open it for editing.
+                        </TextBlock>
+                        <Border BorderBrush="Silver" BorderThickness="0,1,0,0" Margin="0,8" />
+                        <WrapPanel>
+                            <Image Source="/Images/help.png" Margin="0,0,5,0" />
+                            <TextBlock FontStyle="Italic">Press F1 for more help</TextBlock>
+                        </WrapPanel>
+                    </StackPanel>
+                </Button.ToolTip>
             </Button>
-            <Button Padding="5">
+        </ToolBar>
+        <Grid>
+            <StackPanel Margin="10">
+                <!--TextBox-->
+                <Label>The TextBox control</Label>
+                <TextBox Text="Hello, world!" />
+                <TextBox Text="Multi-line TextBox"  AcceptsReturn="True" TextWrapping="Wrap" />
+                <TextBox Text="Spellcheck with TextBox" AcceptsReturn="True" TextWrapping="Wrap" SpellCheck.IsEnabled="True" Language="en-US" />
+                <Separator></Separator>
+
+                <!--Button-->
+                <Label>The Button control</Label>
+                <Button Click="Button_Click">Hello, world!</Button>
+                <Button Background="Beige" Foreground="Blue" FontWeight="Bold">Formatted Button</Button>
+                <Button>
+                    <StackPanel Orientation="Horizontal">
+                        <TextBlock>Formatted</TextBlock>
+                        <TextBlock Foreground="Blue" FontWeight="Bold" Margin="2,0">Button</TextBlock>
+                        <TextBlock Foreground="Gray" FontStyle="Italic">[Various]</TextBlock>
+                    </StackPanel>
+                </Button>
+                <Button Padding="5">
+                    <StackPanel Orientation="Horizontal">
+                        <Image Source="/Images/help.bmp" />
+                        <TextBlock Margin="5,0">Help</TextBlock>
+                    </StackPanel>
+                </Button>
+                <Button Padding="5,2">Hello, World!</Button>
                 <StackPanel Orientation="Horizontal">
-                    <Image Source="/Images/help.bmp" />
-                    <TextBlock Margin="5,0">Help</TextBlock>
+                    <Label>Panels</Label>
+                    <Button Name="BtnCanvas" Click="BtnCanvas_Click">Canvas 1</Button>
+                    <Button Name="BtnCanvas2" Click="BtnCanvas2_Click">Canvas 2</Button>
+                    <Button Name="BtnWrap" Click="BtnWrap_Click">Wrap</Button>
+                    <Button Name="BtnWrap2" Click="BtnWrap2_Click">Wrap 2</Button>
+                    <Button Name="BtnStack" Click="BtnStack_Click">Stack</Button>
+                    <Button Name="BtnStack2" Click="BtnStack2_Click">Stack 2</Button>
+                    <Button Name="BtnDock" Click="BtnDock_Click">Dock</Button>
+                    <Button Name="BtnDock2" Click="BtnDock2_Click">Dock 2</Button>
+                    <Button Name="BtnGrid" Click="BtnGrid_Click">Grid</Button>
+                    <Button Name="BtnGrid2" Click="BtnGrid2_Click">Grid 2</Button>
+                    <Button Name="BtnGrid3" Click="BtnGrid3_Click">Grid 3</Button>
+                    <Button Name="BtnGrid4" Click="BtnGrid4_Click">Grid 4</Button>
+                    <Button Name="BtnGrid5" Click="BtnGrid5_Click">Grid 5</Button>
+                    <Button Name="BtnGrid6" Click="BtnGrid6_Click">Grid 6</Button>
+                    <Button Name="BtnGrid7" Click="BtnGrid7_Click">Grid 7</Button>
+                    <Button Name="BtnUserControl" Click="BtnUserControl_Click">User Control</Button>
                 </StackPanel>
-            </Button>
-            <Button Padding="5,2">Hello, World!</Button>
-            <Separator></Separator>
+                <Separator></Separator>
 
-            <!--Password-->
-            <Label>The PasswordBox control</Label>
-            <Label>Text:</Label>
-            <TextBox />
-            <Label>Password:</Label>
-            <PasswordBox MaxLength="6" PasswordChar="X" />
-            <Separator></Separator>
+                <!--Password-->
+                <Label>The PasswordBox control</Label>
+                <Label>Text:</Label>
+                <TextBox />
+                <Label>Password:</Label>
+                <PasswordBox MaxLength="6" PasswordChar="X" />
+                <Separator></Separator>
 
-            <!--RadioButton-->
-            <Label>The RadioButton control</Label>
-            <Label FontWeight="Bold">Are you ready?</Label>
-            <RadioButton>
-                <WrapPanel>
-                    <Image Source="/WpfTutorialSamples;component/Images/accept.png" Width="16" Height="16" Margin="0,0,5,0" />
-                    <TextBlock Text="Yes" Foreground="Green" />
-                </WrapPanel>
-            </RadioButton>
-            <RadioButton Margin="0,5">
-                <WrapPanel>
-                    <Image Source="/WpfTutorialSamples;component/Images/cancel.png" Width="16" Height="16" Margin="0,0,5,0" />
-                    <TextBlock Text="No" Foreground="Red" />
-                </WrapPanel>
-            </RadioButton>
-            <RadioButton IsChecked="True">
-                <WrapPanel>
-                    <Image Source="/WpfTutorialSamples;component/Images/question.png" Width="16" Height="16" Margin="0,0,5,0" />
-                    <TextBlock Text="Maybe" Foreground="Gray" />
-                </WrapPanel>
-            </RadioButton>
-            <Separator></Separator>
+                <!--RadioButton-->
+                <Label>The RadioButton control</Label>
+                <Label FontWeight="Bold">Are you ready?</Label>
+                <RadioButton>
+                    <WrapPanel>
+                        <Image Source="/WpfTutorialSamples;component/Images/accept.png" Width="16" Height="16" Margin="0,0,5,0" />
+                        <TextBlock Text="Yes" Foreground="Green" />
+                    </WrapPanel>
+                </RadioButton>
+                <RadioButton Margin="0,5">
+                    <WrapPanel>
+                        <Image Source="/WpfTutorialSamples;component/Images/cancel.png" Width="16" Height="16" Margin="0,0,5,0" />
+                        <TextBlock Text="No" Foreground="Red" />
+                    </WrapPanel>
+                </RadioButton>
+                <RadioButton IsChecked="True">
+                    <WrapPanel>
+                        <Image Source="/WpfTutorialSamples;component/Images/question.png" Width="16" Height="16" Margin="0,0,5,0" />
+                        <TextBlock Text="Maybe" Foreground="Gray" />
+                    </WrapPanel>
+                </RadioButton>
+                <Separator></Separator>
 
-            <!--Image-->
-            <Label>The Image control</Label>
-            <Image Source="/Images/gg_logo.png" />
-            <Separator></Separator>
-        </StackPanel>
-    </Grid>
+                <!--Image-->
+                <Label>The Image control</Label>
+                <Image Source="/Images/gg_logo.png" />
+                <Separator></Separator>
+
+                <!--Control ToolTips-->
+                <Label>Control ToolTips</Label>
+                <Button ToolTip="Click here and something will happen!">Click here!</Button>
+                <Separator></Separator>
+            </StackPanel>
+        </Grid>
+    </DockPanel>
 </Window>
