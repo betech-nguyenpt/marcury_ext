@@ -9,7 +9,7 @@ namespace marcury_ext
     {
         private IntPtr handleTarget;
         public RichTextBox richTextBox;
-        private FormBeExtract formMain;
+        private FormMainExtract formMain;
         public bool IsNotLimitSize;
         public FrmLoadRichTb(IntPtr targetHandle)
         {
@@ -18,7 +18,7 @@ namespace marcury_ext
             this.TopMost = true;
             handleTarget = targetHandle;
         }
-        public FrmLoadRichTb(IntPtr targetHandle, FormBeExtract frmExtract)
+        public FrmLoadRichTb(IntPtr targetHandle, FormMainExtract frmExtract)
         {
             InitializeComponent();
             // Keep this form top in windown

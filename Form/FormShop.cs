@@ -50,7 +50,7 @@ namespace marcury_ext.Utils
 
             // Change text in RichTextBox from indexStart to indexEnd
             frmTransparent.UpdateTextOfLineRichTextBox(rtbShop1.Text, oldText);
-            FormBeExtract.setStatus(FormBeExtract.APPLYED_STATUS);
+            FormMainExtract.setStatus(FormMainExtract.APPLYED_STATUS);
         }
 
         private void FormShop_Load(object sender, EventArgs e)

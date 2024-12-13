@@ -4,7 +4,7 @@ using System;
 
 namespace marcury_ext
 {
-    partial class FormBeExtract
+    partial class FormMainExtract
     {
         /// <summary>
         /// Required designer variable.
@@ -31,163 +31,76 @@ namespace marcury_ext
         /// </summary>
         private void InitializeComponent()
         {
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle4 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle1 = new System.Windows.Forms.DataGridViewCellStyle();
             this.gbDataGridView = new System.Windows.Forms.GroupBox();
             this.dgvExtract = new System.Windows.Forms.DataGridView();
-            this.gbFunction = new System.Windows.Forms.GroupBox();
-            this.lbSearchKeyDown = new System.Windows.Forms.Label();
-            this.tbSearchKey = new System.Windows.Forms.TextBox();
-            this.labelStatus = new System.Windows.Forms.Label();
-            this.BtnDone = new System.Windows.Forms.Button();
-            this.BtnClose = new System.Windows.Forms.Button();
-            this.txtHandle = new System.Windows.Forms.TextBox();
             this.BtnStartSearch = new System.Windows.Forms.Button();
-            this.BtnTestConnDb = new System.Windows.Forms.Button();
+            this.BtnFinalConfirm = new System.Windows.Forms.Button();
             this.gbDataGridView.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.dgvExtract)).BeginInit();
-            this.gbFunction.SuspendLayout();
             this.SuspendLayout();
             // 
             // gbDataGridView
             // 
+            this.gbDataGridView.Controls.Add(this.BtnFinalConfirm);
+            this.gbDataGridView.Controls.Add(this.BtnStartSearch);
             this.gbDataGridView.Controls.Add(this.dgvExtract);
-            this.gbDataGridView.Location = new System.Drawing.Point(12, 12);
+            this.gbDataGridView.Location = new System.Drawing.Point(12, 3);
             this.gbDataGridView.Name = "gbDataGridView";
-            this.gbDataGridView.Size = new System.Drawing.Size(1228, 346);
+            this.gbDataGridView.Size = new System.Drawing.Size(1228, 420);
             this.gbDataGridView.TabIndex = 0;
             this.gbDataGridView.TabStop = false;
-            this.gbDataGridView.Text = "DataView";
+            this.gbDataGridView.Text = "設定　ヘルプ";
             // 
             // dgvExtract
             // 
             this.dgvExtract.AllowUserToAddRows = false;
             this.dgvExtract.Anchor = System.Windows.Forms.AnchorStyles.None;
             this.dgvExtract.AutoSizeRowsMode = System.Windows.Forms.DataGridViewAutoSizeRowsMode.AllCells;
-            dataGridViewCellStyle4.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
-            dataGridViewCellStyle4.BackColor = System.Drawing.SystemColors.Window;
-            dataGridViewCellStyle4.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            dataGridViewCellStyle4.ForeColor = System.Drawing.SystemColors.ControlText;
-            dataGridViewCellStyle4.SelectionBackColor = System.Drawing.SystemColors.Highlight;
-            dataGridViewCellStyle4.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
-            dataGridViewCellStyle4.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
-            this.dgvExtract.DefaultCellStyle = dataGridViewCellStyle4;
-            this.dgvExtract.Location = new System.Drawing.Point(6, 19);
+            dataGridViewCellStyle1.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
+            dataGridViewCellStyle1.BackColor = System.Drawing.SystemColors.Window;
+            dataGridViewCellStyle1.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            dataGridViewCellStyle1.ForeColor = System.Drawing.SystemColors.ControlText;
+            dataGridViewCellStyle1.SelectionBackColor = System.Drawing.SystemColors.Highlight;
+            dataGridViewCellStyle1.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
+            dataGridViewCellStyle1.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
+            this.dgvExtract.DefaultCellStyle = dataGridViewCellStyle1;
+            this.dgvExtract.Location = new System.Drawing.Point(6, 37);
             this.dgvExtract.Name = "dgvExtract";
-            this.dgvExtract.Size = new System.Drawing.Size(1216, 311);
+            this.dgvExtract.Size = new System.Drawing.Size(1216, 351);
             this.dgvExtract.TabIndex = 0;
             this.dgvExtract.CellContentClick += new System.Windows.Forms.DataGridViewCellEventHandler(this.dgvExtract_CellContentClick);
             this.dgvExtract.CellPainting += new System.Windows.Forms.DataGridViewCellPaintingEventHandler(this.dgvExtract_CellPainting);
             // 
-            // gbFunction
-            // 
-            this.gbFunction.Controls.Add(this.BtnTestConnDb);
-            this.gbFunction.Controls.Add(this.lbSearchKeyDown);
-            this.gbFunction.Controls.Add(this.tbSearchKey);
-            this.gbFunction.Controls.Add(this.labelStatus);
-            this.gbFunction.Controls.Add(this.BtnDone);
-            this.gbFunction.Controls.Add(this.BtnClose);
-            this.gbFunction.Controls.Add(this.txtHandle);
-            this.gbFunction.Controls.Add(this.BtnStartSearch);
-            this.gbFunction.Location = new System.Drawing.Point(12, 364);
-            this.gbFunction.Name = "gbFunction";
-            this.gbFunction.Size = new System.Drawing.Size(1228, 111);
-            this.gbFunction.TabIndex = 1;
-            this.gbFunction.TabStop = false;
-            this.gbFunction.Text = "Function";
-            // 
-            // lbSearchKeyDown
-            // 
-            this.lbSearchKeyDown.AutoSize = true;
-            this.lbSearchKeyDown.Location = new System.Drawing.Point(780, 65);
-            this.lbSearchKeyDown.Name = "lbSearchKeyDown";
-            this.lbSearchKeyDown.Size = new System.Drawing.Size(62, 13);
-            this.lbSearchKeyDown.TabIndex = 22;
-            this.lbSearchKeyDown.Text = "Search Key";
-            // 
-            // tbSearchKey
-            // 
-            this.tbSearchKey.Location = new System.Drawing.Point(859, 62);
-            this.tbSearchKey.Name = "tbSearchKey";
-            this.tbSearchKey.Size = new System.Drawing.Size(204, 20);
-            this.tbSearchKey.TabIndex = 21;
-            this.tbSearchKey.TextChanged += new System.EventHandler(this.tbSearchKey_TextChanged);
-            this.tbSearchKey.KeyDown += new System.Windows.Forms.KeyEventHandler(this.tbSearchKey_KeyDown);
-            // 
-            // labelStatus
-            // 
-            this.labelStatus.AutoSize = true;
-            this.labelStatus.ForeColor = System.Drawing.Color.Red;
-            this.labelStatus.Location = new System.Drawing.Point(419, 63);
-            this.labelStatus.Name = "labelStatus";
-            this.labelStatus.Size = new System.Drawing.Size(63, 13);
-            this.labelStatus.TabIndex = 20;
-            this.labelStatus.Text = "※ ステータス";
-            // 
-            // BtnDone
-            // 
-            this.BtnDone.BackColor = System.Drawing.Color.LightGreen;
-            this.BtnDone.Location = new System.Drawing.Point(303, 55);
-            this.BtnDone.Name = "BtnDone";
-            this.BtnDone.Size = new System.Drawing.Size(90, 28);
-            this.BtnDone.TabIndex = 19;
-            this.BtnDone.Text = "適用";
-            this.BtnDone.UseVisualStyleBackColor = false;
-            // 
-            // BtnClose
-            // 
-            this.BtnClose.BackColor = System.Drawing.Color.LightCoral;
-            this.BtnClose.DialogResult = System.Windows.Forms.DialogResult.Cancel;
-            this.BtnClose.ForeColor = System.Drawing.SystemColors.Desktop;
-            this.BtnClose.Location = new System.Drawing.Point(1116, 60);
-            this.BtnClose.Name = "BtnClose";
-            this.BtnClose.Size = new System.Drawing.Size(90, 28);
-            this.BtnClose.TabIndex = 1;
-            this.BtnClose.Text = "閉じる";
-            this.BtnClose.UseVisualStyleBackColor = false;
-            // 
-            // txtHandle
-            // 
-            this.txtHandle.Enabled = false;
-            this.txtHandle.Location = new System.Drawing.Point(6, 60);
-            this.txtHandle.Name = "txtHandle";
-            this.txtHandle.Size = new System.Drawing.Size(164, 20);
-            this.txtHandle.TabIndex = 16;
-            // 
             // BtnStartSearch
             // 
-            this.BtnStartSearch.BackColor = System.Drawing.Color.LightSkyBlue;
-            this.BtnStartSearch.Location = new System.Drawing.Point(191, 54);
+            this.BtnStartSearch.Location = new System.Drawing.Point(889, 7);
             this.BtnStartSearch.Name = "BtnStartSearch";
-            this.BtnStartSearch.Size = new System.Drawing.Size(90, 28);
-            this.BtnStartSearch.TabIndex = 14;
-            this.BtnStartSearch.Text = "検索";
-            this.BtnStartSearch.UseVisualStyleBackColor = false;
-            this.BtnStartSearch.Click += new System.EventHandler(this.BtnStartSearch_Click);
+            this.BtnStartSearch.Size = new System.Drawing.Size(185, 24);
+            this.BtnStartSearch.TabIndex = 1;
+            this.BtnStartSearch.Text = "クリップボードのテキストで検索";
+            this.BtnStartSearch.UseVisualStyleBackColor = true;
             // 
-            // BtnTestConnDb
+            // BtnFinalConfirm
             // 
-            this.BtnTestConnDb.Location = new System.Drawing.Point(1113, 18);
-            this.BtnTestConnDb.Name = "BtnTestConnDb";
-            this.BtnTestConnDb.Size = new System.Drawing.Size(92, 24);
-            this.BtnTestConnDb.TabIndex = 23;
-            this.BtnTestConnDb.Text = "Test connectDb";
-            this.BtnTestConnDb.UseVisualStyleBackColor = true;
-            this.BtnTestConnDb.Click += new System.EventHandler(this.BtnTestConnDb_Click);
+            this.BtnFinalConfirm.Location = new System.Drawing.Point(1106, 6);
+            this.BtnFinalConfirm.Name = "BtnFinalConfirm";
+            this.BtnFinalConfirm.Size = new System.Drawing.Size(116, 25);
+            this.BtnFinalConfirm.TabIndex = 2;
+            this.BtnFinalConfirm.Text = "最終確認";
+            this.BtnFinalConfirm.UseVisualStyleBackColor = true;
             // 
-            // FormBeExtract
+            // FormMainExtract
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(1252, 487);
-            this.Controls.Add(this.gbFunction);
+            this.ClientSize = new System.Drawing.Size(1252, 435);
             this.Controls.Add(this.gbDataGridView);
-            this.Name = "FormBeExtract";
-            this.Text = "FrmBeExtract";
+            this.Name = "FormMainExtract";
+            this.Text = "FrmMainExtract";
             this.Load += new System.EventHandler(this.FormBeExtract_Load);
             this.gbDataGridView.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.dgvExtract)).EndInit();
-            this.gbFunction.ResumeLayout(false);
-            this.gbFunction.PerformLayout();
             this.ResumeLayout(false);
 
         }
@@ -336,14 +249,7 @@ namespace marcury_ext
 
         private System.Windows.Forms.GroupBox gbDataGridView;
         private System.Windows.Forms.DataGridView dgvExtract;
-        private GroupBox gbFunction;
+        private Button BtnFinalConfirm;
         private Button BtnStartSearch;
-        private TextBox txtHandle;
-        private Button BtnDone;
-        private Button BtnClose;
-        private Label labelStatus;
-        private Label lbSearchKeyDown;
-        private TextBox tbSearchKey;
-        private Button BtnTestConnDb;
     }
 }

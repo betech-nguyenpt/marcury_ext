@@ -19,7 +19,7 @@ using System.IO;
 
 namespace marcury_ext
 {
-    public partial class FormBeExtract : Form
+    public partial class FormMainExtract : Form
     {
         public static string txtDummy = "入力された2つの文章を比較し、差分チェックします。\r\n 発見された差分は以下のようにハイライト表示されます。\r\n・文字単位の比較を行い、変更部分を緑のハイライトで表示します。\r\n・文字単位の差分が発見された行番号を赤のハイライトで表示します。\r\n・改行や文章挿入箇所はグレーのハイライトが表示されます。";
         private bool isSearchMode = false;
@@ -45,7 +45,7 @@ namespace marcury_ext
         public static void setStatus(int status) { m_status = status; }
         public static int getStatus() { return m_status; }
 
-        public FormBeExtract()
+        public FormMainExtract()
         {
             InitializeComponent();
             customCursor = new CustomCursor();
