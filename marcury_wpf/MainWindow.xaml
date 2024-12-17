@@ -6,7 +6,7 @@
         xmlns:local="clr-namespace:marcury_wpf"
         mc:Ignorable="d"
         Title="MainWindow" Height="450" Width="800">
-    <Grid>
+    <Grid RenderTransformOrigin="0.377,0.553">
         <StatusBar Name="barStatus" 
            VerticalAlignment="Bottom" Background="Beige" >
             <StatusBarItem Name="SbiVersion" MouseDown="SbiVersion_MouseDown">
@@ -37,5 +37,14 @@
                 <Image Source="Images\help.png" Width="16" Height="16"/>
             </StatusBarItem>
         </StatusBar>
+        <Button x:Name="BtnSearchHandleWFA" Content="Search Handle (Use WFA)" Click="BtnSearchHandleWFA_Click" HorizontalAlignment="Left" Margin="387,144,0,0" VerticalAlignment="Top" Width="215" Height="32"/>
+        <TextBox x:Name="textBox" HorizontalAlignment="Left" Height="136" Margin="52,217,0,0" TextWrapping="Wrap" Text="TextBox" VerticalAlignment="Top" Width="670"/>
+        <Button x:Name="BtnGetText" Content="Get Text" HorizontalAlignment="Left" Height="34" Margin="52,144,0,0" VerticalAlignment="Top" Width="195" Click="BtnGetText_Click"/>
+
+        <!-- Lớp phủ -->
+        <Border x:Name="Overlay" Background="#80000000" Visibility="Collapsed">
+            <TextBlock Text="Click vào TextBox cần chọn..." Foreground="White" HorizontalAlignment="Center" VerticalAlignment="Center" FontSize="20" />
+        </Border>
+        <Button x:Name="BtnSearchHandleWPF" Content="Search handle (Use WPF)" HorizontalAlignment="Left" Height="31" Margin="387,63,0,0" VerticalAlignment="Top" Width="215" Click="BtnSearchHandleWPF_Click"/>
     </Grid>
 </Window>
