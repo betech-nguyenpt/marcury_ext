@@ -5,7 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:marcury_wpf"
         mc:Ignorable="d"
-        Title="MainWindow" Height="450" Width="800">
+        Title="MainWindow" Height="400" Width="600">
     <Grid>
         <StatusBar Name="barStatus" 
            VerticalAlignment="Bottom" Background="Beige" >
@@ -37,7 +37,7 @@
                 <Image Source="Images\help.png" Width="16" Height="16"/>
             </StatusBarItem>
         </StatusBar>
-        <Button x:Name="BtnSearchHandle" Content="Search Text" HorizontalAlignment="Left" Margin="40,99,0,0" VerticalAlignment="Top" Click="BtnSearchHandle_Click" Width="148"/>
-        <TextBox x:Name="TbxResult" HorizontalAlignment="Left" Margin="40,136,0,0" TextWrapping="Wrap" Text="TextBox" VerticalAlignment="Top" Width="627" Height="103"/>
+        <Button x:Name="BtnSearchHandle" Content="Search Text" HorizontalAlignment="Left" Margin="25,24,0,0" VerticalAlignment="Top" Click="BtnSearchHandle_Click" Width="111"/>
+        <TextBox x:Name="TbxResult" Margin="0,82,0,0" TextWrapping="Wrap" Text="TextBox" Width="550" Height="228" VerticalAlignment="Top" HorizontalAlignment="Center"/>
     </Grid>
 </Window>
