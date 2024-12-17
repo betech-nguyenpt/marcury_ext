@@ -124,5 +124,12 @@ namespace wpf_example
             WndUserControl wnd = new();
             wnd.Show();
         }
+
+        private void BtnListBox_Click(object sender, RoutedEventArgs e)
+        {
+            WndListBox wnd = new();
+            wnd.Show();
+
+        }
     }
 }

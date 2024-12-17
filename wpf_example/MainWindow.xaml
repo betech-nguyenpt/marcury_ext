@@ -5,7 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:wpf_example"
         mc:Ignorable="d"
-        Title="MainWindow" Height="1000" Width="800" WindowStartupLocation="CenterScreen">
+        Title="MainWindow" Height="1000" Width="871" WindowStartupLocation="CenterScreen">
     <Window.Resources>
         <Style TargetType="{x:Type Button}">
             <Setter Property="Padding" Value="5,2"/>
@@ -84,6 +84,7 @@
                     <Button Name="BtnGrid6" Click="BtnGrid6_Click">Grid 6</Button>
                     <Button Name="BtnGrid7" Click="BtnGrid7_Click">Grid 7</Button>
                     <Button Name="BtnUserControl" Click="BtnUserControl_Click">User Control</Button>
+                    <Button Name="BtnListBox" Click="BtnListBox_Click">ListBox</Button>
                 </StackPanel>
                 <Separator></Separator>
 
