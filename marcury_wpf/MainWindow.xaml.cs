@@ -21,7 +21,7 @@ namespace marcury_wpf
     public partial class MainWindow : Window
     {
         private bool isSearchMode = false;
-        private OverlayForm overlayForm; // Declare overlayForm
+        private OverlayForm? overlayForm;
         public MainWindow()
         {
             InitializeComponent();
@@ -55,14 +55,15 @@ namespace marcury_wpf
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
-        private void OverlayForm_MouseClick(object sender, System.Windows.Forms.MouseEventArgs e)
+        private void OverlayForm_MouseClick(object? sender, System.Windows.Forms.MouseEventArgs e)
         {
+            if (sender is null) return;
             try {
                 // When clicking on a position in the OverlayForm, get the handle of the window there
                 IntPtr handle = GetWindowHandleAtCursor();
                 string fullText = "";
                 if (handle == IntPtr.Zero) {
-                    throw new Exception("123");
+                    throw new Exception("Handle target not found");
                 }
                 AutomationElement textBoxElement = AutomationElement.FromHandle(handle);
                 if (textBoxElement.TryGetCurrentPattern(TextPattern.Pattern, out object patternObject)) {
@@ -71,8 +72,9 @@ namespace marcury_wpf
                     TbxResult.Text = fullText;
                 }
                 // Close OverlayForm after getting the handle
-                this.overlayForm.Close();
+                if (this.overlayForm != null) this.overlayForm.Close();
             } catch (Exception ex) {
+                throw new Exception($"Handle target not found { ex.Message }");
             }
         }
 

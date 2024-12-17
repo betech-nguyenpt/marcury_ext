@@ -13,7 +13,7 @@ namespace marcury_wpf.Forms
 {
     public partial class OverlayForm : Form
     {
-        public event Action<IntPtr> OnWindowHandleDetected; // Event when handle is found
+        public event Action<IntPtr>? OnWindowHandleDetected; // Event when handle is found
         public OverlayForm()
         {
             InitializeComponent();
