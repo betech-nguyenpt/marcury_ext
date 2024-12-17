@@ -7,7 +7,7 @@ namespace marcury_wpf
     /// <summary>
     /// Interaction logic for App.xaml
     /// </summary>
-    public partial class App : Application
+    public partial class App : System.Windows.Application
     {
         /// <summary>
         /// Handle exception in application
@@ -16,7 +16,7 @@ namespace marcury_wpf
         /// <param name="e">Event arguments</param>
         private void Application_DispatcherUnhandledException(object sender, System.Windows.Threading.DispatcherUnhandledExceptionEventArgs e)
         {
-            MessageBox.Show("An unhandled exception just occurred: " + e.Exception.Message, "Exception", MessageBoxButton.OK, MessageBoxImage.Error);
+            System.Windows.MessageBox.Show("An unhandled exception just occurred: " + e.Exception.Message, "Exception", MessageBoxButton.OK, MessageBoxImage.Error);
             e.Handled = true;
         }
     }
