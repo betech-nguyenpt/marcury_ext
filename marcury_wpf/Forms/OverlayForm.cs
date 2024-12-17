@@ -1,19 +1,14 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
-using System.Drawing;
-using System.Linq;
-using System.Runtime.InteropServices;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows.Forms;
+﻿using System.Runtime.InteropServices;
 
 namespace marcury_wpf.Forms
 {
     public partial class OverlayForm : Form
     {
         public event Action<IntPtr>? OnWindowHandleDetected; // Event when handle is found
+
+        /// <summary>
+        /// Contructor OverlayForm
+        /// </summary>
         public OverlayForm()
         {
             InitializeComponent();
@@ -27,11 +22,13 @@ namespace marcury_wpf.Forms
             this.StartPosition = FormStartPosition.Manual;
             this.WindowState = FormWindowState.Maximized;
             this.TopMost = true; // Set overlay on top of other windows
-
-            // Register the Paint event to draw the border
-            //this.MouseClick += OverlayForm_MouseClick;
         }
 
+        /// <summary>
+        /// Handle event when mouse click on form overlay
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void OverlayForm_MouseClick(object sender, MouseEventArgs e)
         {
             IntPtr handle = GetWindowHandleAtCursor();
@@ -39,27 +36,33 @@ namespace marcury_wpf.Forms
             this.Close(); // Close overlay on click
         }
 
-        // Get the Handle of the window at the mouse cursor position
+        /// <summary>
+        /// Get the Handle of the window at the mouse cursor position
+        /// </summary>
+        /// <returns></returns>
         private IntPtr GetWindowHandleAtCursor()
         {
             WinApi.GetCursorPos(out Point cursorPos);
             return WinApi.WindowFromPoint(cursorPos);
         }
 
+        /// <summary>
+        /// Use when load form
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void OverlayForm_Load(object sender, EventArgs e)
         {
-
         }
     }
 
-    // Class to contain necessary Windows APIs
+    /// <summary>
+    ///  Class to contain necessary Windows APIs
+    /// </summary>
     public static class WinApi
     {
         [DllImport("user32.dll")]
         public static extern IntPtr WindowFromPoint(Point p);
-
-        [DllImport("user32.dll", SetLastError = true, CharSet = CharSet.Auto)]
-        public static extern int GetWindowText(IntPtr hwnd, StringBuilder lpString, int nMaxCount);
 
         [DllImport("user32.dll")]
         public static extern bool GetCursorPos(out Point lpPoint);

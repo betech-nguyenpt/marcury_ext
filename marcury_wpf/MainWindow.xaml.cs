@@ -1,17 +1,8 @@
 ﻿using marcury_wpf.Forms;
 using System.Runtime.InteropServices;
-using System.Text;
 using System.Windows;
 using System.Windows.Automation;
-using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Forms;
 using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
 
 namespace marcury_wpf
 {
@@ -20,8 +11,9 @@ namespace marcury_wpf
     /// </summary>
     public partial class MainWindow : Window
     {
+        // Set value for check search handle
         private bool isSearchMode = false;
-        private OverlayForm? overlayForm;
+        private OverlayForm? overlayForm; // Form load full desktop
         public MainWindow()
         {
             InitializeComponent();
@@ -36,6 +28,11 @@ namespace marcury_wpf
             tbxStatus.Text = "Changed log form need implement first!";
         }
 
+        /// <summary>
+        /// Handle event when click button BtnSearchHandle
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void BtnSearchHandle_Click(object sender, RoutedEventArgs e)
         {
             isSearchMode = !isSearchMode;
@@ -51,7 +48,7 @@ namespace marcury_wpf
         }
 
         /// <summary>
-        /// Load OverLoadForm for get handle textbox target
+        /// Handle event when mouse click in overlayForm
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
@@ -78,14 +75,21 @@ namespace marcury_wpf
             }
         }
 
-        // Get the Handle of the window at the mouse cursor position
+        /// <summary>
+        /// Get the Handle of the window at the mouse cursor position
+        /// </summary>
+        /// <returns></returns>
         private IntPtr GetWindowHandleAtCursor()
         {
             System.Drawing.Point cursorPos = System.Windows.Forms.Cursor.Position;
             return WindowFromPoint(cursorPos); // Get handle at mouse position
         }
 
-        // Get handle at mouse position
+        /// <summary>
+        /// Call API in user32.dll
+        /// </summary>
+        /// <param name="p"></param>
+        /// <returns></returns>
         [DllImport("user32.dll")]
         public static extern IntPtr WindowFromPoint(System.Drawing.Point p);
     }
