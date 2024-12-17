@@ -121,7 +121,7 @@ namespace marcury_wpf
                 // Create and display OverlayForm when starting search             
                 this.overlayForm.Show();
                 // Register the Paint event to draw the border
-                this.overlayForm.MouseClick += OverlayForm_MouseClick;
+                //this.overlayForm.MouseClick += OverlayForm_MouseClick;
                 textResult = textBox;
             } else {
                 this.overlayForm?.Close();

@@ -29,18 +29,6 @@
         {
             this.SuspendLayout();
 
-            // OverlayForm settings
-            this.BackColor = Color.FromArgb(200, 200, 200); // Xám nhạt
-            this.Opacity = 0.15;                            // 15% độ trong suốt
-            this.FormBorderStyle = FormBorderStyle.None;
-            this.StartPosition = FormStartPosition.Manual;
-            this.WindowState = FormWindowState.Maximized;
-            this.TopMost = true;
-
-            // Auto-scaling settings
-            this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
-            this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-
             // Form name and text
             this.Name = "OverlayForm";
             this.Text = "OverlayForm";
