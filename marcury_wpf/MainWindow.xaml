@@ -37,5 +37,7 @@
                 <Image Source="Images\help.png" Width="16" Height="16"/>
             </StatusBarItem>
         </StatusBar>
+        <Button x:Name="BtnSearchHandle" Content="Button" HorizontalAlignment="Left" Margin="192,85,0,0" VerticalAlignment="Top" Click="BtnSearchHandle_Click"/>
+        <TextBox x:Name="TbxResult" HorizontalAlignment="Left" Margin="181,136,0,0" TextWrapping="Wrap" Text="TextBox" VerticalAlignment="Top" Width="266" Height="103"/>
     </Grid>
 </Window>
