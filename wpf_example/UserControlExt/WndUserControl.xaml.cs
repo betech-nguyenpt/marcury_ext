@@ -28,5 +28,11 @@ namespace wpf_example.UserControlExt
             binding.Source = txtValue;
             lblValue.SetBinding(TextBlock.TextProperty, binding);
         }
+
+        private void btnUpdateSource_Click(object sender, RoutedEventArgs e)
+        {
+            BindingExpression binding = txtWindowTitle.GetBindingExpression(TextBox.TextProperty);
+            binding.UpdateSource();
+        }
     }
 }
