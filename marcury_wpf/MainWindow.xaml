@@ -37,7 +37,76 @@
                 <Image Source="Images\help.png" Width="16" Height="16"/>
             </StatusBarItem>
         </StatusBar>
-        <Button x:Name="BtnSearchHandle" Content="Search Text" HorizontalAlignment="Left" Margin="25,251,0,0" VerticalAlignment="Top" Click="BtnSearchHandle_Click" Width="111"/>
-        <TextBox x:Name="TbxResult" Margin="0,289,0,0" TextWrapping="Wrap" Text="TextBox" Width="756" Height="137" VerticalAlignment="Top" HorizontalAlignment="Center" TextChanged="TbxResult_TextChanged"/>
+        <DataGrid x:Name="dgMarcuryEx" AutoGenerateColumns="False" Margin="22,43,22,242">
+            <DataGrid.Columns>
+                <!-- Type CheckBox -->
+                <DataGridTemplateColumn Header="Column1" Width="150">
+                    <DataGridTemplateColumn.CellTemplate>
+                        <DataTemplate>
+                            <CheckBox />
+                        </DataTemplate>
+                    </DataGridTemplateColumn.CellTemplate>
+                </DataGridTemplateColumn>
+
+                <!-- type String -->
+                <DataGridTextColumn Header="Column2" Width="300" Binding="{Binding Column2}" />
+
+                <DataGridTextColumn Header="Column3" Width="150" Binding="{Binding Column3}" />
+
+                <!-- type CheckBox -->
+                <DataGridTemplateColumn Header="Column4" Width="150">
+                    <DataGridTemplateColumn.CellTemplate>
+                        <DataTemplate>
+                            <CheckBox />
+                        </DataTemplate>
+                    </DataGridTemplateColumn.CellTemplate>
+                </DataGridTemplateColumn>
+
+                <!-- Type String -->
+                <DataGridTextColumn Header="Column5" Width="300" Binding="{Binding Column5}" />
+
+                <DataGridTextColumn Header="Column6" Width="150" Binding="{Binding Column6}" />
+
+                <!-- Type CheckBox -->
+                <DataGridTemplateColumn Header="Column7" Width="150">
+                    <DataGridTemplateColumn.CellTemplate>
+                        <DataTemplate>
+                            <CheckBox />
+                        </DataTemplate>
+                    </DataGridTemplateColumn.CellTemplate>
+                </DataGridTemplateColumn>
+
+                <DataGridTextColumn Header="Column8" Width="300" Binding="{Binding Column8}" />
+                <DataGridTextColumn Header="Column9" Width="150" Binding="{Binding Column9}" />
+                <DataGridTextColumn Header="Column10" Width="150" Binding="{Binding Column10}" />
+                <DataGridTextColumn Header="Column11" Width="150" Binding="{Binding Column11}" />
+
+                <!-- Type CheckBox -->
+                <DataGridTemplateColumn Header="Column12" Width="150">
+                    <DataGridTemplateColumn.CellTemplate>
+                        <DataTemplate>
+                            <CheckBox />
+                        </DataTemplate>
+                    </DataGridTemplateColumn.CellTemplate>
+                </DataGridTemplateColumn>
+
+                <DataGridTextColumn Header="Column13" Width="150" Binding="{Binding Column13}" />
+                <DataGridTextColumn Header="Column14" Width="150" Binding="{Binding Column14}" />
+
+                <!-- Type Image -->
+                <DataGridTemplateColumn Header="Column15" Width="150">
+                    <DataGridTemplateColumn.CellTemplate>
+                        <DataTemplate>
+                            <Image Source="{Binding ImageSource}" Width="50" Height="50" />
+                        </DataTemplate>
+                    </DataGridTemplateColumn.CellTemplate>
+                </DataGridTemplateColumn>
+
+                <DataGridTextColumn Header="Column16" Width="300" Binding="{Binding Column16}" />
+                <DataGridTextColumn Header="Column17" Width="300" Binding="{Binding Column17}" />
+            </DataGrid.Columns>
+        </DataGrid>
+        <Button x:Name="BtnSearchHandle" Content="Search Text" HorizontalAlignment="Left" Margin="22,256,0,0" VerticalAlignment="Top" Click="BtnSearchHandle_Click" Width="111" RenderTransformOrigin="0.367,0.747"/>
+        <TextBox x:Name="TbxResult" Margin="0,289,0,0" TextWrapping="Wrap" Text="TextBox" Width="756" Height="137" VerticalAlignment="Top" HorizontalAlignment="Center"/>
     </Grid>
 </Window>

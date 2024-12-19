@@ -1,8 +1,13 @@
 ﻿using marcury_wpf.Forms;
+using System.Collections.ObjectModel;
+using System;
 using System.Runtime.InteropServices;
 using System.Windows;
 using System.Windows.Automation;
 using System.Windows.Input;
+using System.Windows.Documents;
+using System.ComponentModel.Design;
+using System.Windows.Media;
 
 namespace marcury_wpf
 {
@@ -11,12 +16,32 @@ namespace marcury_wpf
     /// </summary>
     public partial class MainWindow : Window
     {
+       
         // Set value for check search handle
         private bool isSearchMode = false;
         private OverlayForm? overlayForm; // Form load full desktop
+        public ObservableCollection<DataItem> Items { get; set; }
         public MainWindow()
         {
             InitializeComponent();
+            Items = new ObservableCollection<DataItem>();
+            this.dgMarcuryEx.ItemsSource = Items;
+
+            // Add sample data
+            for (int i = 0; i < 10; i++) {
+                Items.Add(new DataItem {
+                    Column2 = $"Item {i + 1}",
+                    Column3 = $"Details {i + 1}",
+                    Column5 = $"More info {i + 1}",
+                    Column6 = $"Text {i + 1}",
+                    Column8 = $"Note {i + 1}",
+                    Column9 = $"Other {i + 1}",
+                    Column10 = $"Additional {i + 1}",
+                    Column13 = $"Field {i + 1}",
+                    Column16 = $"Last {i + 1}",
+                    ImageSource = "D:\\source\\marcury_ext\\marcury_wpf\\Images\\imgEdit.png"
+                });
+            }
         }
         /// <summary>
         /// Handle mouse down in version StatusBarItem
@@ -92,5 +117,28 @@ namespace marcury_wpf
         /// <returns></returns>
         [DllImport("user32.dll")]
         public static extern IntPtr WindowFromPoint(System.Drawing.Point p);
+    }
+
+    /// <summary>
+    /// Calss DataItem for data grid
+    /// </summary>
+    public class DataItem
+    {
+        public bool Column1 { get; set; }
+        public string Column2 { get; set; }
+        public string Column3 { get; set; }
+        public bool Column4 { get; set; }
+        public string Column5 { get; set; }
+        public string Column6 { get; set; }
+        public bool Column7 { get; set; }
+        public string Column8 { get; set; }
+        public string Column9 { get; set; }
+        public string Column10 { get; set; }
+        public bool Column12 { get; set; }
+        public string Column13 { get; set; }
+        public string Column14 { get; set; }
+        public string ImageSource { get; set; }
+        public string Column16 { get; set; }
+        public string Column17 { get; set; }
     }
 }

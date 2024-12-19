@@ -19,4 +19,10 @@
     </Content>
   </ItemGroup>
 
+  <ItemGroup>
+    <None Update="Images\imgEdit.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+
 </Project>
