@@ -1,14 +1,13 @@
 ﻿using marcury_wpf.Forms;
 using System.Collections.ObjectModel;
-using System;
 using System.Runtime.InteropServices;
 using System.Windows;
 using System.Windows.Automation;
 using System.Windows.Input;
-using System.Windows.Documents;
-using System.ComponentModel.Design;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
+using System.Windows.Media.Animation;
+using Point = System.Windows.Point;
 
 namespace marcury_wpf
 {
@@ -21,11 +20,15 @@ namespace marcury_wpf
         private bool isSearchMode = false;
         private OverlayForm? overlayForm; // Form load full desktop
         public ObservableCollection<DataItem> Items { get; set; }
+
+        private Storyboard loadingAnimation;
         public MainWindow()
         {
             InitializeComponent();
+            loadingAnimation = new Storyboard();
+            CreateLoadingAnimation();
             Items = new ObservableCollection<DataItem>();
-            this.dgMarcuryEx.ItemsSource = Items;
+            //this.dgMarcuryEx.ItemsSource = Items;
 
             // Add sample data
             for (int i = 0; i < 10; i++) {
@@ -42,6 +45,8 @@ namespace marcury_wpf
                     ImageSource = new BitmapImage(new Uri("pack://application:,,,/Images/imgEdit.png"))
                 });
             }
+            LoadingContainer.Visibility = Visibility.Visible; // Hiện loading
+            loadingAnimation.Begin(); // Bắt đầu animation
         }
         /// <summary>
         /// Handle mouse down in version StatusBarItem
@@ -95,6 +100,8 @@ namespace marcury_wpf
                 }
                 // Close OverlayForm after getting the handle
                 if (this.overlayForm != null) this.overlayForm.Close();
+                loadingAnimation.Stop(); // Dừng animation
+                LoadingContainer.Visibility = Visibility.Collapsed; // Ẩn loading
             } catch (Exception ex) {
                 throw new Exception($"Handle target not found { ex.Message }");
             }
@@ -117,6 +124,25 @@ namespace marcury_wpf
         /// <returns></returns>
         [DllImport("user32.dll")]
         public static extern IntPtr WindowFromPoint(System.Drawing.Point p);
+
+
+        /// <summary>
+        /// Create loading animation when run app
+        /// </summary>
+        private void CreateLoadingAnimation()
+        {
+            RotateTransform rotateTransform = new RotateTransform(0);
+            LoadingContainer.RenderTransform = rotateTransform;
+            LoadingContainer.RenderTransformOrigin = new Point(0.5, 0.5);
+
+            DoubleAnimation rotationAnimation = new DoubleAnimation(0, 360, new Duration(TimeSpan.FromSeconds(1))) {
+                RepeatBehavior = RepeatBehavior.Forever
+            };
+
+            Storyboard.SetTarget(rotationAnimation, LoadingContainer);
+            Storyboard.SetTargetProperty(rotationAnimation, new PropertyPath("RenderTransform.Angle"));
+            loadingAnimation.Children.Add(rotationAnimation);
+        }
     }
 
     /// <summary>

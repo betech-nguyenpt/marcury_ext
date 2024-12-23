@@ -5,19 +5,27 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:marcury_wpf"
         mc:Ignorable="d"
-        Title="MainWindow" Height="615" Width="1000">
+        Title="MainWindow" Height="630" Width="1000">
+
     <Grid>
         <Grid.RowDefinitions>
+            <!-- Button search, and final confirm -->
+            <RowDefinition Height="30"/>
             <!-- Height DataGrid -->
             <RowDefinition Height="300"/>
             <!-- Height Button -->
             <RowDefinition Height="50"/>
             <!-- Height TextBox -->
-            <RowDefinition Height="200"/>
+            <RowDefinition Height="180"/>
             <!-- Height StatusBar -->
             <RowDefinition Height="Auto"/>
         </Grid.RowDefinitions>
-        <DataGrid Grid.Row="0" x:Name="dgMarcuryEx" AutoGenerateColumns="False" Margin="22,43,22,10">
+        <Grid Grid.Row ="0" Margin="0.1,0,0,0.5" Width="980" Background="#7B7B7B">
+            <Label x:Name="label" Content="　設定　ヘルプ" Height="30" Width="152" VerticalAlignment="Center" HorizontalAlignment="Left" Margin="0,0,0,0"/>
+            <Button x:Name="BtnSearchText" Content="クリップボードのテキストで検索" Width="160" Height="25" VerticalAlignment="Center" HorizontalAlignment="Left" Margin="700,0,0,0"/>
+            <Button x:Name="BtnFinalConfir" Content="最終確認" Width="110" Height="26" VerticalAlignment="Center" HorizontalAlignment="Right" Margin="0,0,2,0"/>
+        </Grid>
+        <DataGrid Grid.Row="1" x:Name="dgMarcuryEx" AutoGenerateColumns="False" Margin="10,24,22,0">
             <DataGrid.Columns>
                 <!-- Type CheckBox -->
                 <DataGridTemplateColumn Header="Column1" Width="150">
@@ -30,7 +38,6 @@
 
                 <!-- type String -->
                 <DataGridTextColumn Header="Column2" Width="300" Binding="{Binding Column2}" />
-
                 <DataGridTextColumn Header="Column3" Width="150" Binding="{Binding Column3}" />
 
                 <!-- type CheckBox -->
@@ -44,7 +51,6 @@
 
                 <!-- Type String -->
                 <DataGridTextColumn Header="Column5" Width="300" Binding="{Binding Column5}" />
-
                 <DataGridTextColumn Header="Column6" Width="150" Binding="{Binding Column6}" />
 
                 <!-- Type CheckBox -->
@@ -86,10 +92,43 @@
                 <DataGridTextColumn Header="Column17" Width="300" Binding="{Binding Column17}" />
             </DataGrid.Columns>
         </DataGrid>
-        <Button Grid.Row="1" x:Name="BtnSearchHandle" Content="Search Text" HorizontalAlignment="Left" Margin="20,10,0,0" VerticalAlignment="Top" Click="BtnSearchHandle_Click" Width="111" RenderTransformOrigin="0.367,0.747"/>
-        <TextBox Grid.Row="2" x:Name="TbxResult" Margin="22,5,0,0" TextWrapping="Wrap" Text="TextBox" Width="966" Height="161" VerticalAlignment="Top" HorizontalAlignment="Left"/>
-        <StatusBar Grid.Row="3" Name="barStatus" 
-           VerticalAlignment="Bottom" Background="Beige" >
+        <!-- Loading Animation -->
+        <Viewbox Grid.Row="1" Panel.ZIndex="1" HorizontalAlignment="Center" VerticalAlignment="Center" 
+         x:Name="LoadingContainer" Visibility="Collapsed">
+            <Grid Width="12.5" Height="12.5">
+                <!-- Rotating dots -->
+                <Ellipse Width="0.5" Height="0.5" Fill="LightBlue" Opacity="0.3">
+                    <Ellipse.RenderTransform>
+                        <RotateTransform Angle="0" CenterX="1" CenterY="1"/>
+                    </Ellipse.RenderTransform>
+                </Ellipse>
+                <Ellipse Width="0.5" Height="0.5" Fill="SkyBlue" Opacity="0.5" Canvas.Left="3.75" Canvas.Top="0">
+                    <Ellipse.RenderTransform>
+                        <RotateTransform Angle="45" CenterX="1" CenterY="1"/>
+                    </Ellipse.RenderTransform>
+                </Ellipse>
+                <Ellipse Width="0.5" Height="0.5" Fill="DodgerBlue" Opacity="0.7" Canvas.Left="6.25" Canvas.Top="3.75">
+                    <Ellipse.RenderTransform>
+                        <RotateTransform Angle="90" CenterX="1" CenterY="1"/>
+                    </Ellipse.RenderTransform>
+                </Ellipse>
+                <Ellipse Width="0.5" Height="0.5" Fill="DeepSkyBlue" Opacity="0.9" Canvas.Left="3.75" Canvas.Top="7.5">
+                    <Ellipse.RenderTransform>
+                        <RotateTransform Angle="135" CenterX="1" CenterY="1"/>
+                    </Ellipse.RenderTransform>
+                </Ellipse>
+                <Ellipse Width="0.5" Height="0.5" Fill="White" Opacity="1" Canvas.Left="0" Canvas.Top="3.75">
+                    <Ellipse.RenderTransform>
+                        <RotateTransform Angle="180" CenterX="1" CenterY="1"/>
+                    </Ellipse.RenderTransform>
+                </Ellipse>
+            </Grid>
+        </Viewbox>
+
+        <Button Grid.Row="2" x:Name="BtnSearchHandle" Content="Search Text" HorizontalAlignment="Left" Margin="12,10,0,0" VerticalAlignment="Top" Click="BtnSearchHandle_Click" Width="111" RenderTransformOrigin="0.367,0.747"/>
+        <TextBox Grid.Row="2" x:Name="TbxResult" Margin="2,50,0,0" TextWrapping="Wrap" Text="TextBox" Width="966" Height="161" VerticalAlignment="Top" HorizontalAlignment="Left" Grid.RowSpan="2"/>
+        <StatusBar Grid.Row="4" Name="barStatus" 
+           VerticalAlignment="Top" Background="Beige" Margin="0,2,0,0" >
             <StatusBarItem Name="SbiVersion" MouseDown="SbiVersion_MouseDown">
                 <TextBlock Text="{StaticResource VERSION}"></TextBlock>
             </StatusBarItem>
