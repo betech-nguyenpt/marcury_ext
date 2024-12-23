@@ -11,18 +11,16 @@
 
   <ItemGroup>
     <None Remove="Images\help.png" />
+    <None Remove="Images\imgEdit.png" />
   </ItemGroup>
 
   <ItemGroup>
     <Content Include="Images\help.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-  </ItemGroup>
-
-  <ItemGroup>
-    <None Update="Images\imgEdit.png">
+    <Content Include="Images\imgEdit.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
+    </Content>
   </ItemGroup>
 
 </Project>

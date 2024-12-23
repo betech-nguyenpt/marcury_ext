@@ -8,6 +8,7 @@ using System.Windows.Input;
 using System.Windows.Documents;
 using System.ComponentModel.Design;
 using System.Windows.Media;
+using System.Windows.Media.Imaging;
 
 namespace marcury_wpf
 {
@@ -15,8 +16,7 @@ namespace marcury_wpf
     /// Interaction logic for MainWindow.xaml
     /// </summary>
     public partial class MainWindow : Window
-    {
-       
+    {     
         // Set value for check search handle
         private bool isSearchMode = false;
         private OverlayForm? overlayForm; // Form load full desktop
@@ -39,7 +39,7 @@ namespace marcury_wpf
                     Column10 = $"Additional {i + 1}",
                     Column13 = $"Field {i + 1}",
                     Column16 = $"Last {i + 1}",
-                    ImageSource = "D:\\source\\marcury_ext\\marcury_wpf\\Images\\imgEdit.png"
+                    ImageSource = new BitmapImage(new Uri("pack://application:,,,/Images/imgEdit.png"))
                 });
             }
         }
@@ -137,7 +137,7 @@ namespace marcury_wpf
         public bool Column12 { get; set; }
         public string Column13 { get; set; }
         public string Column14 { get; set; }
-        public string ImageSource { get; set; }
+        public ImageSource ImageSource { get; set; }
         public string Column16 { get; set; }
         public string Column17 { get; set; }
     }

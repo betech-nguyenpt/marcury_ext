@@ -5,39 +5,19 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:marcury_wpf"
         mc:Ignorable="d"
-        Title="MainWindow" Height="500" Width="800">
+        Title="MainWindow" Height="600" Width="1000">
     <Grid>
-        <StatusBar Name="barStatus" 
-           VerticalAlignment="Bottom" Background="Beige" >
-            <StatusBarItem Name="SbiVersion" MouseDown="SbiVersion_MouseDown">
-                <TextBlock Text="{StaticResource VERSION}"></TextBlock>
-            </StatusBarItem>
-            <StatusBarItem>
-                <ProgressBar Width="100" Height="20"
-                 Name="progressBar1">
-                    <ProgressBar.Triggers>
-                        <EventTrigger RoutedEvent="ProgressBar.Loaded">
-                            <BeginStoryboard>
-                                <Storyboard>
-                                    <DoubleAnimation
-                Storyboard.TargetName="progressBar1" 
-                Storyboard.TargetProperty="Value"
-                From="0" To="100" Duration="0:0:5"  />
-                                </Storyboard>
-                            </BeginStoryboard>
-                        </EventTrigger>
-                    </ProgressBar.Triggers>
-                </ProgressBar>
-            </StatusBarItem>
-            <Separator/>
-            <StatusBarItem>
-                <TextBlock Name="tbxStatus">Online</TextBlock>
-            </StatusBarItem>
-            <StatusBarItem HorizontalAlignment="Left">
-                <Image Source="Images\help.png" Width="16" Height="16"/>
-            </StatusBarItem>
-        </StatusBar>
-        <DataGrid x:Name="dgMarcuryEx" AutoGenerateColumns="False" Margin="22,43,22,242">
+        <Grid.RowDefinitions>
+            <!-- Height DataGrid -->
+            <RowDefinition Height="300"/>
+            <!-- Height Button -->
+            <RowDefinition Height="50"/>
+            <!-- Height TextBox -->
+            <RowDefinition Height="200"/>
+            <!-- Height StatusBar -->
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+        <DataGrid Grid.Row="0" x:Name="dgMarcuryEx" AutoGenerateColumns="False" Margin="22,43,22,10">
             <DataGrid.Columns>
                 <!-- Type CheckBox -->
                 <DataGridTemplateColumn Header="Column1" Width="150">
@@ -106,7 +86,38 @@
                 <DataGridTextColumn Header="Column17" Width="300" Binding="{Binding Column17}" />
             </DataGrid.Columns>
         </DataGrid>
-        <Button x:Name="BtnSearchHandle" Content="Search Text" HorizontalAlignment="Left" Margin="22,256,0,0" VerticalAlignment="Top" Click="BtnSearchHandle_Click" Width="111" RenderTransformOrigin="0.367,0.747"/>
-        <TextBox x:Name="TbxResult" Margin="0,289,0,0" TextWrapping="Wrap" Text="TextBox" Width="756" Height="137" VerticalAlignment="Top" HorizontalAlignment="Center"/>
+        <Button Grid.Row="1" x:Name="BtnSearchHandle" Content="Search Text" HorizontalAlignment="Left" Margin="20,10,0,0" VerticalAlignment="Top" Click="BtnSearchHandle_Click" Width="111" RenderTransformOrigin="0.367,0.747"/>
+        <TextBox Grid.Row="2" x:Name="TbxResult" Margin="22,10,0,0" TextWrapping="Wrap" Text="TextBox" Width="966" Height="161" VerticalAlignment="Top" HorizontalAlignment="Left"/>
+        <StatusBar Grid.Row="3" Name="barStatus" 
+           VerticalAlignment="Bottom" Background="Beige" >
+            <StatusBarItem Name="SbiVersion" MouseDown="SbiVersion_MouseDown">
+                <TextBlock Text="{StaticResource VERSION}"></TextBlock>
+            </StatusBarItem>
+            <StatusBarItem>
+                <ProgressBar Width="100" Height="20"
+                 Name="progressBar1">
+                    <ProgressBar.Triggers>
+                        <EventTrigger RoutedEvent="ProgressBar.Loaded">
+                            <BeginStoryboard>
+                                <Storyboard>
+                                    <DoubleAnimation
+                Storyboard.TargetName="progressBar1" 
+                Storyboard.TargetProperty="Value"
+                From="0" To="100" Duration="0:0:5"  />
+                                </Storyboard>
+                            </BeginStoryboard>
+                        </EventTrigger>
+                    </ProgressBar.Triggers>
+                </ProgressBar>
+            </StatusBarItem>
+            <Separator/>
+            <StatusBarItem>
+                <TextBlock Name="tbxStatus">Online</TextBlock>
+            </StatusBarItem>
+            <StatusBarItem HorizontalAlignment="Left">
+                <Image Source="Images\help.png" Width="16" Height="16"/>
+            </StatusBarItem>
+        </StatusBar>
+
     </Grid>
 </Window>
