@@ -131,5 +131,11 @@ namespace wpf_example
             wnd.Show();
 
         }
+        private void BtnLoadingFormShow_Click(object sender, RoutedEventArgs e)
+        {
+            WPFLoading wnd = new();
+            wnd.Show();
+
+        }
     }
 }
