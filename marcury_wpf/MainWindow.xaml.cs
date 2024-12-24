@@ -28,7 +28,7 @@ namespace marcury_wpf
             loadingAnimation = new Storyboard();
             CreateLoadingAnimation();
             Items = new ObservableCollection<DataItem>();
-            //this.dgMarcuryEx.ItemsSource = Items;
+            this.dgMarcuryEx.ItemsSource = Items;
 
             // Add sample data
             for (int i = 0; i < 10; i++) {
