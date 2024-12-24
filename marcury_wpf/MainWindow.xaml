@@ -29,9 +29,9 @@
                 <!-- col for Button(s) -->
             </Grid.ColumnDefinitions>
             <Label x:Name="label" Content="設定　ヘルプ" Margin="0.5,0,0,0" HorizontalAlignment="Left"/>
-            <StackPanel Orientation="Horizontal" Grid.Column="1" HorizontalAlignment="Right" Margin="0,0,1,0">
-                <Button x:Name="BtnSearchText" Content="クリップボードのテキストで検索" VerticalAlignment="Center" Margin="0,0,5,0"/>
-                <Button x:Name="BtnFinalConfir" VerticalAlignment="Center" Content="最終確認" Margin="0,0,1,0"/>
+            <StackPanel Orientation="Horizontal" Grid.Column="1" HorizontalAlignment="Right" Margin="0,0,2,0">
+                <Button x:Name="BtnSearchText" VerticalAlignment="Center" Content="クリップボードのテキストで検索" Margin="0,0,1,0" Height="20" Width="144"/>
+                <Button x:Name="BtnFinalConfir" Content="最終確認" Height="20" Width="53"/>
             </StackPanel>
         </Grid>
         <DataGrid Grid.Row="1" x:Name="dgMarcuryEx" AutoGenerateColumns="False" Margin="10,24,10,0">
