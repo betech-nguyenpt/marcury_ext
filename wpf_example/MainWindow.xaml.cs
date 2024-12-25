@@ -131,5 +131,11 @@ namespace wpf_example
             wnd.Show();
 
         }
+
+        private void BtnViewDataGrid_Click(object sender, RoutedEventArgs e)
+        {
+            DataGridTowHeaders wnd = new();
+            wnd.Show();
+        }
     }
 }
