@@ -9,9 +9,14 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <None Remove="Fonts\fontawesome-webfont.ttf" />
     <None Remove="Images\folder.jpg" />
     <None Remove="Images\gg_logo.png" />
     <None Remove="Images\help.png" />
+    <None Remove="Images\loadImg1.png" />
+    <None Remove="Images\loadImg2.png" />
+    <None Remove="Images\loadImg3.png" />
+    <None Remove="Images\loadImg4.png" />
   </ItemGroup>
 
   <ItemGroup>
@@ -24,9 +29,27 @@
     <Content Include="Images\help.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
+    <Content Include="Images\loadImg1.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Images\loadImg2.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Images\loadImg3.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Resource Include="Images\loadImg4.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Resource>
     <Content Include="Images\page_white.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
+  </ItemGroup>
+
+  <ItemGroup>
+    <Resource Include="Fonts\fontawesome-webfont.ttf">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Resource>
   </ItemGroup>
 
 </Project>
